@@ -21,6 +21,8 @@ const BulletSystem = {
         b.hits = [];
         b.radius = isPlayer ? 4 : 3;
         b.weaponId = weaponId || 'pistol';
+        // 清除池复用污染（强制重置所有特殊属性，防止上一轮残留）
+        b.isMortar = false;
         // 特殊属性
         b.chainCount = extra.chainCount || 0;
         b.chainRange = extra.chainRange || 150;
@@ -52,6 +54,42 @@ const BulletSystem = {
             b.x += b.vx * dt;
             b.y += b.vy * dt;
             b.life -= dt;
+
+            // ====== 迫击弹：寿命结束 → 范围爆炸（伤害玩家） ======
+            if (b.isMortar) {
+                if (b.life <= 0 || b.x < -50 || b.x > GameWorld.width + 50 ||
+                    b.y < -50 || b.y > GameWorld.height + 50) {
+                    // 伤害玩家（范围衰减）
+                    const p = typeof PlayerSystem !== 'undefined' ? PlayerSystem.player : null;
+                    if (p && p.alive) {
+                        const pdx = p.x - b.x, pdy = p.y - b.y;
+                        const pDist = Math.sqrt(pdx * pdx + pdy * pdy);
+                        if (pDist < b.splashRadius + p.radius) {
+                            const falloff = Math.max(0.5, 1 - pDist / (b.splashRadius + p.radius) * 0.5);
+                            PlayerSystem.takeDamage(Math.floor(b.damage * falloff));
+                            // 击退玩家
+                            const angle = Math.atan2(p.y - b.y, p.x - b.x);
+                            p.knockbackX = Math.cos(angle) * 300 * falloff;
+                            p.knockbackY = Math.sin(angle) * 300 * falloff;
+                        }
+                    }
+                    // 紫色爆炸特效
+                    ParticleSystem.explosion(b.x, b.y, '#aa44ff', 15);
+                    ParticleSystem.emit(b.x, b.y, 8, {
+                        speed: 60, color: '#4400aa', life: 0.4, size: 8, type: 'glow'
+                    });
+                    this.pool.push(b);
+                    this.bullets.splice(i, 1);
+                    continue;
+                }
+                // 迫击弹飞行尾迹
+                if (Math.random() < 0.3) {
+                    ParticleSystem.emit(b.x, b.y, 1, {
+                        speed: 10, color: '#8866ff', life: 0.15, size: 3, type: 'glow'
+                    });
+                }
+                continue;
+            }
 
             // 范围爆炸（火箭筒）
             if (b.splashRadius > 0 && b.life <= 2.9) {
@@ -114,6 +152,7 @@ const BulletSystem = {
 
     /** 爆炸范围伤害 */
     _checkSplash(b) {
+        if (typeof EnemySystem === 'undefined' || !EnemySystem.enemies) return;
         const enemies = EnemySystem.enemies;
         const radius = b.splashRadius;
         let hitCount = 0;
@@ -133,13 +172,16 @@ const BulletSystem = {
         }
         if (hitCount > 0) {
             // 爆炸特效
-            ParticleSystem.explosion(b.x, b.y, '#ff6600', 20);
+            if (typeof ParticleSystem !== 'undefined') {
+                ParticleSystem.explosion(b.x, b.y, '#ff6600', 20);
+            }
         }
     },
 
     /** 连锁电击 - 由碰撞检测调用 */
     chainLightning(b, hitEnemy) {
         if (b.chainCount <= 0) return;
+        if (typeof EnemySystem === 'undefined' || !EnemySystem.enemies) return;
         const enemies = EnemySystem.enemies.filter(e => e.alive && e !== hitEnemy && !b.hits.includes(e));
         let current = hitEnemy;
         let remaining = b.chainCount;
@@ -171,6 +213,36 @@ const BulletSystem = {
             current = nearest;
             remaining--;
         }
+    },
+
+    /** 创建迫击弹 - 飞向目标位置，到达后范围爆炸 */
+    createMortar(x, y, targetX, targetY, damage, explosionRadius) {
+        const dx = targetX - x;
+        const dy = targetY - y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 5) return null; // 太近不生成
+        const speed = 150 + Math.random() * 30;
+        const travelTime = dist / speed + 0.3;
+
+        let b = this.pool.pop();
+        if (!b) {
+            b = { x: 0, y: 0, vx: 0, vy: 0, damage: 0, pierce: 0, life: 0, isPlayer: true, hits: [], weaponId: '' };
+        }
+        b.x = x;
+        b.y = y;
+        b.vx = (dx / dist) * speed + (Math.random() - 0.5) * 20;
+        b.vy = (dy / dist) * speed + (Math.random() - 0.5) * 20;
+        b.damage = damage;
+        b.pierce = 0;
+        b.life = travelTime;
+        b.isPlayer = false;
+        b.hits = [];
+        b.radius = 5;
+        b.weaponId = 'mortar';
+        b.splashRadius = explosionRadius || 60;
+        b.isMortar = true;
+        this.bullets.push(b);
+        return b;
     },
 
     clear() {

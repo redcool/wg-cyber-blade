@@ -351,6 +351,27 @@ const PlayerSystem = {
             }
         }
 
+        // ====== 突刺延迟冲刺：先瞄准150ms，再执行冲刺 ======
+        if (p._thrustDashTimer != null) {
+            p._thrustDashTimer -= dt;
+            if (p._thrustDashTimer <= 0) {
+                p.knockbackX += p._thrustDashX || 0;
+                p.knockbackY += p._thrustDashY || 0;
+                p._thrustDashX = 0;
+                p._thrustDashY = 0;
+                p._thrustDashTimer = null;
+            }
+        }
+
+        // ====== 横扫延迟攻击：先瞄准150ms，再执行横扫 ======
+        if (p._sweepPending && p._sweepPending.timer != null) {
+            p._sweepPending.timer -= dt;
+            if (p._sweepPending.timer <= 0) {
+                this._executeMeleeSweep(p, p._sweepPending);
+                p._sweepPending = null;
+            }
+        }
+
         // 清理过期的攻击动画
         if (p.weaponAnimations) {
             const now = Date.now();
@@ -439,67 +460,85 @@ const PlayerSystem = {
     /** 根据武器类型开火（近战按距离动态选择横扫/突刺） */
     _fireWeapon(weaponId, params, target, weaponPos, targetDist) {
         const p = this.player;
+        // player→target 夹角（用于近战攻击方向、角色朝向）
         const angle = Math.atan2(target.y - p.y, target.x - p.x);
         const spawnX = weaponPos ? weaponPos.x : p.x + Math.cos(angle) * 25;
         const spawnY = weaponPos ? weaponPos.y : p.y + Math.sin(angle) * 25;
 
+        // weaponPos→target 精确夹角（用于远程子弹飞行方向、武器图标指向）
+        const fireAngle = Math.atan2(target.y - spawnY, target.x - spawnX);
+
         // 近战武器：根据目标距离动态选择横扫(近)或突刺(远)
+        // 骑枪/长枪专属：始终使用突刺（不切换为横扫）
         let actualBehavior = params.behavior;
         if (actualBehavior === 'melee' || actualBehavior === 'melee_sweep' || actualBehavior === 'melee_thrust') {
-            const meleeRange = params.meleeRange || 60;
-            actualBehavior = (targetDist < meleeRange * 0.45) ? 'melee_sweep' : 'melee_thrust';
+            const weaponDef = ShopSystem.allWeapons.find(d => d.id === weaponId);
+            if (weaponDef && weaponDef.tag === 'lance') {
+                actualBehavior = 'melee_thrust';
+            } else {
+                const meleeRange = params.meleeRange || 60;
+                actualBehavior = (targetDist < meleeRange * 0.45) ? 'melee_sweep' : 'melee_thrust';
+            }
         }
 
-        // 记录攻击动画
+        // 近战/远程判定
+        const isMeleeAttack = actualBehavior === 'melee' || actualBehavior === 'melee_sweep' || actualBehavior === 'melee_thrust';
+
+        // 记录攻击动画（非近战存 fireAngle 供渲染器使用）
         if (p.weaponAnimations) {
             p.weaponAnimations.push({
                 weaponId: weaponId,
                 behavior: actualBehavior,
                 angle: angle,
+                fireAngle: isMeleeAttack ? undefined : fireAngle,
                 startTime: Date.now(),
                 duration: actualBehavior === 'melee_sweep' ? 350 :
                           actualBehavior === 'melee_thrust' ? 250 : 200
             });
         }
 
+        // 近战：用 player→target 角度（扫/刺以玩家为中心）
+        // 远程：用 weaponPos→target 精确角度（子弹对准目标）
+        const attackAngle = isMeleeAttack ? angle : fireAngle;
+
         switch (actualBehavior) {
             case 'spread':
-                this._fireSpread(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireSpread(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'laser':
-                this._fireLaser(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireLaser(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'shock':
-                this._fireShock(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireShock(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'melee':
             case 'melee_sweep':
-                this._fireMeleeSweep(angle, params, target, weaponId, weaponPos);
+                this._fireMeleeSweep(attackAngle, params, target, weaponId, weaponPos);
                 break;
             case 'melee_thrust':
-                this._fireMeleeThrust(angle, params, target, weaponId, weaponPos);
+                this._fireMeleeThrust(attackAngle, params, target, weaponId, weaponPos);
                 break;
             case 'explode':
-                this._fireExplode(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireExplode(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'frost':
-                this._fireFrost(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireFrost(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'homing':
-                this._fireHoming(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireHoming(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'heal_bullet':
-                this._fireHealBullet(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireHealBullet(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'shield_aura':
                 // 光环武器也发射基础子弹（保证所有武器都有攻击力）
-                this._fireBullet(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireBullet(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             case 'spray':
-                this._fireSpray(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireSpray(attackAngle, params, target, weaponId, spawnX, spawnY);
                 break;
             default:
-                this._fireBullet(angle, params, target, weaponId, spawnX, spawnY);
+                this._fireBullet(attackAngle, params, target, weaponId, spawnX, spawnY);
         }
 
         // 开火粒子特效
@@ -573,16 +612,32 @@ const PlayerSystem = {
         );
     },
 
-    /** 近战挥动 - 180°扇形攻击（含医药箱碰撞） */
+    /** 近战挥动 - 180°扇形攻击（先瞄准目标，再横扫） */
     _fireMeleeSweep(angle, params, target, weaponId, weaponPos) {
         const p = this.player;
-        const dmg = this._calcDamage(params.damageMult);
-        const meleeRange = params.meleeRange || 80;
-        const arc = Math.PI; // 180°
-        const halfArc = arc / 2;
+        // 先瞄准目标（150ms），再横扫攻击
+        p.knockbackX = 0;
+        p.knockbackY = 0;
+        p._sweepPending = {
+            angle: angle,
+            meleeRange: params.meleeRange || 80,
+            arc: Math.PI,
+            halfArc: Math.PI / 2,
+            dmg: this._calcDamage(params.damageMult),
+            params: params,
+            weaponId: weaponId,
+            weaponPos: weaponPos,
+            timer: 0.15
+        };
+    },
+
+    /** 执行横扫攻击伤害 + 特效（由 update 在瞄准延迟后调用） */
+    _executeMeleeSweep(p, pending) {
+        const { angle, meleeRange, arc, halfArc, dmg, params, weaponId } = pending;
         let hitCount = 0;
         // ---- 攻击敌人 ----
-        for (const e of EnemySystem.enemies) {
+        const enemyList = typeof EnemySystem !== 'undefined' ? EnemySystem.enemies : [];
+        for (const e of enemyList) {
             if (!e.alive) continue;
             const dx = e.x - p.x, dy = e.y - p.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -593,64 +648,62 @@ const PlayerSystem = {
                 if (diff < -Math.PI) diff += Math.PI * 2;
                 if (Math.abs(diff) <= halfArc) {
                     hitCount++;
-                    // 浮动伤害数字
-                    if (p._lastCrit) {
-                        CombatLogSystem.addCritDamage(e.x, e.y, dmg);
-                        CombatLogSystem.logCrit(dmg);
-                    } else {
-                        CombatLogSystem.addDamage(e.x, e.y, dmg);
+                    if (typeof CombatLogSystem !== 'undefined') {
+                        if (p._lastCrit) {
+                            CombatLogSystem.addCritDamage(e.x, e.y, dmg);
+                            CombatLogSystem.logCrit(dmg);
+                        } else {
+                            CombatLogSystem.addDamage(e.x, e.y, dmg);
+                        }
                     }
                     const result = EnemySystem.takeDamage(e, dmg);
-                    // 击退
                     e.knockbackX += dx / dist * 500;
                     e.knockbackY += dy / dist * 500;
-                    // 燃烧效果（链锯剑、火焰魔棒等）
                     if (params.burnDps > 0 && e.alive) {
                         this._applyBurn(e, params.burnDps, 3.0, params.burnMaxStacks || 3);
                     }
-                    // 击杀处理
                     if (result === -1) {
                         p.kills++;
-                        UnlockSystem.sessionStats.kills++;
+                        if (typeof UnlockSystem !== 'undefined') UnlockSystem.sessionStats.kills++;
                         if (PlayerSystem.addXP(e.xpValue)) {
                             if (typeof GameEngine !== 'undefined') GameEngine.levelUpPending = true;
                         }
                         if (p.lifeSteal > 0) {
                             const healAmt = dmg * p.lifeSteal;
                             PlayerSystem.heal(healAmt);
-                            CombatLogSystem.logLifeSteal(healAmt);
+                            if (typeof CombatLogSystem !== 'undefined') CombatLogSystem.logLifeSteal(healAmt);
                         }
                         if (typeof GameEngine !== 'undefined') GameEngine._dropMaterials(e);
-                        // 精英/Boss 掉落宝箱
                         if (typeof ChestSystem !== 'undefined') {
                             if (e.isBoss) ChestSystem.spawnChest(e.x, e.y, 2);
                             else if (e.isElite) ChestSystem.spawnChest(e.x, e.y, 1);
                         }
-                        CombatLogSystem.logKill(e.name);
-                        ParticleSystem.enemyDeath(e.x, e.y, e.glowColor);
+                        if (typeof CombatLogSystem !== 'undefined') CombatLogSystem.logKill(e.name);
+                        if (typeof ParticleSystem !== 'undefined') ParticleSystem.enemyDeath(e.x, e.y, e.glowColor);
                     }
                 }
             }
         }
         // ---- 攻击医药箱 ----
-        for (const crate of MedkitSystem.crates) {
-            if (!crate.alive) continue;
-            const dx = crate.x - p.x, dy = crate.y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < meleeRange + crate.radius && dist > 0) {
-                const crateAngle = Math.atan2(dy, dx);
-                let diff = crateAngle - angle;
-                if (diff > Math.PI) diff -= Math.PI * 2;
-                if (diff < -Math.PI) diff += Math.PI * 2;
-                if (Math.abs(diff) <= halfArc) {
-                    hitCount++;
-                    MedkitSystem.takeDamage(crate, dmg);
+        if (typeof MedkitSystem !== 'undefined') {
+            for (const crate of MedkitSystem.crates) {
+                if (!crate.alive) continue;
+                const dx = crate.x - p.x, dy = crate.y - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < meleeRange + crate.radius && dist > 0) {
+                    const crateAngle = Math.atan2(dy, dx);
+                    let diff = crateAngle - angle;
+                    if (diff > Math.PI) diff -= Math.PI * 2;
+                    if (diff < -Math.PI) diff += Math.PI * 2;
+                    if (Math.abs(diff) <= halfArc) {
+                        hitCount++;
+                        MedkitSystem.takeDamage(crate, dmg);
+                    }
                 }
             }
         }
         // 弧形特效 + 武器图标位置命中火花
         if (hitCount > 0) {
-            // 1) 原有弧形轨迹特效
             for (let i = 0; i < 5; i++) {
                 const a = angle - halfArc + (arc / 5) * i;
                 ParticleSystem.emit(
@@ -659,7 +712,6 @@ const PlayerSystem = {
                     4, { speed: 50, color: '#ff8800', life: 0.2, size: 4, type: 'glow' }
                 );
             }
-            // 2) 武器图标弧线位置命中火花（计算同 renderer.js _drawPlayerWeapons）
             const anim = (p.weaponAnimations || []).find(a => a.weaponId === weaponId);
             if (anim) {
                 const elapsed = Date.now() - anim.startTime;
@@ -678,7 +730,7 @@ const PlayerSystem = {
         }
     },
 
-    /** 近战突刺 - 直线穿透攻击（直接用命中检测，不生成子弹） */
+    /** 近战突刺 - 直线穿透攻击（先瞄准目标，再冲刺） */
     _fireMeleeThrust(angle, params, target, weaponId, weaponPos) {
         const p = this.player;
         const dmg = this._calcDamage(params.damageMult);
@@ -686,6 +738,19 @@ const PlayerSystem = {
         const pierceCount = params.pierce || 3;
         const halfWidth = 15; // 窄宽度 ~30px
         let hits = 0;
+
+        // 先瞄准目标（150ms），再冲刺
+        // 骑枪/长枪：武器够长，无需冲刺；非骑枪近战需要冲刺贴脸
+        const weaponDef = ShopSystem.allWeapons.find(d => d.id === weaponId);
+        const isLance = weaponDef && weaponDef.tag === 'lance';
+        if (!isLance) {
+            p.knockbackX = 0;
+            p.knockbackY = 0;
+            const dashStr = range * 4;
+            p._thrustDashX = Math.cos(angle) * dashStr;
+            p._thrustDashY = Math.sin(angle) * dashStr;
+            p._thrustDashTimer = 0.15;
+        }
 
         // 按距离排序敌人
         const enemiesInRange = EnemySystem.enemies.filter(e => e.alive);
@@ -711,50 +776,56 @@ const PlayerSystem = {
 
             hits++;
             // 浮动伤害数字
-            if (p._lastCrit) {
-                CombatLogSystem.addCritDamage(e.x, e.y, dmg);
-                CombatLogSystem.logCrit(dmg);
-            } else {
-                CombatLogSystem.addDamage(e.x, e.y, dmg);
+            if (typeof CombatLogSystem !== 'undefined') {
+                if (p._lastCrit) {
+                    CombatLogSystem.addCritDamage(e.x, e.y, dmg);
+                    CombatLogSystem.logCrit(dmg);
+                } else {
+                    CombatLogSystem.addDamage(e.x, e.y, dmg);
+                }
             }
             const result = EnemySystem.takeDamage(e, dmg);
 
-            // 击退
-            e.knockbackX += dx / dist * 400;
-            e.knockbackY += dy / dist * 400;
+            // 击退（骑枪额外击退加成）
+            const kbStr = isLance ? 600 : 400;
+            e.knockbackX += dx / dist * kbStr;
+            e.knockbackY += dy / dist * kbStr;
 
             // 燃烧效果
             if (params.burnDps > 0 && e.alive) {
                 this._applyBurn(e, params.burnDps, 3.0, params.burnMaxStacks || 3);
             }
 
-            // 突刺命中特效
-            ParticleSystem.emit(e.x, e.y, 6, {
-                speed: 100, color: '#00ccff', life: 0.2, size: 4, type: 'spark'
-            });
-            ParticleSystem.emit(e.x, e.y, 4, {
-                speed: 60, color: '#ffffff', life: 0.15, size: 7, type: 'glow'
-            });
+            // 突刺命中特效（骑枪用紫色，其他用蓝色）
+            const hitColor = isLance ? '#ff88ff' : '#00ccff';
+            if (typeof ParticleSystem !== 'undefined') {
+                ParticleSystem.emit(e.x, e.y, 6, {
+                    speed: 100, color: hitColor, life: 0.2, size: 4, type: 'spark'
+                });
+                ParticleSystem.emit(e.x, e.y, 4, {
+                    speed: 60, color: '#ffffff', life: 0.15, size: 7, type: 'glow'
+                });
+            }
 
             // 击杀处理
             if (result === -1) {
                 p.kills++;
-                UnlockSystem.sessionStats.kills++;
+                if (typeof UnlockSystem !== 'undefined') UnlockSystem.sessionStats.kills++;
                 if (PlayerSystem.addXP(e.xpValue)) {
                     if (typeof GameEngine !== 'undefined') GameEngine.levelUpPending = true;
                 }
                 if (p.lifeSteal > 0) {
                     const healAmt = dmg * p.lifeSteal;
                     PlayerSystem.heal(healAmt);
-                    CombatLogSystem.logLifeSteal(healAmt);
+                    if (typeof CombatLogSystem !== 'undefined') CombatLogSystem.logLifeSteal(healAmt);
                 }
                 if (typeof GameEngine !== 'undefined') GameEngine._dropMaterials(e);
                 // 精英怪掉落宝箱
                 if (e.isElite && typeof ChestSystem !== 'undefined') {
                     ChestSystem.spawnChest(e.x, e.y);
                 }
-                CombatLogSystem.logKill(e.name);
-                ParticleSystem.enemyDeath(e.x, e.y, e.glowColor);
+                if (typeof CombatLogSystem !== 'undefined') CombatLogSystem.logKill(e.name);
+                if (typeof ParticleSystem !== 'undefined') ParticleSystem.enemyDeath(e.x, e.y, e.glowColor);
             }
         }
 
@@ -779,11 +850,13 @@ const PlayerSystem = {
 
         // 剑气视觉特效（在攻击路径上）
         const fxDist = Math.min(range * 0.4, 60);
+        const trailColor = isLance ? '#ff88ff' : '#00ccff';
         ParticleSystem.emit(
             p.x + Math.cos(angle) * fxDist,
             p.y + Math.sin(angle) * fxDist,
-            5, { speed: 80, color: '#00ccff', life: 0.15, size: 5, type: 'spark' }
+            5, { speed: 80, color: trailColor, life: 0.15, size: 5, type: 'spark' }
         );
+
     },
 
     /** 爆炸 */

@@ -19,7 +19,7 @@ const CharacterSystem = {
                 pickupRange: 40, harvesting: 0, luck: 0,
             },
             weaponSlots: 6,
-            weaponAffinities: ['melee'],
+            weaponAffinities: ['melee', 'lance'],
             unlockCondition: null
         },
         {
@@ -74,7 +74,7 @@ const CharacterSystem = {
             unlockCondition: null
         },
 
-        // ======== 解锁角色 (5个) ========
+        // ======== 解锁角色 (8个) ========
         {
             id: 'mech',
             name: '重型机甲',
@@ -89,7 +89,7 @@ const CharacterSystem = {
                 pickupRange: 40, harvesting: 0, luck: 0,
             },
             weaponSlots: 5,
-            weaponAffinities: ['gun', 'melee'],
+            weaponAffinities: ['gun', 'melee', 'lance'],
             unlockCondition: { type: 'maxLevel', value: 5 }
         },
         {
@@ -106,7 +106,7 @@ const CharacterSystem = {
                 pickupRange: 60, harvesting: 0, luck: 2,
             },
             weaponSlots: 4,
-            weaponAffinities: ['melee', 'bow'],
+            weaponAffinities: ['melee', 'bow', 'lance'],
             unlockCondition: { type: 'totalKills', value: 100 }
         },
         {
@@ -140,7 +140,7 @@ const CharacterSystem = {
                 pickupRange: 50, harvesting: 0, luck: 0,
             },
             weaponSlots: 6,
-            weaponAffinities: ['melee', 'medic'],
+            weaponAffinities: ['melee', 'medic', 'lance'],
             unlockCondition: { type: 'maxLevel', value: 10 }
         },
         {
@@ -174,8 +174,26 @@ const CharacterSystem = {
                 pickupRange: 45, harvesting: 0, luck: 0,
             },
             weaponSlots: 5,
-            weaponAffinities: ['melee', 'gun', 'bow', 'magic', 'medic'],
+            weaponAffinities: ['melee', 'gun', 'bow', 'magic', 'medic', 'lance'],
             unlockCondition: { type: 'maxLevel', value: 15 }
+        },
+        // ======== 骑枪专属角色 ========
+        {
+            id: 'dragon_knight',
+            name: '龙骑士',
+            desc: '龙骑无双，骑枪专精',
+            icon: '🐉',
+            unlocked: false,
+            stats: {
+                maxHp: 150, hpRegen: 0.6, speed: 240, damage: 22,
+                attackSpeed: 1.0, attackRange: 280, armor: 4, dodge: 0.02,
+                critChance: 0.06, critMultiplier: 2.2, bulletCount: 1,
+                bulletPierce: 0, bulletSpeed: 0, lifeSteal: 0.02,
+                pickupRange: 50, harvesting: 0, luck: 1,
+            },
+            weaponSlots: 5,
+            weaponAffinities: ['lance'],
+            unlockCondition: { type: 'totalKills', value: 300 }
         },
     ],
 

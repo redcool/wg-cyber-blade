@@ -30,16 +30,17 @@ const AssetSystem = {
     _preloadAll() {
         const ids = {
             weapon: [
-                'pistol','smg','shotgun','sniper','gatling','revolver','rifle','shotgun_double','magnum','minigun',
+                'pistol','smg','shotgun','sniper','gatling','revolver','rifle','rifle2','shotgun_double','magnum','minigun',
                 'bow','crossbow','longbow','recurve','explosive_arrow','frost_arrow','poison_arrow','triple_shot','piercing_shot','homing_bow',
                 'plasma','axe','dagger','chainsaw','sword','katana','hammer','spear','claws','whip',
                 'fire_staff','frost_staff','thunder_staff','energy_staff','magic_orb','poison_staff','void_staff','lightning_staff','fire_wand','arcane_orb',
                 'heal_gun','shield','holy_staff','life_wand','blessing',
+                'pike','cavalry_lance','trident',
             ],
             item: ['hpUp','regen','armorUp','dodgeUp','critUp','critDmg','speedUp','lifesteal','rangeUp','harvestUp','pickupUp','luckUp','thorn','energy_shield','stim','replicator','magnet','piggy','blood_pact','scope','burn_spreader','ice_core','element_amp',
             'reactive_armor','penetrator','heavy_bullets','coupon','hunting_trophy','glass_cannon','berserker'],
-            char: ['swordsman','gunslinger','fire_mage','archer','mech','assassin','medic','paladin','engineer','berserker'],
-            enemy: ['basic','fast','tank','ranged','elite','boss'],
+            char: ['swordsman','gunslinger','fire_mage','archer','mech','assassin','medic','paladin','engineer','berserker','dragon_knight'],
+            enemy: ['basic','fast','exploder','tank','healer','ranged','mortar','blinker','elite','boss'],
         };
 
         // Sprite 帧列表（仅敌人有方向帧，角色用静态图+呼吸）

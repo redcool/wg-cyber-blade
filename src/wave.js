@@ -1,43 +1,56 @@
 // ============================================================
-// wave.js - 关卡系统（无限关卡，每关30s）
+// wave.js - 关卡系统（无限关卡，难度逐关递增）
 // ============================================================
 const WaveSystem = {
     currentLevel: 0,
     waveTimer: 0,
-    levelDuration: 30,      // 每关30秒
     spawnTimer: 0,
-    spawnInterval: 1.5,
     waveActive: false,
     waveTransitioning: false,
     _bossSpawned: false,
 
-    // 敌人类型池（随关卡数解锁更难的敌人）
+    /** 当前关卡时长（Boss关40s，标准30s） */
+    get levelDuration() {
+        return (this.currentLevel % 5 === 0) ? 40 : 30;
+    },
+
+    // 敌人类型池（10种敌人，随关卡数解锁）
     get _availableTypes() {
         const lv = this.currentLevel;
         const types = ['basic'];
         if (lv >= 2) types.push('fast');
+        if (lv >= 3) types.push('exploder');
         if (lv >= 4) types.push('tank');
+        if (lv >= 5) types.push('healer');
         if (lv >= 6) types.push('ranged');
+        if (lv >= 7) types.push('mortar');
+        if (lv >= 8) types.push('blinker');
         if (lv >= 10) types.push('elite');
         if (lv >= 15 && lv % 5 === 0) types.push('boss');
         return types;
     },
 
-    /** 获取当前关卡难度缩放 */
-    get _difficultyScale() {
-        return 1 + (this.currentLevel - 1) * 0.15;
+    /** 获取生成间隔（随关卡递增变快）：2.0s → 0.5s */
+    get _spawnInterval() {
+        return Math.max(0.5, 2.0 - (this.currentLevel - 1) * 0.05);
     },
 
-    /** 获取生成间隔（随关卡递增变快） */
-    get _spawnRate() {
-        const base = 1.5;
-        const reduction = Math.min(0.8, (this.currentLevel - 1) * 0.04);
-        return Math.max(0.4, base - reduction);
+    /** 获取每次生成操作的怪物数量（按关卡区间划分） */
+    get _spawnsPerTick() {
+        const lv = this.currentLevel;
+        if (lv <= 0) return 0;
+        if (lv === 1) return 1;
+        if (lv <= 3) return Math.random() < 0.5 ? 2 : 1;    // 1~2
+        if (lv <= 6) return 2 + Math.floor(Math.random() * 2); // 2~3
+        if (lv <= 9) return 3 + Math.floor(Math.random() * 2); // 3~4
+        if (lv <= 14) return 3 + Math.floor(Math.random() * 3); // 3~5
+        if (lv <= 19) return 4 + Math.floor(Math.random() * 3); // 4~6
+        return 5 + Math.floor(Math.random() * 4);               // 5~8
     },
 
-    /** 获取每关敌人数 */
-    get _enemyCount() {
-        return 4 + Math.floor(this.currentLevel * 1.5);
+    /** 同时在场敌人上限 */
+    get _maxSimultaneous() {
+        return Math.min(30, 6 + Math.floor(this.currentLevel * 0.8));
     },
 
     /** 开始下一关 */
@@ -62,42 +75,72 @@ const WaveSystem = {
         this.waveTimer += dt;
         this.spawnTimer += dt;
 
-        const scale = this._difficultyScale;
-        const spawnRate = this._spawnRate;
-        const maxEnemies = this._enemyCount + 5;
-        const aliveCount = EnemySystem.enemies.filter(e => e.alive).length;
+        const maxAlive = this._maxSimultaneous;
+        const interval = this._spawnInterval;
 
-        // 生成敌人（同时限制精英/Boss 各最多1个）
-        if (this.spawnTimer >= spawnRate && aliveCount < maxEnemies) {
+        // 生成敌人（按每秒刷怪数控制）
+        if (this.spawnTimer >= interval) {
             this.spawnTimer = 0;
+            const count = this._spawnsPerTick;
             const types = this._availableTypes;
-            let type = types[Math.floor(Math.random() * types.length)];
-            // 精英同时只出一个
-            if (type === 'elite' && EnemySystem.enemies.some(e => e.alive && e.isElite)) {
-                type = 'basic';
+
+            for (let i = 0; i < count; i++) {
+                const aliveCount = EnemySystem.enemies.filter(e => e.alive).length;
+                if (aliveCount >= maxAlive) break;
+
+                let type = this._pickWeightedType(types);
+                // 精英同时只出一个（fallback到普通）
+                if (type === 'elite' && EnemySystem.enemies.some(e => e.alive && e.isElite)) {
+                    type = 'basic';
+                }
+                const pos = this._getSpawnPosition(player);
+                EnemySystem.create(type, pos.x, pos.y, this.currentLevel);
             }
-            // Boss 同时只出一个
-            if (type === 'boss' && EnemySystem.enemies.some(e => e.alive && e.isBoss)) {
-                type = 'tank';
-            }
-            const pos = this._getSpawnPosition(player);
-            EnemySystem.create(type, pos.x, pos.y, scale);
         }
 
-        // BOSS/精英特殊生成（每5关，只生成一次）
+        // BOSS/精英特殊生成（每5关，第4秒生成1次）
         if (this.currentLevel % 5 === 0 && this.waveTimer > 4 && !this._bossSpawned) {
             this._bossSpawned = true;
             const bossType = this.currentLevel >= 15 ? 'boss' : 'elite';
             const pos = this._getSpawnPosition(player);
-            EnemySystem.create(bossType, pos.x, pos.y, scale * 1.2);
+            EnemySystem.create(bossType, pos.x, pos.y, this.currentLevel);
         }
 
-        // 关卡结束条件：30秒到 → 清理场景
+        // 关卡结束条件：时长到 → 清理场景
         if (this.waveTimer >= this.levelDuration) {
             this.waveActive = false;
             this.waveTransitioning = true;
             this._cleanupWave();
         }
+    },
+
+    /** 加权随机选择敌人类型 */
+    _pickWeightedType(types) {
+        const level = this.currentLevel;
+        const weights = {};
+        for (const t of types) {
+            if (t === 'elite' || t === 'boss') { weights[t] = 0; continue; }
+            switch (t) {
+                case 'basic':    weights[t] = level <= 5 ? 35 : 20; break;
+                case 'fast':     weights[t] = 25; break;
+                case 'exploder': weights[t] = level <= 10 ? 18 : 10; break;
+                case 'tank':     weights[t] = level <= 6 ? 8 : 14; break;
+                case 'healer':   weights[t] = level <= 8 ? 0 : 12; break;
+                case 'ranged':   weights[t] = level <= 8 ? 0 : 12; break;
+                case 'mortar':   weights[t] = level <= 10 ? 0 : 8; break;
+                case 'blinker':  weights[t] = level <= 10 ? 0 : 8; break;
+                default:         weights[t] = 10;
+            }
+        }
+        // 加权选择
+        const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
+        if (totalWeight <= 0) return 'basic';
+        let r = Math.random() * totalWeight;
+        for (const [type, w] of Object.entries(weights)) {
+            r -= w;
+            if (r <= 0) return type;
+        }
+        return 'basic';
     },
 
     _getSpawnPosition(player) {

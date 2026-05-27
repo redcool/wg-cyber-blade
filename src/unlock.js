@@ -25,6 +25,8 @@ const UnlockSystem = {
         'magic_orb', 'fire_wand', 'fire_staff', 'frost_staff',
         // 医疗基础 (2)
         'heal_gun', 'life_wand',
+        // 骑枪基础 (3)
+        'pike', 'cavalry_lance', 'trident',
     ]),
     // 基础武器ID列表（用于武器选择界面）
     basicWeaponIds: new Set([
@@ -33,6 +35,7 @@ const UnlockSystem = {
         'bow', 'recurve', 'crossbow',
         'magic_orb', 'fire_wand', 'fire_staff', 'frost_staff',
         'heal_gun', 'life_wand',
+        'pike', 'cavalry_lance', 'trident',
     ]),
     unlockedCharacters: new Set(),
 
@@ -127,7 +130,7 @@ const UnlockSystem = {
     _checkUnlocks() {
         const newUnlocks = [];
 
-        // ====== 武器解锁条件（45种武器逐步解锁） ======
+        // ====== 武器解锁条件（48种武器逐步解锁） ======
         const weaponUnlocks = [
             // 近战 (melee)
             { id: 'plasma', condition: () => this.stats.totalLevels >= 1 },
@@ -148,6 +151,7 @@ const UnlockSystem = {
             { id: 'gatling', condition: () => this.stats.totalKills >= 50 },
             { id: 'revolver', condition: () => this.stats.totalLevels >= 2 },
             { id: 'rifle', condition: () => this.stats.totalLevels >= 4 },
+            { id: 'rifle2', condition: () => this.stats.totalKills >= 120 },
             { id: 'shotgun_double', condition: () => this.stats.totalKills >= 120 },
             { id: 'magnum', condition: () => this.stats.totalKills >= 200 },
             { id: 'minigun', condition: () => this.stats.totalLevels >= 12 },
@@ -179,6 +183,10 @@ const UnlockSystem = {
             { id: 'holy_staff', condition: () => this.stats.totalKills >= 60 },
             { id: 'life_wand', condition: () => this.stats.totalLevels >= 5 },
             { id: 'blessing', condition: () => this.stats.totalLevels >= 10 },
+            // 骑枪 (lance)
+            { id: 'pike', condition: () => this.stats.totalLevels >= 7 },
+            { id: 'cavalry_lance', condition: () => this.stats.totalKills >= 150 },
+            { id: 'trident', condition: () => this.stats.totalLevels >= 10 },
         ];
 
         for (const wu of weaponUnlocks) {
@@ -196,6 +204,7 @@ const UnlockSystem = {
             { id: 'paladin', condition: () => this.stats.maxLevel >= 10 },
             { id: 'engineer', condition: () => this.stats.totalKills >= 200 },
             { id: 'berserker', condition: () => this.stats.maxLevel >= 15 },
+            { id: 'dragon_knight', condition: () => this.stats.totalKills >= 300 },
         ];
 
         for (const cu of charUnlocks) {

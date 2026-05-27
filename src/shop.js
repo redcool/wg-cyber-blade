@@ -230,6 +230,7 @@ const ShopSystem = {
         bow:   { name: '弓箭', icon: '🏹', desc: '暴击/穿透流派' },
         magic: { name: '元素', icon: '🔮', desc: '元素伤害/特效流派' },
         medic: { name: '医疗', icon: '💊', desc: '回复/吸血流派' },
+        lance: { name: '骑枪', icon: '🔱', desc: '长距离突刺流派' },
     },
 
     // 羁绊加成定义（4档完整）
@@ -259,9 +260,13 @@ const ShopSystem = {
             3: { hpRegenAdd: 2.0, lifeStealAdd: 0.05 },
             4: { hpRegenAdd: 3.0, lifeStealAdd: 0.10, maxHpAdd: 20 },
         },
+        lance: {
+            2: { attackRangeMult: 0.10, bulletPierceAdd: 1 },
+            3: { attackRangeMult: 0.20, bulletPierceAdd: 2, critChanceAdd: 0.10 },
+        },
     },
 
-    /* ==================== 武器定义（45种） ==================== */
+    /* ==================== 武器定义（48种） ==================== */
     allWeapons: [
         // ==============================
         // 近战 (melee) × 10
@@ -338,6 +343,10 @@ const ShopSystem = {
           icon: '🔫', slots: 2, cost: 13,
           tag: 'gun', mods: { damageMult: 0.05 }, behavior: 'spread',
           bulletCount: 3, bulletSpeed: 800, damageMult: 1.2, attackSpeedMult: 0.9, spread: 0.08, pierce: 0 },
+        { id: 'rifle2',   name: '战斗步枪',  desc: '2发连射 +30%伤害 穿透+1',
+          icon: '🔫', slots: 2, cost: 15,
+          tag: 'gun', mods: { damageMult: 0.3 }, behavior: 'spread',
+          bulletCount: 2, bulletSpeed: 900, damageMult: 1.6, attackSpeedMult: 1.0, spread: 0.06, pierce: 1 },
         { id: 'shotgun_double', name: '双管散弹', desc: '8发散弹 -30%攻速',
           icon: '💥', slots: 3, cost: 16,
           tag: 'gun', mods: { attackSpeedMult: -0.3 }, behavior: 'spread',
@@ -478,6 +487,21 @@ const ShopSystem = {
           icon: '🛡️', slots: 2, cost: 15,
           tag: 'medic', mods: { damageMult: -0.3, armorAdd: 2 }, behavior: 'shield_aura',
           bulletCount: 0, bulletSpeed: 0, damageMult: 0.5, attackSpeedMult: 1.2, spread: 0, pierce: 0, auraHeal: 3, auraRadius: 80 },
+        // ==============================
+        // 骑枪 (lance) × 3
+        // ==============================
+        { id: 'pike',      name: '长枪',      desc: '超长距突刺 穿透+4 射程200',
+          icon: '🔱', slots: 1, cost: 12,
+          tag: 'lance', mods: { attackRangeMult: 1.15 }, behavior: 'melee_thrust',
+          bulletCount: 1, bulletSpeed: 0, damageMult: 2.0, attackSpeedMult: 0.80, spread: 0, pierce: 4, meleeRange: 200 },
+        { id: 'cavalry_lance', name: '骑枪',   desc: '超长距突刺 穿透+5 +30%伤害 -25%攻速',
+          icon: '🔱', slots: 2, cost: 16,
+          tag: 'lance', mods: { damageMult: 0.3, attackSpeedMult: -0.25 }, behavior: 'melee_thrust',
+          bulletCount: 1, bulletSpeed: 0, damageMult: 3.2, attackSpeedMult: 1.10, spread: 0, pierce: 5, meleeRange: 250 },
+        { id: 'trident',   name: '三叉戟',    desc: '三叉突刺 穿透+6 -10%伤害 +15%射程',
+          icon: '🔱', slots: 2, cost: 14,
+          tag: 'lance', mods: { damageMult: -0.1, attackRangeMult: 1.15 }, behavior: 'melee_thrust',
+          bulletCount: 1, bulletSpeed: 0, damageMult: 1.6, attackSpeedMult: 0.85, spread: 0, pierce: 6, meleeRange: 180 },
     ],
 
     /* ==================== 道具定义（22种不变） ==================== */

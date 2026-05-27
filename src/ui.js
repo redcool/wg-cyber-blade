@@ -68,7 +68,7 @@ const UISystem = {
         );
 
         // 按标签分组排序显示
-        const tagOrder = ['melee', 'gun', 'bow', 'magic', 'medic'];
+        const tagOrder = ['melee', 'gun', 'bow', 'magic', 'medic', 'lance'];
         basicWeapons.sort((a, b) => tagOrder.indexOf(a.tag) - tagOrder.indexOf(b.tag));
 
         const grid = document.getElementById('weaponSelectGrid');
@@ -265,7 +265,7 @@ const UISystem = {
 
     /** 获取标签颜色 */
     _tagColor(tagId) {
-        const colors = { rapid: '#ffcc00', heavy: '#ff6600', tech: '#00ffff', melee: '#00ff88' };
+        const colors = { rapid: '#ffcc00', heavy: '#ff6600', tech: '#00ffff', melee: '#00ff88', lance: '#ff88ff' };
         return colors[tagId] || '#ffffff';
     },
 
@@ -551,6 +551,19 @@ const UISystem = {
             if (!canAfford) div.classList.add('too-expensive');
             if (item.locked) div.classList.add('locked-card');
 
+            // 品质边框颜色 + 品质标签
+            let qualityBadgeHtml = '';
+            if (isWeapon) {
+                const quality = item.quality || 'T1';
+                const qDef = ShopSystem.qualityDefs[quality];
+                if (qDef) {
+                    const col = qDef.color;
+                    div.style.borderColor = col;
+                    div.style.boxShadow = `0 0 10px ${col}22, inset 0 0 6px ${col}11`;
+                    qualityBadgeHtml = `<span class="mc-quality-badge" style="color:${col}">${qDef.name}</span>`;
+                }
+            }
+
             const typeLabel = isWeapon ? '武器' : '道具';
             const iconHtml = isWeapon ? AssetSystem.weaponIconHTML(item.id) : AssetSystem.itemIconHTML(item.id, 44);
 
@@ -579,6 +592,7 @@ const UISystem = {
 
             div.innerHTML = `
                 <span class="mc-type-badge">${typeLabel}</span>
+                ${qualityBadgeHtml}
                 ${countBadge}
                 <div class="mc-icon">${iconHtml}</div>
                 <div class="mc-name">${item.name}</div>

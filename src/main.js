@@ -144,6 +144,7 @@ const GameEngine = {
         this._checkMedkitCollisions(player);
         MedkitSystem.update(dt, player);
         ChestSystem.update(dt, player);
+        this._updateMaterials(dt, player);
         ParticleSystem.update(dt);
         CombatLogSystem.update(dt);
         WaveSystem.update(dt, player);
@@ -192,6 +193,8 @@ const GameEngine = {
         for (let i = BulletSystem.bullets.length - 1; i >= 0; i--) {
             const b = BulletSystem.bullets[i];
             if (!b.isPlayer) {
+                // 迫击弹不直接碰撞，由寿命结束触发范围爆炸
+                if (b.isMortar) continue;
                 // 敌人子弹 vs 玩家
                 const dx = b.x - player.x, dy = b.y - player.y;
                 if (dx * dx + dy * dy < (b.radius + player.radius) * (b.radius + player.radius)) {
@@ -309,10 +312,33 @@ const GameEngine = {
             GameWorld.materials.push({
                 x: enemy.x + (Math.random() - 0.5) * 30,
                 y: enemy.y + (Math.random() - 0.5) * 30,
-                value: value
+                value: value,
+                life: 30 // 30秒后自动消失，防止无限堆积
             });
         }
         CombatLogSystem.logDrop(totalValue);
+    },
+
+    /** 金币自动拾取 + 生命周期（防止无限堆积导致卡死） */
+    _updateMaterials(dt, player) {
+        const pickupRange = player.pickupRange + 8; // 同chest/medkit拾取范围
+        for (let i = GameWorld.materials.length - 1; i >= 0; i--) {
+            const mat = GameWorld.materials[i];
+            // 生命周期递减
+            mat.life -= dt;
+            if (mat.life <= 0) {
+                GameWorld.materials.splice(i, 1);
+                continue;
+            }
+            // 玩家靠近自动拾取
+            const dx = mat.x - player.x;
+            const dy = mat.y - player.y;
+            if (Math.sqrt(dx * dx + dy * dy) < pickupRange) {
+                player.materials += mat.value;
+                ParticleSystem.pickup(mat.x, mat.y);
+                GameWorld.materials.splice(i, 1);
+            }
+        }
     },
 
     /** 玩家子弹检测医药箱碰撞 */

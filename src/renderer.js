@@ -240,11 +240,22 @@ const Renderer = {
 
             // ---- 计算实际绘制位置和角度 ---- //
             let drawX = orbitX, drawY = orbitY;
-            // 武器图标始终朝外（面向轨道方向），不受行走方向影响
+            // 非攻击时武器朝外（面向轨道方向），攻击时指向目标
             let drawAngle = orbitalAngle;
+
+            // 所有武器图标正方向朝上（向上），需要 +π/2 偏移补偿
+            // Math.atan2 返回角度: 0=右, -π/2=上；图片正方向朝上，需要偏移 +90°
+            const isUpwardIcon = true;
+            const upOffset = isUpwardIcon ? Math.PI / 2 : 0;
+            drawAngle += upOffset;
 
             if (isAttacking && weaponDef) {
                 const anim = (player.weaponAnimations || []).find(a => a.weaponId === w.id);
+                // 非近战：用武器→目标的精确夹角（匹配子弹飞行方向）
+                // 近战：用玩家→目标的夹角（横扫/突刺以玩家为中心）
+                const aimAngle = (anim && anim.fireAngle != null) ? anim.fireAngle : targetAngle;
+                // 所有攻击中的武器图标指向目标方向
+                drawAngle = aimAngle + upOffset;
                 if (anim && (anim.behavior === 'melee_sweep' || anim.behavior === 'melee_thrust')) {
                     const elapsed = Date.now() - anim.startTime;
                     const progress = Math.min(1, elapsed / anim.duration);
@@ -264,14 +275,14 @@ const Renderer = {
                         }
                         drawX = orbitX + Math.cos(targetAngle) * lungeDist * thrustT;
                         drawY = orbitY + Math.sin(targetAngle) * lungeDist * thrustT;
-                        drawAngle = targetAngle;
+                        drawAngle = targetAngle + upOffset;
                     } else {
                         // 横扫：武器图标沿180°弧线从目标方向左侧扫到右侧
                         const sweepArc = Math.PI;
                         const sweepAngle = targetAngle - sweepArc / 2 + sweepArc * progress;
                         drawX = x + Math.cos(sweepAngle) * dist;
                         drawY = y + Math.sin(sweepAngle) * dist;
-                        drawAngle = sweepAngle;
+                        drawAngle = sweepAngle + upOffset;
                     }
                 }
             }
