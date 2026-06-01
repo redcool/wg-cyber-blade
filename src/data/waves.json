@@ -1,0 +1,366 @@
+[
+  {
+    "waveNumber": 1,
+    "minBudget": 8,
+    "maxBudget": 10,
+    "availableBehaviors": [
+      "chase"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 2,
+    "minBudget": 12,
+    "maxBudget": 14,
+    "availableBehaviors": [
+      "chase"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 3,
+    "minBudget": 16,
+    "maxBudget": 18,
+    "availableBehaviors": [
+      "chase",
+      "fast"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 4,
+    "minBudget": 20,
+    "maxBudget": 22,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 5,
+    "minBudget": 24,
+    "maxBudget": 26,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "circle",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 6,
+    "minBudget": 28,
+    "maxBudget": 32,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 7,
+    "minBudget": 32,
+    "maxBudget": 36,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 8,
+    "minBudget": 36,
+    "maxBudget": 40,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 9,
+    "minBudget": 40,
+    "maxBudget": 45,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 10,
+    "minBudget": 50,
+    "maxBudget": 55,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 11,
+    "minBudget": 60,
+    "maxBudget": 66,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 12,
+    "minBudget": 70,
+    "maxBudget": 77,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 13,
+    "minBudget": 80,
+    "maxBudget": 88,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 14,
+    "minBudget": 90,
+    "maxBudget": 99,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 15,
+    "minBudget": 100,
+    "maxBudget": 110,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect"
+    ],
+    "spawnPattern": "random",
+    "specialRule": "bossEvery5"
+  },
+  {
+    "waveNumber": 16,
+    "minBudget": 120,
+    "maxBudget": 132,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect",
+      "freeze"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 17,
+    "minBudget": 140,
+    "maxBudget": 154,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect",
+      "freeze"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 18,
+    "minBudget": 160,
+    "maxBudget": 176,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect",
+      "freeze"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 19,
+    "minBudget": 180,
+    "maxBudget": 198,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect",
+      "freeze"
+    ],
+    "spawnPattern": "random",
+    "specialRule": ""
+  },
+  {
+    "waveNumber": 20,
+    "minBudget": 200,
+    "maxBudget": 220,
+    "availableBehaviors": [
+      "chase",
+      "fast",
+      "ranged",
+      "explode",
+      "heal",
+      "mortar",
+      "blink"
+    ],
+    "availableMechanics": [
+      "splitter",
+      "shielded",
+      "leech",
+      "reflect",
+      "freeze"
+    ],
+    "spawnPattern": "random",
+    "specialRule": "bossEvery5"
+  }
+]

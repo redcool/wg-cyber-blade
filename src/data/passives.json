@@ -1,0 +1,119 @@
+[
+    {
+        "id": "berserker_rage",
+        "name": "嗜血狂暴",
+        "desc": "低血量时 +30% 伤害",
+        "icon": "💢",
+        "triggerType": "OnLowHP",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "damagePercentBoost",
+            "value": 0.3,
+            "duration": 999
+        },
+        "target": "player",
+        "tags": ["melee"],
+        "cooldown": 5.0
+    },
+    {
+        "id": "engineer_turret_boost",
+        "name": "工程精通",
+        "desc": "工程物 +50% 伤害",
+        "icon": "🤖",
+        "triggerType": "Passive",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "statMod",
+            "turretDamage": 0.5
+        },
+        "target": "player",
+        "tags": ["tech"],
+        "cooldown": 0
+    },
+    {
+        "id": "pyro_burn_on_hit",
+        "name": "火焰之触",
+        "desc": "攻击命中时 100% 施加燃烧",
+        "icon": "🔥",
+        "triggerType": "OnHit",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "applyBurn",
+            "dps": 8,
+            "duration": 3.0,
+            "maxStacks": 3
+        },
+        "target": "enemy",
+        "tags": ["fire"],
+        "cooldown": 0.5
+    },
+    {
+        "id": "pyro_fire_damage_boost",
+        "name": "火焰专精",
+        "desc": "火焰伤害 +20%",
+        "icon": "🔥",
+        "triggerType": "Passive",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "statMod",
+            "elementalDamage": 4
+        },
+        "target": "player",
+        "tags": ["fire"],
+        "cooldown": 0
+    },
+    {
+        "id": "hunter_ranged_boost",
+        "name": "精准射击",
+        "desc": "远程伤害 +5",
+        "icon": "🏹",
+        "triggerType": "Passive",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "statMod",
+            "rangedDamage": 5
+        },
+        "target": "player",
+        "tags": ["ranged"],
+        "cooldown": 0
+    },
+    {
+        "id": "merchant_gold_damage",
+        "name": "金钱之力",
+        "desc": "每 50 金币 +5% 伤害",
+        "icon": "💰",
+        "triggerType": "PerSecond",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "conditionalStatMod",
+            "stat": "damagePercent",
+            "formula": "Math.floor(materials / 50) * 0.05"
+        },
+        "target": "player",
+        "tags": ["economy"],
+        "cooldown": 1.0
+    },
+    {
+        "id": "assassin_crit_boost",
+        "name": "致命一击",
+        "desc": "暴击时 +50% 额外伤害",
+        "icon": "💥",
+        "triggerType": "OnCrit",
+        "condition": null,
+        "chance": 1.0,
+        "effect": {
+            "type": "damagePercentBoost",
+            "value": 0.5,
+            "duration": 0.5
+        },
+        "target": "player",
+        "tags": ["crit"],
+        "cooldown": 0
+    }
+]

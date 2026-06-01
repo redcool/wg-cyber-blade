@@ -20,9 +20,17 @@
 
             <div id="charSelectOverlay" class="char-select-section">
                 <h3 class="section-title">选择角色</h3>
-                <div id="charList" class="char-list"></div>
+                <div id="charDetail" class="char-detail"></div>
+                <div id="charGrid" class="char-grid"></div>
             </div>
 
+            <div class="save-buttons">
+                <button id="saveBtn" class="cyber-btn-secondary save-btn">💾 保存</button>
+                <button id="loadBtn" class="cyber-btn-secondary save-btn">📂 加载</button>
+                <button id="exportSaveBtn" class="cyber-btn-secondary save-btn">📤 导出</button>
+                <button id="importSaveBtn" class="cyber-btn-secondary save-btn">📥 导入</button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none">
+            </div>
             <button id="startBtn" class="cyber-btn">开始挑战</button>
             <div class="controls-hint">
                 <p><span class="key">WASD</span> 移动 · <span class="key">↔</span> 自动攻击</p>
@@ -34,10 +42,23 @@
     <!-- 武器选择（选择角色后出发前） -->
     <div id="weaponSelectOverlay" class="overlay hidden">
         <div class="menu-content weapon-select-content">
+            <button id="weaponSelectBack" class="back-btn-corner">返回</button>
             <h1 class="weapon-select-title">🗡️ 选择初始武器</h1>
             <p class="subtitle" id="weaponSelectHint">选择一个基础武器开始挑战</p>
             <div id="weaponSelectGrid" class="weapon-select-grid"></div>
-            <button id="weaponSelectSkip" class="cyber-btn-secondary">基础手枪 · 跳过</button>
+            <div class="select-actions">
+                <button id="weaponSelectSkip" class="cyber-btn-secondary">基础手枪 · 跳过</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 难度选择 -->
+    <div id="difficultyOverlay" class="overlay hidden">
+        <div class="menu-content diff-content">
+            <button id="diffBack" class="back-btn-corner">返回</button>
+            <h1 class="weapon-select-title">⚙️ 选择难度</h1>
+            <p class="subtitle">0 = 标准难度 · 9 = 极限</p>
+            <div id="diffGrid" class="diff-grid"></div>
         </div>
     </div>
 
@@ -140,54 +161,105 @@
 
     <div id="hud" class="hidden">
         <div class="hud-top">
-            <!-- 左：角色信息单行 -->
+            <!-- 左：HP / EXP / 资源 / 升级+宝箱（每项占一行） -->
             <div class="hud-top-left">
-                <span id="hudCharName" class="hud-char-name">剑客</span>
-                <span class="hud-sep">|</span>
-                <div class="hud-health-compact">
+                <div class="hud-stat hud-stat-full" id="hudStatHP">
+                    <span class="hud-stat-icon">❤️</span>
                     <div class="health-bar-bg">
                         <div id="healthBar" class="health-bar-fill"></div>
                     </div>
-                    <span id="healthText" class="hud-value hud-hp-text">100/100</span>
+                    <span id="healthText" class="hud-stat-value">100/100</span>
                 </div>
-                <span class="hud-sep">|</span>
-                <div class="hud-xp-compact">
-                    <div class="xp-bar-bg">
-                        <div id="xpBar" class="xp-bar-fill"></div>
+                <div class="hud-stat hud-stat-full" id="hudStatEXP">
+                    <span class="hud-stat-icon">⭐</span>
+                    <div class="hud-xp-compact">
+                        <div class="xp-bar-bg">
+                            <div id="xpBar" class="xp-bar-fill"></div>
+                        </div>
+                    </div>
+                    <span id="hudExpPct" class="hud-stat-value">0%</span>
+                </div>
+                <div class="hud-stat hud-stat-full" id="hudStatMat">
+                    <span class="hud-stat-icon">🪙</span>
+                    <span id="materialCount" class="hud-stat-value">0</span>
+                </div>
+                <div class="hud-stat-row" id="hudStatRowBottom">
+                    <div class="hud-stat hidden" id="hudStatLevelUp">
+                        <span class="hud-stat-icon">⬆</span>
+                        <span id="hudLevelUpCount" class="hud-stat-value">0</span>
+                    </div>
+                    <div class="hud-stat hidden" id="hudStatChestN">
+                        <span class="hud-stat-icon">🟢</span>
+                        <span id="hudChestNormal" class="hud-stat-value">0</span>
+                    </div>
+                    <div class="hud-stat hidden" id="hudStatChestR">
+                        <span class="hud-stat-icon">🔴</span>
+                        <span id="hudChestRare" class="hud-stat-value">0</span>
                     </div>
                 </div>
-                <span id="hudLevelIcon" class="hud-level-icon">⬆ Lv.<span id="hudLevelNum">1</span></span>
-                <span class="hud-sep">|</span>
-                <span id="hudChestIcon" class="hud-chest-icon">📦 ×<span id="hudChestCount">0</span></span>
             </div>
             <!-- 中：关卡 + 倒计时 -->
             <div class="hud-center">
                 <span id="hudLevelTag" class="hud-level-tag">第 <span id="levelCount">1</span> 关</span>
-                <div id="waveTimer" class="hud-timer">30</div>
+                <div id="waveTimer" class="hud-timer">60</div>
             </div>
-            <!-- 右：击杀 + 金币 -->
+            <!-- 右：击杀 -->
             <div class="hud-right">
                 <span id="hudKills" class="hud-kills">💀 <span id="killCount">0</span></span>
-                <span class="hud-materials">🪙 <span id="materialCount">0</span></span>
             </div>
         </div>
+        <div id="bossBar" class="hud-boss-bar hidden">
+            <span id="bossName" class="boss-name"></span>
+            <span id="bossPhase" class="boss-phase"></span>
+            <div class="boss-hp-bg">
+                <div id="bossHpFill" class="boss-hp-fill"></div>
+            </div>
+            <span id="bossHpText" class="boss-hp-text"></span>
+        </div>
         <div id="hudSynergies" class="hud-synergies"></div>
+        <!-- 调试信息 -->
+        <div id="hudDebug" class="hud-debug"></div>
     </div>
 
-    <script src="src/input.js?v=5.1"></script>
-    <script src="src/stats.js?v=5.1"></script>
-    <script src="src/unlock.js?v=5.1"></script>
-    <script src="src/character.js?v=5.1"></script>
-    <script src="src/assets.js?v=5.1"></script>
-    <script src="src/bullet.js?v=5.1"></script>
-    <script src="src/particle.js?v=5.1"></script>
-    <script src="src/player.js?v=5.1"></script>
-    <script src="src/enemy.js?v=5.1"></script>
-    <script src="src/wave.js?v=5.1"></script>
-    <script src="src/shop.js?v=5.1"></script>
-    <script src="src/ui.js?v=5.1"></script>
-    <script src="src/renderer.js?v=5.1"></script>
-    <script src="src/combatlog.js?v=5.1"></script>
-    <script src="src/main.js?v=5.1"></script>
+    <!-- ===== 引擎层 - 基础层 ===== -->
+    <script src="src/engine/save.js?v=7.0"></script>
+    <script src="src/engine/time.js?v=7.0"></script>
+    <script src="src/engine/input.js?v=7.0"></script>
+    <script src="src/data/data-bundle.js?v=7.0"></script>
+    <script src="src/engine/data.js?v=7.0"></script>
+    <script src="src/engine/stats.js?v=7.0"></script>
+
+    <!-- ===== 引擎层 - 系统层（按依赖顺序） ===== -->
+    <script src="src/engine/tags.js?v=7.0"></script>
+    <script src="src/engine/effects.js?v=7.0"></script>
+    <script src="src/engine/passives.js?v=7.0"></script>
+    <script src="src/engine/character.js?v=7.0"></script>
+    <script src="src/engine/item.js?v=7.0"></script>
+    <script src="src/engine/shop.js?v=7.0"></script>
+    <script src="src/engine/levelup.js?v=7.0"></script>
+    <script src="src/engine/loot.js?v=7.0"></script>
+    <script src="src/engine/enemy.js?v=7.0"></script>
+    <script src="src/engine/wave.js?v=7.0"></script>
+    <script src="src/engine/boss.js?v=7.0"></script>
+
+    <!-- ===== 引擎层 - 渲染层 ===== -->
+    <script src="src/engine/assets.js?v=7.0"></script>
+    <script src="src/engine/audio.js?v=7.0"></script>
+    <script src="src/engine/particle.js?v=7.0"></script>
+    <script src="src/engine/bullet.js?v=7.0"></script>
+    <script src="src/engine/combatlog.js?v=7.0"></script>
+    <script src="src/engine/renderer.js?v=7.0"></script>
+    <script src="src/engine/engine.js?v=7.0"></script>
+
+    <!-- ===== 游戏层（Cyberblade - 赛博土豆专用代码） ===== -->
+    <script src="src/cyberblade/unlock.js?v=7.0"></script>
+    <!-- [DEPRECATED Phase 4] 旧模块，已替换为 engine/ 下同名模块 -->
+    <!-- <script src="src/cyberblade/character.js?v=7.0"></script> -->
+    <script src="src/cyberblade/player.js?v=7.0"></script>
+    <!-- <script src="src/cyberblade/enemy.js?v=7.0"></script> -->
+    <!-- <script src="src/cyberblade/wave.js?v=7.0"></script> -->
+    <!-- <script src="src/cyberblade/shop.js?v=7.0"></script> -->
+    <script src="src/cyberblade/ui.js?v=7.0"></script>
+    <script src="src/cyberblade/main.js?v=7.0"></script>
 </body>
 </html>

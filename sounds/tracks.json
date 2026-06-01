@@ -1,0 +1,4 @@
+[
+  { "id": "combat1", "file": "sounds/bgm_1.m4a", "name": "战斗主题1" },
+  { "id": "combat2", "file": "sounds/bgm_2.m4a", "name": "战斗主题2" }
+]

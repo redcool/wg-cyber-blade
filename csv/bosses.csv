@@ -1,0 +1,15 @@
+# Boss 数值表
+# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
+# 可在 Excel / Google Sheets 中直接编辑
+#
+# 列顺序 (12列):
+# id, name, baseHp, baseSpeed, baseDamage, radius, color, glowColor,
+# xpValue, materialValue, phaseCount, phasesJson
+#
+# phasesJson: JSON 数组，每阶段包含 hpPercent 和 skills
+#   skill 对象: { type, damageMult, count, ... }
+#
+# 注: 此表暂为骨架数据，具体数值由策划后续填充
+#
+id,name,baseHp,baseSpeed,baseDamage,radius,color,glowColor,xpValue,materialValue,phaseCount,phasesJson
+fireLord,火焰领主,1500,40,25,40,#ff4400,#ff2200,200,100,3,"[{""hpPercent"":100,""skills"":[{""type"":""melee_sweep"",""damageMult"":1.0},{""type"":""summon"",""count"":3}]},{""hpPercent"":70,""skills"":[{""type"":""fire_breath"",""damageMult"":1.5},{""type"":""summon"",""count"":5}]},{""hpPercent"":30,""skills"":[{""type"":""fire_storm"",""damageMult"":2.0},{""type"":""charge"",""damageMult"":2.5}]}]"

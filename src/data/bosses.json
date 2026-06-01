@@ -1,0 +1,56 @@
+[
+  {
+    "id": "fireLord",
+    "name": "火焰领主",
+    "baseHp": 1500,
+    "baseSpeed": 40,
+    "baseDamage": 25,
+    "radius": 40,
+    "color": "#ff4400",
+    "glowColor": "#ff2200",
+    "xpValue": 200,
+    "materialValue": 100,
+    "phaseCount": 3,
+    "phasesJson": [
+      {
+        "hpPercent": 100,
+        "skills": [
+          {
+            "type": "melee_sweep",
+            "damageMult": 1
+          },
+          {
+            "type": "summon",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "hpPercent": 70,
+        "skills": [
+          {
+            "type": "fire_breath",
+            "damageMult": 1.5
+          },
+          {
+            "type": "summon",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "hpPercent": 30,
+        "skills": [
+          {
+            "type": "fire_storm",
+            "damageMult": 2
+          },
+          {
+            "type": "charge",
+            "damageMult": 2.5
+          }
+        ]
+      }
+    ]
+  }
+]

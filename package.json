@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bundle": "node scripts/generate-data-bundle.js"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}

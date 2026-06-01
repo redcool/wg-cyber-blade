@@ -1,0 +1,39 @@
+# 波次配置表
+# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
+# 可在 Excel / Google Sheets 中直接编辑
+#
+# 列顺序 (7列):
+# waveNumber, minBudget, maxBudget, availableBehaviors, availableMechanics,
+# spawnPattern, specialRule
+#
+# 难度曲线: wave 1 = budget 8~10, wave 20 = budget 200~220
+# maxBudget 近似 = minBudget + 10%
+#
+# availableBehaviors: 用 | 分隔可选敌人行为 (chase|fast|ranged|explode|heal|mortar|blink)
+# availableMechanics: 用 | 分隔特殊机制 (splitter|shielded|leech|reflect|freeze)
+# spawnPattern: random|circle|line|wave|ambush
+# specialRule: bossEvery5|doubleSpawn|healingReduced 或空
+#
+# 注: 波次生成逻辑在 wave.js 中实现，本表为配置骨架
+#
+waveNumber,minBudget,maxBudget,availableBehaviors,availableMechanics,spawnPattern,specialRule
+1,8,10,chase,,random,
+2,12,14,chase,,random,
+3,16,18,chase|fast,,random,
+4,20,22,chase|fast|ranged,,random,
+5,24,26,chase|fast|ranged,,circle,
+6,28,32,chase|fast|ranged|explode,,random,
+7,32,36,chase|fast|ranged|explode|heal,,random,
+8,36,40,chase|fast|ranged|explode|heal|mortar,,random,
+9,40,45,chase|fast|ranged|explode|heal|mortar|blink,,random,
+10,50,55,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded,random,
+11,60,66,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded,random,
+12,70,77,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech,random,
+13,80,88,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,
+14,90,99,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,
+15,100,110,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,bossEvery5
+16,120,132,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
+17,140,154,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
+18,160,176,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
+19,180,198,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
+20,200,220,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,bossEvery5

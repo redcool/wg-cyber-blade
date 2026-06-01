@@ -1,0 +1,29 @@
+# 角色数值表
+# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
+# 可在 Excel / Google Sheets 中直接编辑
+#
+# 列顺序 (28列):
+# id, name, desc, icon, unlocked, weaponSlots,
+# maxHp, hpRegen, speed, damagePercent, attackSpeed, attackRange, armor, dodge, critChance, critDamage,
+# lifeSteal, harvesting, luck, xpGain, meleeDamage, rangedDamage, elementalDamage, engineering,
+# tags, unlockType, unlockValue, passives
+#
+# tags: 用 | 分隔 (melee|gun|bow|magic|medic|lance)
+# unlockType/unlockValue: 空/空=默认解锁, maxLevel/N=通关第N关, totalKills/N=累计击杀N
+# passives: 引用 passives.json 中的 passive ID，多个用 | 分隔
+#
+# damagePercent: 百分比修正，0 = 无额外修正。角色基础伤害由武器决定
+# critDamage: 加算值，0 = 使用基础 2x 暴击伤害
+#
+id,name,desc,icon,unlocked,weaponSlots,maxHp,hpRegen,speed,damagePercent,attackSpeed,attackRange,armor,dodge,critChance,critDamage,lifeSteal,harvesting,luck,xpGain,meleeDamage,rangedDamage,elementalDamage,engineering,tags,unlockType,unlockValue,passives
+swordsman,剑客,近战达人擅长用剑斧类武器,⚔️,true,6,120,0.6,240,0,1.2,200,3,0.03,0.05,0,0.02,0,0,0,0,0,0,0,melee|lance,,,
+gunslinger,枪手,远程火力枪械精通,🔫,true,6,90,0.4,220,0,1.3,350,1,0.02,0.08,0,0,0,1,0,0,0,0,0,gun,,,
+fire_mage,火焰法师,元素掌控者魔法大师,🔥,true,6,80,0.5,200,0,0.9,320,0,0.02,0.05,0,0,0,2,0,0,0,0,0,magic,,,
+archer,弓箭游侠,远程精准打击暴击穿透流派,🏹,true,6,95,0.5,230,0,1.1,360,1,0.03,0.10,0,0,0,1,0,0,0,0,0,bow,,,
+mech,重型机甲,血厚防高但移速较慢,🦾,false,5,180,0.3,140,0,0.8,280,8,0,0.03,0,0,0,0,0,0,0,0,0,gun|melee|lance,maxLevel,5,
+assassin,疾影刺客,极速高伤但非常脆弱,🗡️,false,4,70,0.8,280,0,1.5,220,0,0.12,0.12,0,0.03,0,2,0,0,0,0,0,melee|bow|lance,totalKills,100,
+medic,医疗兵,回复支援型擅长医疗武器,💊,false,6,100,2.0,200,0,1.0,280,2,0.04,0.05,0,0.02,0,1,0,0,0,0,0,medic,totalKills,80,
+paladin,圣骑士,攻守兼备近战医疗双修,✨,false,6,140,1.0,180,0,0.9,220,2,0.02,0.05,0,0.03,0,0,0,0,0,0,0,melee|medic|lance,maxLevel,10,
+engineer,工程师,科技暴击流枪械元素双修,🔧,false,6,90,0.5,210,0,1.1,320,2,0.03,0.12,0,0,0,2,0,0,0,0,0,gun|magic,totalKills,200,
+berserker,狂战士,低血高伤嗜血狂暴,💢,false,5,60,0.3,260,0,1.6,180,0,0.05,0.08,0,0.08,0,0,0,0,0,0,0,melee|gun|bow|magic|medic|lance,maxLevel,15,
+dragon_knight,龙骑士,龙骑无双骑枪专精,🐉,false,5,150,0.6,240,0,1.0,280,4,0.02,0.06,0,0.02,0,1,0,0,0,0,0,lance,totalKills,300,
