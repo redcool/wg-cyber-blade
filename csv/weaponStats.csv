@@ -1,0 +1,35 @@
+# 武器属性标签表
+# key,中文名,英文名
+# 格式化逻辑在代码中通过 FORMAT_MAP 控制
+key,中文名,英文名
+damage_lv1,伤害,damage
+damage,伤害,damage
+cooldown_lv1,冷却,cooldown
+attackSpeed,攻速,attack speed
+meleeRange,近战范围,melee range
+attackRange,射程,attack range
+range,射程,range
+bulletSpeed,弹速,bullet speed
+bulletCount,弹量,bullets
+spread,散射,spread
+sprayCone,锥角,cone angle
+pierce,穿透,pierce
+splashRadius,溅射,splash radius
+homingStrength,追踪,homing
+chainCount,连锁,chain
+burnDps,灼烧,burn dps
+burnMaxStacks,灼烧层数,burn stacks
+slowAmount,减速,slow
+slowDuration,减速时长,slow duration
+healOnHit,击中回血,heal on hit
+auraHeal,光环回复,aura heal
+auraRadius,光环范围,aura radius
+critChanceAdd,暴击,crit chance
+critDamageAdd,暴伤,crit damage
+speedMult,移速,move speed
+lifeStealAdd,偷取,life steal
+armorAdd,护甲,armor
+maxHpAdd,生命,max hp
+hpRegenAdd,回复,hp regen
+knockback,击退,knockback
+slots,槽位,slots

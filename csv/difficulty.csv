@@ -1,0 +1,13 @@
+# 难度配置表
+# id,中文名,英文名,enemyMult,spawnRate,eliteInterval,bossWaves,newEnemyTypes,desc
+id,中文名,英文名,enemyMult,spawnRate,eliteInterval,bossWaves,newEnemyTypes,desc
+0,标准,Standard,1.0,1.0,0,,,默认难度，怪物属性为标准值
+1,挑战★1,Challenge 1,1.2,1.0,0,,,怪物属性提升至1.2倍
+2,挑战★2,Challenge 2,1.4,1.1,0,,,怪物属性1.4倍，生成速度略增
+3,挑战★3,Challenge 3,1.6,1.2,15,"[15]","tank",怪物属性1.6倍，15关出Boss，新增重装机兵
+4,挑战★4,Challenge 4,1.8,1.3,10,"[10,20]","tank|ranged",怪物属性1.8倍，每10关出精英，Boss在10/20关
+5,挑战★5,Challenge 5,2.0,1.4,8,"[8,16,24]","tank|ranged|exploder",怪物2倍，精英间隔8关，Boss在8/16/24关
+6,挑战★6,Challenge 6,2.3,1.5,6,"[6,12,18,24]","tank|ranged|exploder|healer",怪物2.3倍，精英6关间隔
+7,挑战★7,Challenge 7,2.6,1.6,5,"[5,10,15,20,25]","tank|ranged|exploder|healer|mortar",怪物2.6倍，精英5关间隔
+8,挑战★8,Challenge 8,3.0,1.8,4,"[4,8,12,16,20,24]","tank|ranged|exploder|healer|mortar|blinker",怪物3倍，精英4关间隔
+9,极限★9,Extreme 9,3.5,2.0,3,"[3,6,9,12,15,18,21,24]","tank|ranged|exploder|healer|mortar|blinker|elite",怪物3.5倍，精英3关间隔，极限挑战

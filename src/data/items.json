@@ -1,372 +1,878 @@
 [
   {
-    "id": "hpUp",
-    "name": "生命核心",
-    "desc": "最大生命 +30",
-    "cost": 6,
+    "id": "hp_up",
+    "name": "生命强化",
+    "desc": "+15 最大生命",
+    "cost": 20,
     "icon": "❤️",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "maxHp": 15
+    }
   },
   {
-    "id": "regen",
-    "name": "再生芯片",
-    "desc": "生命回复 +1/秒",
-    "cost": 5,
+    "id": "hp_regen",
+    "name": "治疗宝珠",
+    "desc": "+1 生命回复/秒",
+    "cost": 15,
     "icon": "💚",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "hpRegen": 1
+    }
   },
   {
-    "id": "armorUp",
-    "name": "合金装甲",
-    "desc": "护甲 +3",
-    "cost": 7,
+    "id": "speed_up",
+    "name": "运动鞋",
+    "desc": "+10 移速",
+    "cost": 20,
+    "icon": "👟",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "speed": 10
+    }
+  },
+  {
+    "id": "armor_up",
+    "name": "护甲片",
+    "desc": "+2 护甲",
+    "cost": 25,
     "icon": "🛡️",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "armor": 2
+    }
   },
   {
-    "id": "dodgeUp",
-    "name": "幽影斗篷",
-    "desc": "闪避 +3%（上限60%）",
-    "cost": 8,
+    "id": "dodge_up",
+    "name": "轻羽披风",
+    "desc": "+3% 闪避",
+    "cost": 25,
+    "icon": "🌬️",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "dodge": 0.03
+    }
+  },
+  {
+    "id": "dmg_up",
+    "name": "锐利尖刺",
+    "desc": "+10% 伤害",
+    "cost": 25,
+    "icon": "⚡",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "damagePercent": 0.1
+    }
+  },
+  {
+    "id": "attack_speed",
+    "name": "速攻手套",
+    "desc": "+8% 攻速",
+    "cost": 25,
     "icon": "💨",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "attackSpeed": 0.08
+    }
   },
   {
-    "id": "lifesteal",
-    "name": "吸血鬼之牙",
-    "desc": "生命偷取 +3%",
-    "cost": 8,
+    "id": "crit_up",
+    "name": "锋利刀刃",
+    "desc": "+3%暴击 -2%伤害",
+    "cost": 25,
+    "icon": "💥",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "critChance": 0.03,
+      "damagePercent": -0.02
+    }
+  },
+  {
+    "id": "life_steal",
+    "name": "吸血牙",
+    "desc": "+3%偷取 -2生命",
+    "cost": 25,
     "icon": "🩸",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "lifeSteal": 0.03,
+      "maxHp": -2
+    }
+  },
+  {
+    "id": "melee_dmg",
+    "name": "力量手套",
+    "desc": "+3近战 -1远程",
+    "cost": 20,
+    "icon": "⚔️",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "meleeDamage": 3,
+      "rangedDamage": -1
+    }
+  },
+  {
+    "id": "ranged_dmg",
+    "name": "精准手套",
+    "desc": "+3远程 -1近战",
+    "cost": 20,
+    "icon": "🏹",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "rangedDamage": 3,
+      "meleeDamage": -1
+    }
+  },
+  {
+    "id": "pickup_up",
+    "name": "磁力手套",
+    "desc": "+12 拾取范围",
+    "cost": 15,
+    "icon": "🧲",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "pickupRange": 12
+    }
+  },
+  {
+    "id": "range_up",
+    "name": "瞄准镜",
+    "desc": "+30 射程 -3%攻速",
+    "cost": 20,
+    "icon": "🎯",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "common"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "attackRange": 30,
+      "attackSpeed": -0.03
+    }
+  },
+  {
+    "id": "bigger_hp",
+    "name": "巨人药剂",
+    "desc": "+30 最大生命 -5%速度",
+    "cost": 30,
+    "icon": "🧪",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "maxHp": 30,
+      "speed": -5
+    }
+  },
+  {
+    "id": "rapid_fire",
+    "name": "速射核心",
+    "desc": "+15%攻速 -2护甲",
+    "cost": 35,
+    "icon": "🔥",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "attackSpeed": 0.15,
+      "armor": -2
+    }
+  },
+  {
+    "id": "pierce_shot",
+    "name": "穿甲弹",
+    "desc": "+2穿透 -5%伤害",
+    "cost": 30,
+    "icon": "💀",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "projectilePierce": 2,
+      "damagePercent": -0.05
+    }
+  },
+  {
+    "id": "thorns_item",
+    "name": "荆棘甲",
+    "desc": "反弹 5 伤害",
+    "cost": 25,
+    "icon": "🌵",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [
+      "reflective"
+    ],
+    "effects": [
+      {
+        "type": "reflect",
+        "value": 5
+      }
+    ],
+    "statMods": {}
+  },
+  {
+    "id": "elemental_dmg",
+    "name": "元素水晶",
+    "desc": "+3 元素伤害",
+    "cost": 30,
+    "icon": "🔮",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "elementalDamage": 3
+    }
+  },
+  {
+    "id": "regen_belt",
+    "name": "生命腰带",
+    "desc": "+2生命回复 +20生命",
+    "cost": 30,
+    "icon": "💚",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "hpRegen": 2,
+      "maxHp": 20
+    }
+  },
+  {
+    "id": "lucky_coin",
+    "name": "幸运币",
+    "desc": "+3%暴击 +15%经验",
+    "cost": 30,
+    "icon": "🪙",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "critChance": 0.03,
+      "xpGain": 0.15
+    }
+  },
+  {
+    "id": "evasion_cloak",
+    "name": "幻影斗篷",
+    "desc": "+5%闪避 +20生命",
+    "cost": 35,
+    "icon": "🌀",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "dodge": 0.05,
+      "maxHp": 20
+    }
+  },
+  {
+    "id": "warrior_ring",
+    "name": "战士之戒",
+    "desc": "+15%伤害 -3%攻速",
+    "cost": 35,
+    "icon": "💍",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "damagePercent": 0.15,
+      "attackSpeed": -0.03
+    }
+  },
+  {
+    "id": "steel_boots",
+    "name": "铁靴",
+    "desc": "+3护甲 +20生命 -5%移速",
+    "cost": 30,
+    "icon": "👢",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "armor": 3,
+      "maxHp": 20,
+      "speed": -5
+    }
+  },
+  {
+    "id": "fury_blade",
+    "name": "狂暴之刃",
+    "desc": "+10%攻速 击杀+2%攻速(5秒)",
+    "cost": 35,
+    "icon": "🗡️",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [
+      "onKill"
+    ],
+    "effects": [
+      {
+        "type": "buffAttackSpeed",
+        "value": 0.02,
+        "duration": 5
+      }
+    ],
+    "statMods": {
+      "attackSpeed": 0.1
+    }
+  },
+  {
+    "id": "sniper_scope",
+    "name": "狙击镜",
+    "desc": "+45射程 -5%伤害",
+    "cost": 30,
+    "icon": "🔭",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "attackRange": 45,
+      "damagePercent": -0.05
+    }
+  },
+  {
+    "id": "repair_kit",
+    "name": "维修包",
+    "desc": "+3生命回复 -2%闪避",
+    "cost": 30,
+    "icon": "🔧",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "uncommon"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "hpRegen": 3,
+      "dodge": -0.02
+    }
+  },
+  {
+    "id": "giant_heart",
+    "name": "泰坦之心",
+    "desc": "+50 最大生命",
+    "cost": 50,
+    "icon": "❤️‍🔥",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "maxHp": 50
+    }
+  },
+  {
+    "id": "berserker_axe",
+    "name": "狂战士斧",
+    "desc": "+25%伤害 -5护甲",
+    "cost": 60,
+    "icon": "🪓",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "damagePercent": 0.25,
+      "armor": -5
+    }
+  },
+  {
+    "id": "vampire_cape",
+    "name": "吸血鬼披风",
+    "desc": "+5%偷取 -15生命",
+    "cost": 55,
+    "icon": "🧛",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "lifeSteal": 0.05,
+      "maxHp": -15
+    }
+  },
+  {
+    "id": "phoenix_wing",
+    "name": "凤凰羽翼",
+    "desc": "+8%攻速 +5%伤害",
+    "cost": 55,
+    "icon": "🪶",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "attackSpeed": 0.08,
+      "damagePercent": 0.05
+    }
+  },
+  {
+    "id": "stone_armor",
+    "name": "岩石铠甲",
+    "desc": "+8护甲 -15移速",
+    "cost": 50,
+    "icon": "🪨",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "armor": 8,
+      "speed": -15
+    }
+  },
+  {
+    "id": "shadow_blade",
+    "name": "暗影之刃",
+    "desc": "+8%暴击 -2生命回复",
+    "cost": 55,
+    "icon": "🗡️",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "critChance": 0.08,
+      "hpRegen": -2
+    }
   },
   {
     "id": "energy_shield",
-    "name": "能量屏障",
-    "desc": "每8秒抵挡1次伤害",
-    "cost": 12,
+    "name": "能量护盾",
+    "desc": "受到伤害回蓝 30%",
+    "cost": 50,
     "icon": "🛡️",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "thorn",
-    "name": "荆棘装甲",
-    "desc": "反弹30%伤害给攻击者",
-    "cost": 8,
-    "icon": "🌵",
-    "unique": true,
-    "rarity": "uncommon",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "reactive_armor",
-    "name": "反应装甲",
-    "desc": "受伤后50%概率回5HP(冷却3s)",
-    "cost": 10,
-    "icon": "⚙️",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "critUp",
-    "name": "精准目镜",
-    "desc": "暴击率 +5%",
-    "cost": 7,
-    "icon": "💥",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "critDmg",
-    "name": "暴伤增幅器",
-    "desc": "暴击伤害 +50%",
-    "cost": 9,
-    "icon": "🔥",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "speedUp",
-    "name": "战术推进器",
-    "desc": "移动速度 +15%",
-    "cost": 6,
-    "icon": "⚡",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "rangeUp",
-    "name": "全息瞄准镜",
-    "desc": "攻击范围 +15%",
-    "cost": 6,
-    "icon": "🎯",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "stim",
-    "name": "战斗兴奋剂",
-    "desc": "+25%攻速 +25%受伤",
-    "cost": 8,
-    "icon": "💉",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "penetrator",
-    "name": "穿甲弹头",
-    "desc": "穿透 +1",
-    "cost": 10,
-    "icon": "🔩",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "heavy_bullets",
-    "name": "重型弹丸",
-    "desc": "+30%伤害 -10%攻速",
-    "cost": 12,
-    "icon": "🔫",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [
+      "onHit"
+    ],
+    "effects": [
+      {
+        "type": "restoreMana",
+        "chance": 0.3,
+        "value": 5
+      }
+    ],
+    "statMods": {}
   },
   {
     "id": "replicator",
-    "name": "子弹复制器",
-    "desc": "20%概率射出双倍子弹",
-    "cost": 14,
-    "icon": "🖨️",
-    "unique": true,
-    "rarity": "epic",
+    "name": "复制器",
+    "desc": "20%概率双倍子弹",
+    "cost": 60,
+    "icon": "🔄",
+    "unique": false,
+    "rarity": "",
     "tags": [
-      "gun",
-      "ranged"
+      "rare"
     ],
     "triggers": [
-      "OnHit"
+      "onFire"
     ],
     "effects": [
       {
         "type": "duplicateBullet",
         "chance": 0.2
       }
-    ]
+    ],
+    "statMods": {}
   },
   {
-    "id": "harvestUp",
-    "name": "贪婪芯片",
-    "desc": "材料收获 +25%",
-    "cost": 5,
-    "icon": "💰",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "luckUp",
-    "name": "四叶幸运草",
-    "desc": "幸运 +3",
-    "cost": 5,
-    "icon": "🍀",
-    "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "pickupUp",
-    "name": "磁力场",
-    "desc": "拾取范围 +40",
-    "cost": 4,
+    "id": "magnet_item",
+    "name": "超强磁铁",
+    "desc": "拾取范围×2",
+    "cost": 40,
     "icon": "🧲",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "pickupRange": 999
+    }
   },
   {
-    "id": "piggy",
-    "name": "存钱罐",
-    "desc": "每波获得15%金币利息",
-    "cost": 6,
-    "icon": "🐷",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "coupon",
-    "name": "折扣券",
-    "desc": "商店价格-2（最低1金）",
-    "cost": 6,
+    "id": "coupon_item",
+    "name": "打折券",
+    "desc": "商店8折",
+    "cost": 30,
     "icon": "🎫",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "hunting_trophy",
-    "name": "狩猎勋章",
-    "desc": "精英掉落材料+50%",
-    "cost": 8,
-    "icon": "🏆",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "blood_pact",
-    "name": "献血契约",
-    "desc": "-2HP/秒 +40%伤害",
-    "cost": 6,
-    "icon": "🩸",
-    "unique": true,
-    "rarity": "uncommon",
-    "tags": [],
-    "triggers": [],
-    "effects": null
-  },
-  {
-    "id": "scope",
-    "name": "高倍望远镜",
-    "desc": "+50%射程 -15%伤害",
-    "cost": 8,
-    "icon": "🔭",
     "unique": false,
-    "rarity": "common",
-    "tags": [],
-    "triggers": [],
-    "effects": null
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [
+      "shopDiscount"
+    ],
+    "effects": null,
+    "statMods": {}
   },
   {
-    "id": "glass_cannon",
-    "name": "玻璃大炮",
-    "desc": "+35%伤害 -3护甲",
-    "cost": 10,
-    "icon": "💎",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
-    "triggers": [],
-    "effects": null
+    "id": "explosive_rounds",
+    "name": "爆破弹",
+    "desc": "击中爆炸(120范围,50%伤害)",
+    "cost": 60,
+    "icon": "💥",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
+    "triggers": [
+      "onHit"
+    ],
+    "effects": [
+      {
+        "type": "explosion",
+        "radius": 120,
+        "damagePercent": 0.5
+      }
+    ],
+    "statMods": {}
   },
   {
-    "id": "magnet",
-    "name": "磁暴线圈",
-    "desc": "周围2秒15伤(半径120)",
-    "cost": 10,
-    "icon": "🧲",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
+    "id": "scroll_knowledge",
+    "name": "知识卷轴",
+    "desc": "+25%经验 +5%伤害",
+    "cost": 45,
+    "icon": "📜",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "rare"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "xpGain": 0.25,
+      "damagePercent": 0.05
+    }
   },
   {
-    "id": "burn_spreader",
-    "name": "燃烧扩散器",
-    "desc": "燃烧死亡传播(范围200)",
-    "cost": 12,
-    "icon": "🔥",
-    "unique": true,
-    "rarity": "epic",
-    "tags": [],
-    "triggers": [],
-    "effects": null
+    "id": "tardigrade",
+    "name": "水熊虫基因",
+    "desc": "致命伤免死一次",
+    "cost": 80,
+    "icon": "🧬",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [
+      "revive"
+    ],
+    "effects": [
+      {
+        "type": "revive",
+        "value": 1
+      }
+    ],
+    "statMods": {
+      "maxHp": 30
+    }
   },
   {
-    "id": "ice_core",
-    "name": "极寒之核",
-    "desc": "冰爆范围+50% 伤害+50%",
-    "cost": 12,
-    "icon": "❄️",
-    "unique": true,
-    "rarity": "epic",
-    "tags": [],
-    "triggers": [],
-    "effects": null
+    "id": "ricochet_item",
+    "name": "弹射核心",
+    "desc": "子弹弹射+2",
+    "cost": 90,
+    "icon": "🎱",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [
+      "ricochet"
+    ],
+    "effects": [
+      {
+        "type": "ricochet",
+        "count": 2
+      }
+    ],
+    "statMods": {}
   },
   {
-    "id": "element_amp",
-    "name": "元素增幅器",
-    "desc": "喷射穿透+2 伤害+20%",
-    "cost": 14,
-    "icon": "⚡",
-    "unique": true,
-    "rarity": "epic",
-    "tags": [],
+    "id": "atomic_core",
+    "name": "原子核心",
+    "desc": "+50%伤害 +10%暴击",
+    "cost": 100,
+    "icon": "☢️",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "damagePercent": 0.5,
+      "critChance": 0.1
+    }
   },
   {
-    "id": "berserker",
-    "name": "狂战士之血",
-    "desc": "低血量+50%攻速+30%伤害",
-    "cost": 10,
-    "icon": "💢",
-    "unique": true,
-    "rarity": "rare",
-    "tags": [],
+    "id": "blood_orb",
+    "name": "血之宝珠",
+    "desc": "+8%偷取 +10%伤害 -20生命",
+    "cost": 80,
+    "icon": "🔴",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
     "triggers": [],
-    "effects": null
+    "effects": null,
+    "statMods": {
+      "lifeSteal": 0.08,
+      "damagePercent": 0.1,
+      "maxHp": -20
+    }
+  },
+  {
+    "id": "divine_armor",
+    "name": "神圣铠甲",
+    "desc": "+12护甲 +50生命",
+    "cost": 100,
+    "icon": "✨",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "armor": 12,
+      "maxHp": 50
+    }
+  },
+  {
+    "id": "ninja_tabi",
+    "name": "忍者足袋",
+    "desc": "+30移速 +10%闪避",
+    "cost": 90,
+    "icon": "👟",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "speed": 30,
+      "dodge": 0.1
+    }
+  },
+  {
+    "id": "anvil",
+    "name": "神之铁砧",
+    "desc": "物品+1升级",
+    "cost": 120,
+    "icon": "🔨",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [
+      "upgrade"
+    ],
+    "effects": [
+      {
+        "type": "upgradeItems",
+        "count": 1
+      }
+    ],
+    "statMods": {}
+  },
+  {
+    "id": "healing_spring",
+    "name": "生命之泉",
+    "desc": "+5生命回复 +50生命",
+    "cost": 80,
+    "icon": "🌊",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "hpRegen": 5,
+      "maxHp": 50
+    }
+  },
+  {
+    "id": "celestial_wings",
+    "name": "天使之翼",
+    "desc": "+20%闪避 +15%攻速 -50生命",
+    "cost": 100,
+    "icon": "👼",
+    "unique": false,
+    "rarity": "",
+    "tags": [
+      "legendary"
+    ],
+    "triggers": [],
+    "effects": null,
+    "statMods": {
+      "dodge": 0.2,
+      "attackSpeed": 0.15,
+      "maxHp": -50
+    }
   }
 ]

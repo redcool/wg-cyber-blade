@@ -45,9 +45,10 @@
             <button id="weaponSelectBack" class="back-btn-corner">返回</button>
             <h1 class="weapon-select-title">🗡️ 选择初始武器</h1>
             <p class="subtitle" id="weaponSelectHint">选择一个基础武器开始挑战</p>
+            <div id="weaponDetail" class="weapon-detail"></div>
             <div id="weaponSelectGrid" class="weapon-select-grid"></div>
             <div class="select-actions">
-                <button id="weaponSelectSkip" class="cyber-btn-secondary">基础手枪 · 跳过</button>
+                <button id="weaponSelectConfirm" class="cyber-btn">选择此武器 · 出战</button>
             </div>
         </div>
     </div>
@@ -57,8 +58,16 @@
         <div class="menu-content diff-content">
             <button id="diffBack" class="back-btn-corner">返回</button>
             <h1 class="weapon-select-title">⚙️ 选择难度</h1>
-            <p class="subtitle">0 = 标准难度 · 9 = 极限</p>
+            <div id="diffDetail" class="diff-detail">
+                <div class="diff-detail-badge"></div>
+                <div class="diff-detail-info">
+                    <div class="diff-detail-name"></div>
+                    <div class="diff-detail-desc"></div>
+                    <div class="diff-detail-bonuses"></div>
+                </div>
+            </div>
             <div id="diffGrid" class="diff-grid"></div>
+            <button id="startBattleBtn" class="diff-start-btn">⚔ 开始战斗</button>
         </div>
     </div>
 
@@ -217,8 +226,14 @@
             <span id="bossHpText" class="boss-hp-text"></span>
         </div>
         <div id="hudSynergies" class="hud-synergies"></div>
-        <!-- 调试信息 -->
-        <div id="hudDebug" class="hud-debug"></div>
+        <!-- 调试窗口（可折叠） -->
+        <div id="hudDebug" class="hud-debug">
+            <div class="debug-header">
+                <span class="debug-title">🐞 Debug</span>
+                <span class="debug-toggle">−</span>
+            </div>
+            <div class="debug-body"></div>
+        </div>
     </div>
 
     <!-- ===== 引擎层 - 基础层 ===== -->
@@ -227,7 +242,8 @@
     <script src="src/engine/input.js?v=7.0"></script>
     <script src="src/data/data-bundle.js?v=7.0"></script>
     <script src="src/engine/data.js?v=7.0"></script>
-    <script src="src/engine/stats.js?v=7.0"></script>
+    <script src="src/engine/formula.js?v=7.1"></script>
+    <script src="src/engine/stats.js?v=7.1"></script>
 
     <!-- ===== 引擎层 - 系统层（按依赖顺序） ===== -->
     <script src="src/engine/tags.js?v=7.0"></script>
@@ -236,6 +252,7 @@
     <script src="src/engine/character.js?v=7.0"></script>
     <script src="src/engine/item.js?v=7.0"></script>
     <script src="src/engine/shop.js?v=7.0"></script>
+    <script src="src/engine/rarityColors.js?v=7.0"></script>
     <script src="src/engine/levelup.js?v=7.0"></script>
     <script src="src/engine/loot.js?v=7.0"></script>
     <script src="src/engine/enemy.js?v=7.0"></script>

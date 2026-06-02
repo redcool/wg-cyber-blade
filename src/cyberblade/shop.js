@@ -226,36 +226,21 @@ const ShopSystem = {
     },
 
     _itemApplyFunctions: {
-        hpUp: (p) => { p.maxHp += 30; p.hp += 30; },
-        regen: (p) => p.hpRegen += 1.0,
-        armorUp: (p) => p.armor += 3,
-        dodgeUp: (p) => p.dodge = Math.min(0.6, p.dodge + 0.03),
-        lifesteal: (p) => p.lifeSteal += 0.03,
+        // statMods 来自 CSV，下方仅保留需要特殊逻辑的道具
         energy_shield: (p) => { p.energyShieldCD = 8; p.energyShieldTimer = 0; p.energyShieldReady = true; },
-        thorn: (p) => { p.thornDamage = 0.3; },
         reactive_armor: (p) => { p.reactiveArmor = true; },
-        critUp: (p) => p.critChance += 0.05,
-        critDmg: (p) => p.critMultiplier += 0.5,
-        speedUp: (p) => p.speed *= 1.15,
-        rangeUp: (p) => p.attackRange *= 1.15,
-        stim: (p) => { p.attackSpeed = Math.min(5.0, p.attackSpeed * 1.25); p.takenDmgMult = (p.takenDmgMult || 1.0) * 1.25; },
-        penetrator: (p) => { p.bulletPierce = (p.bulletPierce || 0) + 1; },
-        heavy_bullets: (p) => { p.damage = Math.floor(p.damage * 1.30); p.attackSpeed = Math.max(0.5, p.attackSpeed * 0.9); },
+        stim: (p) => { p.takenDmgMult = (p.takenDmgMult || 1.0) * 1.25; },
         replicator: (p) => { p.replicatorChance = (p.replicatorChance || 0) + 0.2; },
-        harvestUp: (p) => p.harvesting += 25,
-        luckUp: (p) => p.luck += 3,
-        pickupUp: (p) => p.pickupRange += 40,
-        piggy: (p) => { p.piggyBank = true; },
         coupon: (p) => { p.coupon = (p.coupon || 0) + 1; },
         hunting_trophy: (p) => { p.huntingTrophy = true; },
-        blood_pact: (p) => { p.bloodPactDrain = 2; p.damage = Math.floor(p.damage * 1.4); },
-        scope: (p) => { p.attackRange = Math.min(800, p.attackRange * 1.5); p.damage = Math.floor(p.damage * 0.85); },
-        glass_cannon: (p) => { p.damage = Math.floor(p.damage * 1.35); p.armor = Math.max(0, p.armor - 3); },
         magnet: (p) => { p.magnetDmg = 15; p.magnetTimer = 0; p.magnetRadius = 120; },
         burn_spreader: (p) => { p._burnSpreadLevel = (p._burnSpreadLevel || 0) + 1; p._burnSpreadRange = 200; },
         ice_core: (p) => { p._iceExplosionMult = (p._iceExplosionMult || 1.0) * 1.5; p._iceExplosionRadiusAdd = (p._iceExplosionRadiusAdd || 0) + 0.5; },
         element_amp: (p) => { p._sprayPierceAdd = (p._sprayPierceAdd || 0) + 2; p._sprayDamageMult = (p._sprayDamageMult || 1.0) * 1.2; },
         berserker: (p) => { p.berserkerBlood = true; },
+        tardigrade: (p) => { p.tardigradeBlock = true; },
+        ricochet: (p) => { p.ricochetCount = (p.ricochetCount || 0) + 1; },
+        anvil: (p) => { p.anvilUpgrade = true; },
     },
 
     // 标签系统已迁移至 TagSystem (src/engine/tags.js)
@@ -438,6 +423,21 @@ const ShopSystem = {
             const cost = Math.max(1, inflationCost);
             this.items.push({ ...baseItem, type: 'item', locked: false, cost: cost });
         }
+
+        // 确保每次生成 + 已锁定物品 ≥ 4 个
+        if (this.items.length < 4) {
+            const need = 4 - this.items.length;
+            const fillPool = [...this.allItems].filter(it => {
+                if (it.unique && this._boughtUniqueItems.includes(it.id)) return false;
+                return !this.items.some(ex => ex.id === it.id && ex.type === 'item');
+            }).sort(() => Math.random() - 0.5);
+            for (let i = 0; i < need && i < fillPool.length; i++) {
+                const baseItem = fillPool[i];
+                const inflationCost = Math.round(baseItem.cost + currentWave + baseItem.cost * 0.1 * currentWave);
+                const cost = Math.max(1, inflationCost);
+                this.items.push({ ...baseItem, type: 'item', locked: false, cost: cost });
+            }
+        }
     },
 
     refresh(free = false) {
@@ -531,7 +531,14 @@ const ShopSystem = {
             player.materials -= actualCost;
             player.items.push(item.id);
             if (item.unique) this._boughtUniqueItems.push(item.id);
-            item.apply(player);
+            // 应用 statMods (来自 CSV) + 注册触发器
+            if (typeof ItemSystem !== 'undefined') {
+                ItemSystem.buyItem(item.id, player);
+            }
+            // 应用自定义特殊逻辑（if any）
+            if (this._itemApplyFunctions[item.id]) {
+                this._itemApplyFunctions[item.id](player);
+            }
             StatsSystem.clampPlayer(player);
             UnlockSystem.recordItemBought(item.id);
         }
@@ -620,16 +627,11 @@ const ShopSystem = {
         for (const q of qualities) {
             if (qualityOrder.indexOf(q) > qualityOrder.indexOf(bestQuality)) bestQuality = q;
         }
-        const qDef = this.qualityDefs[bestQuality];
-        const qualityBonus = qDef ? qDef.damageMult : 1.0;
-        const levelBonus = 1 + (maxLevel - 1) * 0.25;
 
         player.weaponParams[weaponId] = {
             behavior: def.behavior || 'bullet',
             bulletCount: def.bulletCount || 1,
             bulletSpeed: def.bulletSpeed || 500,
-            damageMult: (def.damageMult || 1.0) * qualityBonus * levelBonus,
-            attackSpeedMult: def.attackSpeedMult || 1.0,
             spread: def.spread || 0.1,
             pierce: def.pierce || 0,
             chainCount: def.chainCount || 0,
@@ -644,8 +646,15 @@ const ShopSystem = {
             burnMaxStacks: def.burnMaxStacks || 0,
             meleeRange: def.meleeRange || 0,
             critBounce: def.critBounce || 0,
+            attackRange: def.attackRange || 0,
+            bulletMaxRange: def.bulletMaxRange || 0,
             sprayCone: def.sprayCone || 0,
             iceExplosionRadius: def.iceExplosionRadius || 0,
+            tag: def.tag || '',
+            // FormulaSystem 引用
+            _weaponDef: def,
+            _weaponLevel: maxLevel,
+            _weaponQuality: bestQuality,
         };
     },
 
@@ -666,14 +675,10 @@ const ShopSystem = {
     _applyWeaponBehaviors(player, weapon) {
         if (!player.weaponParams) player.weaponParams = {};
         const quality = weapon.quality || 'T1';
-        const qDef = this.qualityDefs[quality];
-        const qualityBonus = qDef ? qDef.damageMult : 1.0;
         player.weaponParams[weapon.id] = {
             behavior: weapon.behavior || 'bullet',
             bulletCount: weapon.bulletCount || 1,
             bulletSpeed: weapon.bulletSpeed || 500,
-            damageMult: (weapon.damageMult || 1.0) * qualityBonus,
-            attackSpeedMult: weapon.attackSpeedMult || 1.0,
             spread: weapon.spread || 0.1,
             pierce: weapon.pierce || 0,
             chainCount: weapon.chainCount || 0,
@@ -687,7 +692,14 @@ const ShopSystem = {
             meleeRange: weapon.meleeRange || 0,
             critBounce: weapon.critBounce || 0,
             attackRange: weapon.attackRange || 0,
+            bulletMaxRange: weapon.bulletMaxRange || 0,
+            tag: weapon.tag || '',
+            level: (player.weapons.find(w => w.id === weapon.id) || {}).level || 1,
             quality: quality,
+            // FormulaSystem 引用
+            _weaponDef: weapon,
+            _weaponLevel: (player.weapons.find(w => w.id === weapon.id) || {}).level || 1,
+            _weaponQuality: quality,
         };
     },
 

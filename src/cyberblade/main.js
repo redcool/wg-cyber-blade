@@ -10,8 +10,14 @@ GameEngine.startGame = function(startWeaponId, difficulty) {
     PlayerSystem.reset();
     EnemySystem.clear();
     WaveSystem.reset();
-    if (difficulty) {
+    // 加载难度配置（数据驱动）
+    const diffDefs = (typeof DataLoader !== 'undefined' && DataLoader._cache && DataLoader._cache.difficulty)
+        || (typeof window !== 'undefined' && window.__DATA_BUNDLE__ && window.__DATA_BUNDLE__.difficulty)
+        || [];
+    const diffCfg = diffDefs.find(d => d.id === difficulty) || null;
+    if (diffCfg) {
         WaveSystem.difficultyOffset = difficulty;
+        WaveSystem.difficultyConfig = diffCfg;
     }
     BossSystem.clear();
     ItemSystem.reset();
@@ -97,7 +103,7 @@ GameEngine.startGame = function(startWeaponId, difficulty) {
         if (GameEngine.levelUpPending) {
             GameEngine.levelUpPending = false;
             GameEngine.state = 'levelup';
-            LevelUpSystem.generateCards(pp);
+            LevelUpSystem.generateCards(pp, WaveSystem.currentLevel || 0);
             UISystem.showLevelUp();
         } else {
             GameEngine.state = 'shopping';
@@ -142,6 +148,8 @@ GameEngine._updatePlaying = function(dt) {
     // 3. 死亡检查
     if (!player.alive) {
         ParticleSystem.explosion(player.x, player.y, '#00ffff', 30);
+        BulletSystem.clear();
+        WaveSystem._resetPlayerIdle();
         this.state = 'gameover';
         setTimeout(() => UISystem.showGameOver(), 500);
         return;
@@ -194,7 +202,7 @@ GameEngine._updatePlaying = function(dt) {
             this.levelUpPending = false;
             this.state = 'levelup';
             if (typeof AudioSystem !== 'undefined') AudioSystem.pauseBGM();
-            LevelUpSystem.generateCards(player);
+            LevelUpSystem.generateCards(player, WaveSystem.currentLevel || 0);
             UISystem.showLevelUp();
         } else {
             this.state = 'shopping';
@@ -448,7 +456,7 @@ GameEngine.onLevelUpClosed = function() {
         p.level++;
         p.xpToNext = StatsSystem.xpForLevel(p.level);
         this.state = 'levelup';
-        LevelUpSystem.generateCards(p);
+        LevelUpSystem.generateCards(p, WaveSystem.currentLevel || 0);
         UISystem.showLevelUp();
         return;
     }

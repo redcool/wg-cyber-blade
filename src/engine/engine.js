@@ -23,17 +23,34 @@ const GameEngine = {
         if (typeof DataLoader !== 'undefined' && DataLoader.preloadAll) {
             await DataLoader.preloadAll();
         }
+        // 加载等级成长表到 FormulaSystem + StatsSystem
+        if (typeof FormulaSystem !== 'undefined' && FormulaSystem.loadLevelTable) {
+            const levelData = (typeof DataLoader !== 'undefined' && DataLoader._cache && DataLoader._cache.characterLevel)
+                ? DataLoader._cache.characterLevel : [];
+            FormulaSystem.loadLevelTable(levelData);
+            if (typeof StatsSystem !== 'undefined' && StatsSystem.loadXpTable) {
+                StatsSystem.loadXpTable(levelData);
+            }
+        }
         // 并行加载各系统数据
         await Promise.all([
             CharacterSystem.loadCharacters ? CharacterSystem.loadCharacters() : Promise.resolve(),
             typeof ItemSystem !== 'undefined' && ItemSystem.loadItems ? ItemSystem.loadItems() : Promise.resolve(),
             typeof PassiveSystem !== 'undefined' && PassiveSystem.loadPassives ? PassiveSystem.loadPassives() : Promise.resolve(),
             typeof LevelUpSystem !== 'undefined' && LevelUpSystem.loadCards ? LevelUpSystem.loadCards() : Promise.resolve(),
+            typeof RarityColorSystem !== 'undefined' && RarityColorSystem.load ? RarityColorSystem.load() : Promise.resolve(),
             ShopSystem.loadData ? ShopSystem.loadData() : Promise.resolve(),
             EnemySystem.loadEnemies ? EnemySystem.loadEnemies() : Promise.resolve(),
             typeof WaveSystem !== 'undefined' && WaveSystem.loadWaves ? WaveSystem.loadWaves() : Promise.resolve(),
             typeof BossSystem !== 'undefined' && BossSystem.loadBosses ? BossSystem.loadBosses() : Promise.resolve(),
         ]);
+        // 同步稀有度颜色配置到各系统
+        if (typeof ShopSystem !== 'undefined' && ShopSystem._syncRarityColors) {
+            ShopSystem._syncRarityColors();
+        }
+        if (typeof LootSystem !== 'undefined' && LootSystem._syncRarityColors) {
+            LootSystem._syncRarityColors();
+        }
         await Time.loadConfig();
         Input.init();
         Renderer.init();

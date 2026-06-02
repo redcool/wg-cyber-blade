@@ -102,6 +102,7 @@ const CharacterSystem = {
                 maxHp: swordsman.maxHp || 100,
                 hpRegen: swordsman.hpRegen || 0.5,
                 speed: swordsman.speed || 220,
+                pickupRange: swordsman.pickupRange || 15,
                 attackSpeed: swordsman.attackSpeed || 1.0,
                 attackRange: swordsman.attackRange || 280,
                 armor: swordsman.armor || 1,
@@ -125,7 +126,7 @@ const CharacterSystem = {
                 id: 'default', name: '默认', desc: '均衡型角色', icon: '👤',
                 unlocked: true, weaponSlots: 6,
                 maxHp: 100, hpRegen: 0.5, speed: 220,
-                attackSpeed: 1.0, attackRange: 280,
+                pickupRange: 15, attackSpeed: 1.0, attackRange: 280,
                 armor: 1, dodge: 0.02, critChance: 0.05, critDamage: 2.0,
                 lifeSteal: 0, damagePercent: 0,
                 meleeDamage: 0, rangedDamage: 0, elementalDamage: 0,
@@ -166,6 +167,7 @@ const CharacterSystem = {
         const statFields = [
             'maxHp', 'hpRegen', 'speed', 'attackSpeed', 'attackRange',
             'armor', 'dodge', 'critChance', 'critDamage', 'lifeSteal',
+            'pickupRange',
             'damagePercent', 'meleeDamage', 'rangedDamage', 'elementalDamage',
             'engineering', 'harvesting', 'luck', 'xpGain', 'materialGain',
         ];
@@ -204,15 +206,38 @@ const CharacterSystem = {
             delete player._passiveIds;
         }
 
-        // 7. 兼容字段
+        // 7. 应用等级成长（level >= 1）
+        player._characterLevel = player.level || 1;
+        if (typeof FormulaSystem !== 'undefined' && FormulaSystem.applyLevelGrowth) {
+            FormulaSystem.applyLevelGrowth(player, player._characterLevel);
+        }
+
+        // 8. 兼容字段
         player._baseDamage = 15;
         player.damage = player.damagePercent || 0;
-        if (player.critDamage === undefined) {
+        // critDamage 为 0 表示"使用默认 2.0"（角色 CSV 中未填暴伤加成）
+        if (player.critDamage === undefined || player.critDamage === null || player.critDamage === 0) {
             player.critDamage = 2.0;
         }
         player.critMultiplier = player.critDamage;
 
         return true;
+    },
+
+    /**
+     * 重新计算等级成长的属性（升级时调用）
+     * 保留武器/道具带来的额外加成，仅重新应用等级倍率
+     * @param {Object} player
+     */
+    recalcLevelStats(player) {
+        if (!player || !player._baseCharStats) return;
+        if (typeof FormulaSystem !== 'undefined' && FormulaSystem.applyLevelGrowth) {
+            FormulaSystem.applyLevelGrowth(player, player.level || 1);
+        }
+        // 重新钳制
+        if (typeof StatsSystem !== 'undefined' && StatsSystem.clampPlayer) {
+            StatsSystem.clampPlayer(player);
+        }
     },
 
     // -------------------------------------------------------

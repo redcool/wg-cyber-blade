@@ -1,0 +1,157 @@
+[
+  {
+    "key": "damage_lv1",
+    "中文名": "伤害",
+    "英文名": "damage"
+  },
+  {
+    "key": "damage",
+    "中文名": "伤害",
+    "英文名": "damage"
+  },
+  {
+    "key": "cooldown_lv1",
+    "中文名": "冷却",
+    "英文名": "cooldown"
+  },
+  {
+    "key": "attackSpeed",
+    "中文名": "攻速",
+    "英文名": "attack speed"
+  },
+  {
+    "key": "meleeRange",
+    "中文名": "近战范围",
+    "英文名": "melee range"
+  },
+  {
+    "key": "attackRange",
+    "中文名": "射程",
+    "英文名": "attack range"
+  },
+  {
+    "key": "range",
+    "中文名": "射程",
+    "英文名": "range"
+  },
+  {
+    "key": "bulletSpeed",
+    "中文名": "弹速",
+    "英文名": "bullet speed"
+  },
+  {
+    "key": "bulletCount",
+    "中文名": "弹量",
+    "英文名": "bullets"
+  },
+  {
+    "key": "spread",
+    "中文名": "散射",
+    "英文名": "spread"
+  },
+  {
+    "key": "sprayCone",
+    "中文名": "锥角",
+    "英文名": "cone angle"
+  },
+  {
+    "key": "pierce",
+    "中文名": "穿透",
+    "英文名": "pierce"
+  },
+  {
+    "key": "splashRadius",
+    "中文名": "溅射",
+    "英文名": "splash radius"
+  },
+  {
+    "key": "homingStrength",
+    "中文名": "追踪",
+    "英文名": "homing"
+  },
+  {
+    "key": "chainCount",
+    "中文名": "连锁",
+    "英文名": "chain"
+  },
+  {
+    "key": "burnDps",
+    "中文名": "灼烧",
+    "英文名": "burn dps"
+  },
+  {
+    "key": "burnMaxStacks",
+    "中文名": "灼烧层数",
+    "英文名": "burn stacks"
+  },
+  {
+    "key": "slowAmount",
+    "中文名": "减速",
+    "英文名": "slow"
+  },
+  {
+    "key": "slowDuration",
+    "中文名": "减速时长",
+    "英文名": "slow duration"
+  },
+  {
+    "key": "healOnHit",
+    "中文名": "击中回血",
+    "英文名": "heal on hit"
+  },
+  {
+    "key": "auraHeal",
+    "中文名": "光环回复",
+    "英文名": "aura heal"
+  },
+  {
+    "key": "auraRadius",
+    "中文名": "光环范围",
+    "英文名": "aura radius"
+  },
+  {
+    "key": "critChanceAdd",
+    "中文名": "暴击",
+    "英文名": "crit chance"
+  },
+  {
+    "key": "critDamageAdd",
+    "中文名": "暴伤",
+    "英文名": "crit damage"
+  },
+  {
+    "key": "speedMult",
+    "中文名": "移速",
+    "英文名": "move speed"
+  },
+  {
+    "key": "lifeStealAdd",
+    "中文名": "偷取",
+    "英文名": "life steal"
+  },
+  {
+    "key": "armorAdd",
+    "中文名": "护甲",
+    "英文名": "armor"
+  },
+  {
+    "key": "maxHpAdd",
+    "中文名": "生命",
+    "英文名": "max hp"
+  },
+  {
+    "key": "hpRegenAdd",
+    "中文名": "回复",
+    "英文名": "hp regen"
+  },
+  {
+    "key": "knockback",
+    "中文名": "击退",
+    "英文名": "knockback"
+  },
+  {
+    "key": "slots",
+    "中文名": "槽位",
+    "英文名": "slots"
+  }
+]

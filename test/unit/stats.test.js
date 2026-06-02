@@ -2,6 +2,7 @@
 // stats.test.js — StatsSystem v3 单元测试
 // ============================================================
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import '../../src/engine/formula.js'; // 必须先注册 FormulaSystem 全局
 import { StatsSystem } from '../../src/engine/stats.js';
 
 // --------------- fixtures ---------------

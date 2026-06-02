@@ -374,6 +374,129 @@ __DATA_BUNDLE__['characters'] = [
   }
 ];
 
+__DATA_BUNDLE__['characterLevel'] = [
+  {
+    "level": 1,
+    "xpRequired": 0,
+    "growth": 1,
+    "offset": 0
+  },
+  {
+    "level": 2,
+    "xpRequired": 25,
+    "growth": 1.08,
+    "offset": 0.04
+  },
+  {
+    "level": 3,
+    "xpRequired": 60,
+    "growth": 1.17,
+    "offset": 0.05
+  },
+  {
+    "level": 4,
+    "xpRequired": 110,
+    "growth": 1.26,
+    "offset": 0.05
+  },
+  {
+    "level": 5,
+    "xpRequired": 180,
+    "growth": 1.36,
+    "offset": 0.06
+  },
+  {
+    "level": 6,
+    "xpRequired": 270,
+    "growth": 1.46,
+    "offset": 0.06
+  },
+  {
+    "level": 7,
+    "xpRequired": 390,
+    "growth": 1.57,
+    "offset": 0.07
+  },
+  {
+    "level": 8,
+    "xpRequired": 540,
+    "growth": 1.68,
+    "offset": 0.07
+  },
+  {
+    "level": 9,
+    "xpRequired": 730,
+    "growth": 1.8,
+    "offset": 0.08
+  },
+  {
+    "level": 10,
+    "xpRequired": 960,
+    "growth": 1.92,
+    "offset": 0.08
+  },
+  {
+    "level": 11,
+    "xpRequired": 1240,
+    "growth": 2.05,
+    "offset": 0.09
+  },
+  {
+    "level": 12,
+    "xpRequired": 1580,
+    "growth": 2.18,
+    "offset": 0.09
+  },
+  {
+    "level": 13,
+    "xpRequired": 1980,
+    "growth": 2.32,
+    "offset": 0.1
+  },
+  {
+    "level": 14,
+    "xpRequired": 2450,
+    "growth": 2.46,
+    "offset": 0.1
+  },
+  {
+    "level": 15,
+    "xpRequired": 3000,
+    "growth": 2.61,
+    "offset": 0.11
+  },
+  {
+    "level": 16,
+    "xpRequired": 3640,
+    "growth": 2.76,
+    "offset": 0.11
+  },
+  {
+    "level": 17,
+    "xpRequired": 4380,
+    "growth": 2.92,
+    "offset": 0.12
+  },
+  {
+    "level": 18,
+    "xpRequired": 5230,
+    "growth": 3.08,
+    "offset": 0.12
+  },
+  {
+    "level": 19,
+    "xpRequired": 6200,
+    "growth": 3.25,
+    "offset": 0.13
+  },
+  {
+    "level": 20,
+    "xpRequired": 7300,
+    "growth": 3.42,
+    "offset": 0.13
+  }
+];
+
 __DATA_BUNDLE__['weapons'] = [
   {
     "id": "plasma",
@@ -383,8 +506,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 10,
     "tag": "melee",
-    "damageMult": 1.5,
-    "attackSpeedMult": 0.5,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.5,
+    "cooldown_lv2": 0.47,
+    "cooldown_lv3": 0.44,
+    "cooldown_lv4": 0.4,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -410,7 +540,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Blade",
+    "knockback": 300,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "axe",
@@ -420,8 +554,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "melee",
-    "damageMult": 2,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 30,
+    "damage_lv2": 50,
+    "damage_lv3": 80,
+    "damage_lv4": 120,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -447,7 +588,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Blunt",
+    "knockback": 500,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "dagger",
@@ -457,8 +602,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 8,
     "tag": "melee",
-    "damageMult": 1.3,
-    "attackSpeedMult": 0.38,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.38,
+    "cooldown_lv2": 0.35,
+    "cooldown_lv3": 0.33,
+    "cooldown_lv4": 0.3,
     "attackRangeMult": 0.7,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -484,7 +636,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Blade",
+    "knockback": 200,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "chainsaw",
@@ -494,8 +650,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "melee",
-    "damageMult": 1.8,
-    "attackSpeedMult": 0.55,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.55,
+    "cooldown_lv2": 0.51,
+    "cooldown_lv3": 0.47,
+    "cooldown_lv4": 0.43,
     "attackRangeMult": 0,
     "speedMult": -0.1,
     "critChanceAdd": 0,
@@ -521,7 +684,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Heavy",
+    "knockback": 400,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "sword",
@@ -531,8 +698,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 11,
     "tag": "melee",
-    "damageMult": 1.6,
-    "attackSpeedMult": 0.6,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -558,7 +732,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Blade",
+    "knockback": 250,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "katana",
@@ -568,8 +746,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "melee",
-    "damageMult": 2.2,
-    "attackSpeedMult": 0.7,
+    "minLevel": 1,
+    "damage_lv1": 35,
+    "damage_lv2": 60,
+    "damage_lv3": 95,
+    "damage_lv4": 145,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0.05,
@@ -595,7 +780,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Precise",
+    "knockback": 250,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "hammer",
@@ -605,8 +794,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "melee",
-    "damageMult": 3,
-    "attackSpeedMult": 1.4,
+    "minLevel": 1,
+    "damage_lv1": 45,
+    "damage_lv2": 75,
+    "damage_lv3": 120,
+    "damage_lv4": 180,
+    "cooldown_lv1": 1.4,
+    "cooldown_lv2": 1.3,
+    "cooldown_lv3": 1.21,
+    "cooldown_lv4": 1.11,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -632,7 +828,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Heavy",
+    "knockback": 600,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "spear",
@@ -642,8 +842,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 13,
     "tag": "melee",
-    "damageMult": 1.8,
-    "attackSpeedMult": 0.85,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.85,
+    "cooldown_lv2": 0.79,
+    "cooldown_lv3": 0.73,
+    "cooldown_lv4": 0.67,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -669,7 +876,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Blunt",
+    "knockback": 300,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "claws",
@@ -679,8 +890,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 7,
     "tag": "melee",
-    "damageMult": 1.2,
-    "attackSpeedMult": 0.3,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.3,
+    "cooldown_lv2": 0.28,
+    "cooldown_lv3": 0.26,
+    "cooldown_lv4": 0.24,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -706,7 +924,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Blade",
+    "knockback": 150,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "whip",
@@ -716,8 +938,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "melee",
-    "damageMult": 1.4,
-    "attackSpeedMult": 1.25,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 1.25,
+    "cooldown_lv2": 1.16,
+    "cooldown_lv3": 1.08,
+    "cooldown_lv4": 0.99,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -743,7 +972,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_sweep"
+    "behavior": "melee_sweep",
+    "class": "Blunt",
+    "knockback": 200,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "pistol",
@@ -753,8 +986,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 0,
     "tag": "gun",
-    "damageMult": 1,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 60,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -780,7 +1020,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Primitive",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "smg",
@@ -790,8 +1034,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "gun",
-    "damageMult": 0.6,
-    "attackSpeedMult": 0.3,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 25,
+    "damage_lv4": 40,
+    "cooldown_lv1": 0.3,
+    "cooldown_lv2": 0.28,
+    "cooldown_lv3": 0.26,
+    "cooldown_lv4": 0.24,
     "attackRangeMult": 0,
     "speedMult": 0.05,
     "critChanceAdd": 0,
@@ -817,7 +1068,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Primitive",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "shotgun",
@@ -827,8 +1082,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 10,
     "tag": "gun",
-    "damageMult": 0.8,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 25,
+    "damage_lv4": 40,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -854,7 +1116,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Heavy",
+    "knockback": 150,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "sniper",
@@ -864,8 +1130,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "gun",
-    "damageMult": 2.5,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 40,
+    "damage_lv2": 70,
+    "damage_lv3": 110,
+    "damage_lv4": 165,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -891,7 +1164,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Precise",
+    "knockback": 200,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "gatling",
@@ -901,8 +1178,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "gun",
-    "damageMult": 0.7,
-    "attackSpeedMult": 0.4,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 25,
+    "damage_lv4": 40,
+    "cooldown_lv1": 0.4,
+    "cooldown_lv2": 0.37,
+    "cooldown_lv3": 0.34,
+    "cooldown_lv4": 0.31,
     "attackRangeMult": 0,
     "speedMult": -0.1,
     "critChanceAdd": 0,
@@ -928,18 +1212,29 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Heavy",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "revolver",
     "name": "左轮手枪",
-    "desc": "高伤害单发 +10%暴率",
+    "desc": "6发弹匣 +10%暴率",
     "icon": "🔫",
     "slots": 1,
     "cost": 9,
     "tag": "gun",
-    "damageMult": 1.8,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.5,
+    "cooldown_lv2": 0.46,
+    "cooldown_lv3": 0.42,
+    "cooldown_lv4": 0.38,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0.1,
@@ -965,7 +1260,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Precise",
+    "knockback": 150,
+    "magSize": 6,
+    "reloadTime": 2
   },
   {
     "id": "rifle",
@@ -975,8 +1274,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 13,
     "tag": "gun",
-    "damageMult": 1.2,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1002,7 +1308,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Primitive",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "rifle2",
@@ -1012,8 +1322,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "gun",
-    "damageMult": 1.6,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1039,7 +1356,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Precise",
+    "knockback": 120,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "shotgun_double",
@@ -1049,8 +1370,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "gun",
-    "damageMult": 1.5,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1076,7 +1404,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Heavy",
+    "knockback": 250,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "magnum",
@@ -1086,8 +1418,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 18,
     "tag": "gun",
-    "damageMult": 3.5,
-    "attackSpeedMult": 1,
+    "minLevel": 2,
+    "damage_lv1": 0,
+    "damage_lv2": 95,
+    "damage_lv3": 150,
+    "damage_lv4": 225,
+    "cooldown_lv1": 0,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1113,7 +1452,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Heavy",
+    "knockback": 250,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "minigun",
@@ -1123,8 +1466,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 20,
     "tag": "gun",
-    "damageMult": 0.4,
-    "attackSpeedMult": 0.2,
+    "minLevel": 2,
+    "damage_lv1": 0,
+    "damage_lv2": 10,
+    "damage_lv3": 15,
+    "damage_lv4": 25,
+    "cooldown_lv1": 0,
+    "cooldown_lv2": 0.19,
+    "cooldown_lv3": 0.18,
+    "cooldown_lv4": 0.17,
     "attackRangeMult": 0,
     "speedMult": -0.05,
     "critChanceAdd": 0,
@@ -1150,7 +1500,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Heavy",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "bow",
@@ -1160,8 +1514,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 8,
     "tag": "bow",
-    "damageMult": 1.4,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0.05,
@@ -1187,7 +1548,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Primitive",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "crossbow",
@@ -1197,8 +1562,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "bow",
-    "damageMult": 2,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 30,
+    "damage_lv2": 50,
+    "damage_lv3": 80,
+    "damage_lv4": 120,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1224,7 +1596,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Precise",
+    "knockback": 180,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "longbow",
@@ -1234,8 +1610,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "bow",
-    "damageMult": 2.5,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 40,
+    "damage_lv2": 70,
+    "damage_lv3": 110,
+    "damage_lv4": 165,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1261,7 +1644,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Precise",
+    "knockback": 200,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "recurve",
@@ -1271,8 +1658,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 10,
     "tag": "bow",
-    "damageMult": 1.2,
-    "attackSpeedMult": 0.7,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1298,7 +1692,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Primitive",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "explosive_arrow",
@@ -1308,8 +1706,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "bow",
-    "damageMult": 1.8,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1335,7 +1740,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "explode"
+    "behavior": "explode",
+    "class": "Support",
+    "knockback": 200,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "frost_arrow",
@@ -1345,8 +1754,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "bow",
-    "damageMult": 1,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 60,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1372,7 +1788,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "frost"
+    "behavior": "frost",
+    "class": "Support",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "poison_arrow",
@@ -1382,8 +1802,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 10,
     "tag": "bow",
-    "damageMult": 0.8,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 25,
+    "damage_lv4": 40,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1409,7 +1836,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Support",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "triple_shot",
@@ -1419,8 +1850,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "bow",
-    "damageMult": 1,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 60,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1446,7 +1884,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spread"
+    "behavior": "spread",
+    "class": "Primitive",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "piercing_shot",
@@ -1456,8 +1898,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "bow",
-    "damageMult": 2.2,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 35,
+    "damage_lv2": 60,
+    "damage_lv3": 95,
+    "damage_lv4": 145,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1483,7 +1932,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Precise",
+    "knockback": 180,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "homing_bow",
@@ -1493,8 +1946,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "bow",
-    "damageMult": 1.3,
-    "attackSpeedMult": 0.8,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 35,
+    "damage_lv3": 55,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.8,
+    "cooldown_lv2": 0.74,
+    "cooldown_lv3": 0.69,
+    "cooldown_lv4": 0.63,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1520,7 +1980,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "homing"
+    "behavior": "homing",
+    "class": "Support",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "fire_staff",
@@ -1530,8 +1994,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "magic",
-    "damageMult": 1.5,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 40,
+    "damage_lv3": 60,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1557,7 +2028,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "explode"
+    "behavior": "explode",
+    "class": "Elemental",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "frost_staff",
@@ -1567,8 +2042,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "magic",
-    "damageMult": 1.2,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 30,
+    "damage_lv3": 45,
+    "damage_lv4": 65,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1594,7 +2076,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "frost"
+    "behavior": "frost",
+    "class": "Elemental",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "thunder_staff",
@@ -1604,8 +2090,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "magic",
-    "damageMult": 1.8,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 40,
+    "damage_lv3": 60,
+    "damage_lv4": 85,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1631,7 +2124,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "shock"
+    "behavior": "shock",
+    "class": "Elemental",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "energy_staff",
@@ -1641,8 +2138,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "magic",
-    "damageMult": 2,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 30,
+    "damage_lv2": 50,
+    "damage_lv3": 75,
+    "damage_lv4": 105,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1668,7 +2172,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Elemental",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "magic_orb",
@@ -1678,8 +2186,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 9,
     "tag": "magic",
-    "damageMult": 1.3,
-    "attackSpeedMult": 0.8,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 30,
+    "damage_lv3": 45,
+    "damage_lv4": 65,
+    "cooldown_lv1": 0.8,
+    "cooldown_lv2": 0.74,
+    "cooldown_lv3": 0.69,
+    "cooldown_lv4": 0.63,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1705,7 +2220,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "homing"
+    "behavior": "homing",
+    "class": "Elemental",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "poison_staff",
@@ -1715,8 +2234,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 13,
     "tag": "magic",
-    "damageMult": 0.9,
-    "attackSpeedMult": 1,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 55,
+    "cooldown_lv1": 1,
+    "cooldown_lv2": 0.93,
+    "cooldown_lv3": 0.86,
+    "cooldown_lv4": 0.79,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1742,7 +2268,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "frost"
+    "behavior": "frost",
+    "class": "Elemental",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "void_staff",
@@ -1752,8 +2282,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 18,
     "tag": "magic",
-    "damageMult": 2.5,
-    "attackSpeedMult": 1.2,
+    "minLevel": 2,
+    "damage_lv1": 0,
+    "damage_lv2": 65,
+    "damage_lv3": 100,
+    "damage_lv4": 140,
+    "cooldown_lv1": 0,
+    "cooldown_lv2": 1.12,
+    "cooldown_lv3": 1.04,
+    "cooldown_lv4": 0.96,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1779,7 +2316,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "explode"
+    "behavior": "explode",
+    "class": "Elemental",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "lightning_staff",
@@ -1789,8 +2330,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "magic",
-    "damageMult": 1.6,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 40,
+    "damage_lv3": 60,
+    "damage_lv4": 85,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0.1,
@@ -1816,7 +2364,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "shock"
+    "behavior": "shock",
+    "class": "Elemental",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "fire_wand",
@@ -1826,8 +2378,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 8,
     "tag": "magic",
-    "damageMult": 1.1,
-    "attackSpeedMult": 0.7,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 55,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1853,7 +2412,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Elemental",
+    "knockback": 50,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "arcane_orb",
@@ -1863,8 +2426,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 17,
     "tag": "magic",
-    "damageMult": 2.2,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 35,
+    "damage_lv2": 55,
+    "damage_lv3": 85,
+    "damage_lv4": 120,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1890,7 +2460,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "homing"
+    "behavior": "homing",
+    "class": "Elemental",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "flame_spray",
@@ -1900,8 +2474,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "magic",
-    "damageMult": 1.2,
-    "attackSpeedMult": 0.6,
+    "minLevel": 1,
+    "damage_lv1": 20,
+    "damage_lv2": 30,
+    "damage_lv3": 45,
+    "damage_lv4": 65,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1927,7 +2508,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spray"
+    "behavior": "spray",
+    "class": "Elemental",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "poison_spray",
@@ -1937,8 +2522,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 13,
     "tag": "magic",
-    "damageMult": 1,
-    "attackSpeedMult": 0.7,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 55,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -1964,7 +2556,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spray"
+    "behavior": "spray",
+    "class": "Elemental",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "cold_spray",
@@ -1974,8 +2570,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "magic",
-    "damageMult": 1.1,
-    "attackSpeedMult": 0.7,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 40,
+    "damage_lv4": 55,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2001,7 +2604,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "spray"
+    "behavior": "spray",
+    "class": "Elemental",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "heal_gun",
@@ -2011,8 +2618,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 10,
     "tag": "medic",
-    "damageMult": 0.6,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 20,
+    "damage_lv4": 25,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2038,7 +2652,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 3,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "heal_bullet"
+    "behavior": "heal_bullet",
+    "class": "Medical",
+    "knockback": 50,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "shield",
@@ -2048,8 +2666,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "medic",
-    "damageMult": 0.3,
-    "attackSpeedMult": 1.5,
+    "minLevel": 1,
+    "damage_lv1": 5,
+    "damage_lv2": 10,
+    "damage_lv3": 15,
+    "damage_lv4": 20,
+    "cooldown_lv1": 1.5,
+    "cooldown_lv2": 1.4,
+    "cooldown_lv3": 1.3,
+    "cooldown_lv4": 1.2,
     "attackRangeMult": 0,
     "speedMult": -0.15,
     "critChanceAdd": 0,
@@ -2075,7 +2700,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 5,
     "sprayCone": 100,
-    "behavior": "shield_aura"
+    "behavior": "shield_aura",
+    "class": "Medical",
+    "knockback": 100,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "holy_staff",
@@ -2085,8 +2714,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "medic",
-    "damageMult": 1,
-    "attackSpeedMult": 0.9,
+    "minLevel": 1,
+    "damage_lv1": 15,
+    "damage_lv2": 25,
+    "damage_lv3": 35,
+    "damage_lv4": 45,
+    "cooldown_lv1": 0.9,
+    "cooldown_lv2": 0.84,
+    "cooldown_lv3": 0.78,
+    "cooldown_lv4": 0.72,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2112,7 +2748,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 5,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Medical",
+    "knockback": 60,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "life_wand",
@@ -2122,8 +2762,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 9,
     "tag": "medic",
-    "damageMult": 0.8,
-    "attackSpeedMult": 0.8,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 20,
+    "damage_lv4": 25,
+    "cooldown_lv1": 0.8,
+    "cooldown_lv2": 0.74,
+    "cooldown_lv3": 0.69,
+    "cooldown_lv4": 0.63,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2149,7 +2796,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "bullet"
+    "behavior": "bullet",
+    "class": "Medical",
+    "knockback": 50,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "blessing",
@@ -2159,8 +2810,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 15,
     "tag": "medic",
-    "damageMult": 0.5,
-    "attackSpeedMult": 1.2,
+    "minLevel": 1,
+    "damage_lv1": 10,
+    "damage_lv2": 15,
+    "damage_lv3": 20,
+    "damage_lv4": 25,
+    "cooldown_lv1": 1.2,
+    "cooldown_lv2": 1.12,
+    "cooldown_lv3": 1.04,
+    "cooldown_lv4": 0.96,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2186,7 +2844,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 3,
     "sprayCone": 80,
-    "behavior": "shield_aura"
+    "behavior": "shield_aura",
+    "class": "Medical",
+    "knockback": 80,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "pike",
@@ -2196,8 +2858,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 12,
     "tag": "lance",
-    "damageMult": 2,
-    "attackSpeedMult": 0.8,
+    "minLevel": 1,
+    "damage_lv1": 30,
+    "damage_lv2": 50,
+    "damage_lv3": 80,
+    "damage_lv4": 120,
+    "cooldown_lv1": 0.8,
+    "cooldown_lv2": 0.74,
+    "cooldown_lv3": 0.69,
+    "cooldown_lv4": 0.63,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2223,7 +2892,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Blunt",
+    "knockback": 400,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "cavalry_lance",
@@ -2233,8 +2906,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 16,
     "tag": "lance",
-    "damageMult": 3.2,
-    "attackSpeedMult": 1.1,
+    "minLevel": 1,
+    "damage_lv1": 50,
+    "damage_lv2": 85,
+    "damage_lv3": 135,
+    "damage_lv4": 205,
+    "cooldown_lv1": 1.1,
+    "cooldown_lv2": 1.02,
+    "cooldown_lv3": 0.95,
+    "cooldown_lv4": 0.87,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2260,7 +2940,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Heavy",
+    "knockback": 500,
+    "magSize": 0,
+    "reloadTime": 0
   },
   {
     "id": "trident",
@@ -2270,8 +2954,15 @@ __DATA_BUNDLE__['weapons'] = [
     "slots": 1,
     "cost": 14,
     "tag": "lance",
-    "damageMult": 1.6,
-    "attackSpeedMult": 0.85,
+    "minLevel": 1,
+    "damage_lv1": 25,
+    "damage_lv2": 45,
+    "damage_lv3": 70,
+    "damage_lv4": 105,
+    "cooldown_lv1": 0.85,
+    "cooldown_lv2": 0.79,
+    "cooldown_lv3": 0.73,
+    "cooldown_lv4": 0.67,
     "attackRangeMult": 0,
     "speedMult": 0,
     "critChanceAdd": 0,
@@ -2297,7 +2988,11 @@ __DATA_BUNDLE__['weapons'] = [
     "auraHeal": 0,
     "auraRadius": 0,
     "sprayCone": 0,
-    "behavior": "melee_thrust"
+    "behavior": "melee_thrust",
+    "class": "Blunt",
+    "knockback": 350,
+    "magSize": 0,
+    "reloadTime": 0
   }
 ];
 
@@ -3422,49 +4117,1982 @@ __DATA_BUNDLE__['passives'] = [
 ;
 
 __DATA_BUNDLE__['levelUpCards'] = [
+  {
+    "id": "maxHp",
+    "level": 1,
+    "name": "生命强化",
+    "desc": "最大生命 +20%",
+    "icon": "❤️",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 2,
+    "name": "生命祝福",
+    "desc": "最大生命 +40%",
+    "icon": "❤️",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.40",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 3,
+    "name": "生命祝福",
+    "desc": "最大生命 +60%",
+    "icon": "❤️",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.60",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 4,
+    "name": "生命不朽",
+    "desc": "最大生命 +80%",
+    "icon": "❤️",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.80",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 1,
+    "name": "合金护甲",
+    "desc": "护甲 +3",
+    "icon": "🛡️",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "armor:3",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 2,
+    "name": "重甲锻造",
+    "desc": "护甲 +6",
+    "icon": "🛡️",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:6",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 3,
+    "name": "钢甲壁垒",
+    "desc": "护甲 +9",
+    "icon": "🛡️",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:9",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 4,
+    "name": "不灭战甲",
+    "desc": "护甲 +12",
+    "icon": "🛡️",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:12",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 1,
+    "name": "幽影步法",
+    "desc": "闪避 +3%",
+    "icon": "💨",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.03",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 2,
+    "name": "风影步",
+    "desc": "闪避 +6%",
+    "icon": "💨",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.06",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 3,
+    "name": "虚空漫步",
+    "desc": "闪避 +9%",
+    "icon": "💨",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.09",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 4,
+    "name": "幻影之舞",
+    "desc": "闪避 +12%",
+    "icon": "💨",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.12",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 1,
+    "name": "再生之力",
+    "desc": "生命回复 +1/秒",
+    "icon": "💚",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:1",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 2,
+    "name": "生命源泉",
+    "desc": "生命回复 +2/秒",
+    "icon": "💚",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:2",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 3,
+    "name": "大地之愈",
+    "desc": "生命回复 +3/秒",
+    "icon": "💚",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:3",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 4,
+    "name": "永恒之泉",
+    "desc": "生命回复 +4/秒",
+    "icon": "💚",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:4",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 1,
+    "name": "嗜血本能",
+    "desc": "生命偷取 +3%",
+    "icon": "🩸",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.03",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 2,
+    "name": "血之渴望",
+    "desc": "生命偷取 +6%",
+    "icon": "🩸",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.06",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 3,
+    "name": "生命契约",
+    "desc": "生命偷取 +9%",
+    "icon": "🩸",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.09",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 1,
+    "name": "攻击强化",
+    "desc": "伤害 +10%",
+    "icon": "🗡️",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 2,
+    "name": "毁灭之力",
+    "desc": "伤害 +25%",
+    "icon": "🗡️",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 3,
+    "name": "末日审判",
+    "desc": "伤害 +50%",
+    "icon": "🗡️",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 1,
+    "name": "疾风连击",
+    "desc": "攻速 +15%",
+    "icon": "⚡",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 2,
+    "name": "狂战士之怒",
+    "desc": "攻速 +30%",
+    "icon": "⚡",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 3,
+    "name": "时停之刃",
+    "desc": "攻速 +45%",
+    "icon": "⚡",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 1,
+    "name": "精准锁定",
+    "desc": "暴击率 +5%",
+    "icon": "💥",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.05",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 2,
+    "name": "致命瞄准",
+    "desc": "暴击率 +10%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 3,
+    "name": "百发百中",
+    "desc": "暴击率 +15%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 1,
+    "name": "暴击强化",
+    "desc": "暴击伤害 +50%",
+    "icon": "🔥",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:0.5",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 2,
+    "name": "毁灭暴击",
+    "desc": "暴击伤害 +100%",
+    "icon": "🔥",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:1.0",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 3,
+    "name": "致命裁决",
+    "desc": "暴击伤害 +150%",
+    "icon": "🔥",
+    "rarity": "legendary",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:1.5",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 1,
+    "name": "近战专精",
+    "desc": "近战伤害 +5",
+    "icon": "⚔️",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 2,
+    "name": "近战大师",
+    "desc": "近战伤害 +10",
+    "icon": "⚔️",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 3,
+    "name": "近战宗师",
+    "desc": "近战伤害 +15",
+    "icon": "⚔️",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 1,
+    "name": "远程专精",
+    "desc": "远程伤害 +5",
+    "icon": "🏹",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 2,
+    "name": "远程大师",
+    "desc": "远程伤害 +10",
+    "icon": "🏹",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 3,
+    "name": "远程宗师",
+    "desc": "远程伤害 +15",
+    "icon": "🏹",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 1,
+    "name": "元素之力",
+    "desc": "元素伤害 +5",
+    "icon": "🔮",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 2,
+    "name": "元素风暴",
+    "desc": "元素伤害 +10",
+    "icon": "🔮",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 3,
+    "name": "元素毁灭",
+    "desc": "元素伤害 +15",
+    "icon": "🔮",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 1,
+    "name": "工程强化",
+    "desc": "工程 +5",
+    "icon": "🤖",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 2,
+    "name": "工程大师",
+    "desc": "工程 +10",
+    "icon": "🤖",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 3,
+    "name": "工程宗师",
+    "desc": "工程 +15",
+    "icon": "🤖",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 1,
+    "name": "疾跑",
+    "desc": "移速 +10%",
+    "icon": "⚡",
+    "rarity": "common",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 2,
+    "name": "神行太保",
+    "desc": "移速 +20%",
+    "icon": "⚡",
+    "rarity": "rare",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 3,
+    "name": "瞬影",
+    "desc": "移速 +30%",
+    "icon": "⚡",
+    "rarity": "epic",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 1,
+    "name": "鹰眼",
+    "desc": "射程 +15%",
+    "icon": "🎯",
+    "rarity": "common",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 2,
+    "name": "千里眼",
+    "desc": "射程 +30%",
+    "icon": "🎯",
+    "rarity": "rare",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 3,
+    "name": "全知之眼",
+    "desc": "射程 +45%",
+    "icon": "🎯",
+    "rarity": "epic",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 1,
+    "name": "幸运之星",
+    "desc": "幸运 +2",
+    "icon": "🍀",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:2",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 2,
+    "name": "幸运光环",
+    "desc": "幸运 +4",
+    "icon": "🍀",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:4",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 3,
+    "name": "幸运女神",
+    "desc": "幸运 +6",
+    "icon": "🍀",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:6",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 1,
+    "name": "收获",
+    "desc": "金币量 +5%",
+    "icon": "🪙",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.05",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 2,
+    "name": "收获",
+    "desc": "金币量 +10%",
+    "icon": "🪙",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 3,
+    "name": "丰收",
+    "desc": "金币量 +15%",
+    "icon": "🪙",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 4,
+    "name": "丰收",
+    "desc": "金币量 +20%",
+    "icon": "🪙",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 5,
+    "name": "大丰收",
+    "desc": "金币量 +30%",
+    "icon": "🪙",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 1,
+    "name": "经验加成",
+    "desc": "经验获取 +15%",
+    "icon": "📈",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 2,
+    "name": "经验祝福",
+    "desc": "经验获取 +30%",
+    "icon": "📈",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 3,
+    "name": "经验洪流",
+    "desc": "经验获取 +45%",
+    "icon": "📈",
+    "rarity": "legendary",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "materialGain",
+    "level": 1,
+    "name": "财源广进",
+    "desc": "材料获取 +20%",
+    "icon": "💰",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "materialGain:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "materialGain",
+    "level": 2,
+    "name": "黄金之河",
+    "desc": "材料获取 +40%",
+    "icon": "💰",
+    "rarity": "legendary",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "materialGain:0.40",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 1,
+    "name": "爆破扩大",
+    "desc": "爆炸范围 +20%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 2,
+    "name": "毁灭扩撒",
+    "desc": "爆炸范围 +40%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.4",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 3,
+    "name": "核爆范围",
+    "desc": "爆炸范围 +60%",
+    "icon": "💥",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.6",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 1,
+    "name": "爆破强化",
+    "desc": "爆炸伤害 +25%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 2,
+    "name": "爆破毁灭",
+    "desc": "爆炸伤害 +50%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 3,
+    "name": "末日爆破",
+    "desc": "爆炸伤害 +75%",
+    "icon": "💥",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.75",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 1,
+    "name": "穿透弹",
+    "desc": "穿透 +1",
+    "icon": "➡️",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:1",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 2,
+    "name": "穿透强化",
+    "desc": "穿透 +2",
+    "icon": "➡️",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 3,
+    "name": "无尽穿透",
+    "desc": "穿透 +3",
+    "icon": "➡️",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:3",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "turretDmg",
+    "level": 1,
+    "name": "炮台强化",
+    "desc": "炮台伤害 +25%",
+    "icon": "🤖",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "",
+    "statMult": "turretDamage:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "turretDmg",
+    "level": 2,
+    "name": "炮台毁灭",
+    "desc": "炮台伤害 +50%",
+    "icon": "🤖",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "",
+    "statMult": "turretDamage:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "bulletCount",
+    "level": 1,
+    "name": "弹幕",
+    "desc": "子弹 +1",
+    "icon": "🔫",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "bulletCount:1",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "bulletCount",
+    "level": 2,
+    "name": "弹幕大师",
+    "desc": "子弹 +2",
+    "icon": "🔫",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "bulletCount:2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 1,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "rare",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 2,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "epic",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 3,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "legendary",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponQualityUp",
+    "level": 1,
+    "name": "品质升华",
+    "desc": "随机一把武器品质提升",
+    "icon": "✨",
+    "rarity": "epic",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponQualityUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponSlot",
+    "level": 1,
+    "name": "武器槽扩展",
+    "desc": "武器槽 +1",
+    "icon": "📦",
+    "rarity": "legendary",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addWeaponSlot",
+    "actionValue": ""
+  },
+  {
+    "id": "passiveKillExplode",
+    "level": 1,
+    "name": "杀戮快感",
+    "desc": "击杀时爆炸",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "on_kill_explosion"
+  },
+  {
+    "id": "passiveBurnSpread",
+    "level": 1,
+    "name": "燃烧扩散",
+    "desc": "燃烧效果传播",
+    "icon": "🔥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "fire"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "burn_spread"
+  },
+  {
+    "id": "passiveLifeSteal",
+    "level": 1,
+    "name": "生命契约",
+    "desc": "击杀回复5生命",
+    "icon": "🩸",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "life_on_hit"
+  }
+];
 
-  { "id": "maxHp_20",       "name": "生命强化",     "desc": "最大生命 +20%",       "icon": "❤️",  "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "maxHp": { "type": "mult", "value": 0.20 } } },
-  { "id": "maxHp_40",       "name": "生命祝福",     "desc": "最大生命 +40%",       "icon": "❤️",  "rarity": "rare",     "category": "survival", "tags": [],             "statMods": { "maxHp": { "type": "mult", "value": 0.40 } } },
-  { "id": "armor_3",        "name": "合金护甲",     "desc": "护甲 +3",             "icon": "🛡️",  "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "armor": { "type": "add", "value": 3 } } },
-  { "id": "armor_6",        "name": "重甲锻造",     "desc": "护甲 +6",             "icon": "🛡️",  "rarity": "rare",     "category": "survival", "tags": ["melee"],       "statMods": { "armor": { "type": "add", "value": 6 } } },
-  { "id": "dodge_3",        "name": "幽影步法",     "desc": "闪避 +3%",            "icon": "💨",   "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "dodge": { "type": "add", "value": 0.03 } } },
-  { "id": "hpRegen_1",      "name": "再生之力",     "desc": "生命回复 +1/秒",       "icon": "💚",   "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "hpRegen": { "type": "add", "value": 1.0 } } },
-  { "id": "lifeSteal_3",    "name": "嗜血本能",     "desc": "生命偷取 +3%",        "icon": "🩸",   "rarity": "rare",     "category": "survival", "tags": ["melee"],       "statMods": { "lifeSteal": { "type": "add", "value": 0.03 } } },
+__DATA_BUNDLE__['weaponStats'] = [
+  {
+    "key": "damage_lv1",
+    "中文名": "伤害",
+    "英文名": "damage"
+  },
+  {
+    "key": "damage",
+    "中文名": "伤害",
+    "英文名": "damage"
+  },
+  {
+    "key": "cooldown_lv1",
+    "中文名": "冷却",
+    "英文名": "cooldown"
+  },
+  {
+    "key": "attackSpeed",
+    "中文名": "攻速",
+    "英文名": "attack speed"
+  },
+  {
+    "key": "meleeRange",
+    "中文名": "近战范围",
+    "英文名": "melee range"
+  },
+  {
+    "key": "attackRange",
+    "中文名": "射程",
+    "英文名": "attack range"
+  },
+  {
+    "key": "range",
+    "中文名": "射程",
+    "英文名": "range"
+  },
+  {
+    "key": "bulletSpeed",
+    "中文名": "弹速",
+    "英文名": "bullet speed"
+  },
+  {
+    "key": "bulletCount",
+    "中文名": "弹量",
+    "英文名": "bullets"
+  },
+  {
+    "key": "spread",
+    "中文名": "散射",
+    "英文名": "spread"
+  },
+  {
+    "key": "sprayCone",
+    "中文名": "锥角",
+    "英文名": "cone angle"
+  },
+  {
+    "key": "pierce",
+    "中文名": "穿透",
+    "英文名": "pierce"
+  },
+  {
+    "key": "splashRadius",
+    "中文名": "溅射",
+    "英文名": "splash radius"
+  },
+  {
+    "key": "homingStrength",
+    "中文名": "追踪",
+    "英文名": "homing"
+  },
+  {
+    "key": "chainCount",
+    "中文名": "连锁",
+    "英文名": "chain"
+  },
+  {
+    "key": "burnDps",
+    "中文名": "灼烧",
+    "英文名": "burn dps"
+  },
+  {
+    "key": "burnMaxStacks",
+    "中文名": "灼烧层数",
+    "英文名": "burn stacks"
+  },
+  {
+    "key": "slowAmount",
+    "中文名": "减速",
+    "英文名": "slow"
+  },
+  {
+    "key": "slowDuration",
+    "中文名": "减速时长",
+    "英文名": "slow duration"
+  },
+  {
+    "key": "healOnHit",
+    "中文名": "击中回血",
+    "英文名": "heal on hit"
+  },
+  {
+    "key": "auraHeal",
+    "中文名": "光环回复",
+    "英文名": "aura heal"
+  },
+  {
+    "key": "auraRadius",
+    "中文名": "光环范围",
+    "英文名": "aura radius"
+  },
+  {
+    "key": "critChanceAdd",
+    "中文名": "暴击",
+    "英文名": "crit chance"
+  },
+  {
+    "key": "critDamageAdd",
+    "中文名": "暴伤",
+    "英文名": "crit damage"
+  },
+  {
+    "key": "speedMult",
+    "中文名": "移速",
+    "英文名": "move speed"
+  },
+  {
+    "key": "lifeStealAdd",
+    "中文名": "偷取",
+    "英文名": "life steal"
+  },
+  {
+    "key": "armorAdd",
+    "中文名": "护甲",
+    "英文名": "armor"
+  },
+  {
+    "key": "maxHpAdd",
+    "中文名": "生命",
+    "英文名": "max hp"
+  },
+  {
+    "key": "hpRegenAdd",
+    "中文名": "回复",
+    "英文名": "hp regen"
+  },
+  {
+    "key": "knockback",
+    "中文名": "击退",
+    "英文名": "knockback"
+  },
+  {
+    "key": "slots",
+    "中文名": "槽位",
+    "英文名": "slots"
+  }
+];
 
-  { "id": "damage_10",      "name": "攻击强化",     "desc": "伤害 +10%",           "icon": "🗡️",  "rarity": "common",   "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.10 } } },
-  { "id": "damage_25",      "name": "毁灭之力",     "desc": "伤害 +25%",           "icon": "🗡️",  "rarity": "rare",     "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.25 } } },
-  { "id": "damage_50",      "name": "末日审判",     "desc": "伤害 +50%",           "icon": "🗡️",  "rarity": "epic",     "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.50 } } },
-  { "id": "attackSpeed_15", "name": "疾风连击",     "desc": "攻速 +15%",           "icon": "⚡",   "rarity": "common",   "category": "offense",  "tags": [],             "statMods": { "attackSpeed": { "type": "mult", "value": 0.15 } } },
-  { "id": "attackSpeed_30", "name": "狂战士之怒",   "desc": "攻速 +30%",           "icon": "⚡",   "rarity": "rare",     "category": "offense",  "tags": ["melee"],       "statMods": { "attackSpeed": { "type": "mult", "value": 0.30 } } },
-  { "id": "critChance_5",   "name": "精准锁定",     "desc": "暴击率 +5%",          "icon": "💥",   "rarity": "common",   "category": "offense",  "tags": ["crit"],        "statMods": { "critChance": { "type": "add", "value": 0.05 } } },
-  { "id": "critDamage_50",  "name": "致命一击",     "desc": "暴击伤害 +50%",       "icon": "🔥",   "rarity": "rare",     "category": "offense",  "tags": ["crit"],        "statMods": { "critDamage": { "type": "add", "value": 0.5 } } },
-  { "id": "melee_flat_5",   "name": "近战专精",     "desc": "近战伤害 +5",         "icon": "⚔️",   "rarity": "common",   "category": "offense",  "tags": ["melee"],       "statMods": { "meleeDamage": { "type": "add", "value": 5 } } },
-  { "id": "ranged_flat_5",  "name": "远程专精",     "desc": "远程伤害 +5",         "icon": "🏹",   "rarity": "common",   "category": "offense",  "tags": ["ranged"],      "statMods": { "rangedDamage": { "type": "add", "value": 5 } } },
-  { "id": "elemental_flat_5","name": "元素之力",    "desc": "元素伤害 +5",         "icon": "🔮",   "rarity": "common",   "category": "offense",  "tags": ["fire","explosive"], "statMods": { "elementalDamage": { "type": "add", "value": 5 } } },
-  { "id": "eng_flat_5",     "name": "工程强化",     "desc": "工程 +5",             "icon": "🤖",   "rarity": "common",   "category": "offense",  "tags": ["tech"],        "statMods": { "engineering": { "type": "add", "value": 5 } } },
+__DATA_BUNDLE__['charStats'] = [
+  {
+    "key": "maxHp",
+    "中文名": "生命",
+    "英文名": "hp"
+  },
+  {
+    "key": "hpRegen",
+    "中文名": "回复",
+    "英文名": "hp regen"
+  },
+  {
+    "key": "speed",
+    "中文名": "速度",
+    "英文名": "speed"
+  },
+  {
+    "key": "damagePercent",
+    "中文名": "伤害%",
+    "英文名": "damage%"
+  },
+  {
+    "key": "attackSpeed",
+    "中文名": "攻速",
+    "英文名": "attack speed"
+  },
+  {
+    "key": "attackRange",
+    "中文名": "射程",
+    "英文名": "attack range"
+  },
+  {
+    "key": "armor",
+    "中文名": "护甲",
+    "英文名": "armor"
+  },
+  {
+    "key": "dodge",
+    "中文名": "闪避",
+    "英文名": "dodge"
+  },
+  {
+    "key": "critChance",
+    "中文名": "暴击率",
+    "英文名": "crit chance"
+  },
+  {
+    "key": "critDamage",
+    "中文名": "暴击伤害",
+    "英文名": "crit damage"
+  },
+  {
+    "key": "lifeSteal",
+    "中文名": "生命偷取",
+    "英文名": "life steal"
+  },
+  {
+    "key": "harvesting",
+    "中文名": "采集",
+    "英文名": "harvesting"
+  },
+  {
+    "key": "luck",
+    "中文名": "运气",
+    "英文名": "luck"
+  },
+  {
+    "key": "xpGain",
+    "中文名": "经验获取",
+    "英文名": "xp gain"
+  },
+  {
+    "key": "meleeDamage",
+    "中文名": "近战伤害",
+    "英文名": "melee damage"
+  },
+  {
+    "key": "rangedDamage",
+    "中文名": "远程伤害",
+    "英文名": "ranged damage"
+  },
+  {
+    "key": "elementalDamage",
+    "中文名": "元素伤害",
+    "英文名": "elemental damage"
+  },
+  {
+    "key": "engineering",
+    "中文名": "工程",
+    "英文名": "engineering"
+  },
+  {
+    "key": "weaponSlots",
+    "中文名": "武器槽位",
+    "英文名": "weapon slots"
+  }
+];
 
-  { "id": "speed_10",       "name": "疾跑",         "desc": "移速 +10%",           "icon": "⚡",   "rarity": "common",   "category": "mobility", "tags": [],             "statMods": { "speed": { "type": "mult", "value": 0.10 } } },
-  { "id": "speed_20",       "name": "神行太保",     "desc": "移速 +20%",           "icon": "⚡",   "rarity": "rare",     "category": "mobility", "tags": [],             "statMods": { "speed": { "type": "mult", "value": 0.20 } } },
-  { "id": "range_15",       "name": "鹰眼",         "desc": "射程 +15%",           "icon": "🎯",   "rarity": "common",   "category": "mobility", "tags": ["ranged"],      "statMods": { "attackRange": { "type": "mult", "value": 0.15 } } },
-  { "id": "range_30",       "name": "千里眼",       "desc": "射程 +30%",           "icon": "🎯",   "rarity": "rare",     "category": "mobility", "tags": ["ranged"],      "statMods": { "attackRange": { "type": "mult", "value": 0.30 } } },
+__DATA_BUNDLE__['difficulty'] = [
+  {
+    "id": 0,
+    "中文名": "标准",
+    "英文名": "Standard",
+    "enemyMult": 1,
+    "spawnRate": 1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "默认难度，怪物属性为标准值"
+  },
+  {
+    "id": 1,
+    "中文名": "挑战★1",
+    "英文名": "Challenge 1",
+    "enemyMult": 1.2,
+    "spawnRate": 1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "怪物属性提升至1.2倍"
+  },
+  {
+    "id": 2,
+    "中文名": "挑战★2",
+    "英文名": "Challenge 2",
+    "enemyMult": 1.4,
+    "spawnRate": 1.1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "怪物属性1.4倍，生成速度略增"
+  },
+  {
+    "id": 3,
+    "中文名": "挑战★3",
+    "英文名": "Challenge 3",
+    "enemyMult": 1.6,
+    "spawnRate": 1.2,
+    "eliteInterval": 15,
+    "bossWaves": [
+      15
+    ],
+    "newEnemyTypes": [
+      "tank"
+    ],
+    "desc": "怪物属性1.6倍，15关出Boss，新增重装机兵"
+  },
+  {
+    "id": 4,
+    "中文名": "挑战★4",
+    "英文名": "Challenge 4",
+    "enemyMult": 1.8,
+    "spawnRate": 1.3,
+    "eliteInterval": 10,
+    "bossWaves": [
+      10,
+      20
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged"
+    ],
+    "desc": "怪物属性1.8倍，每10关出精英，Boss在10/20关"
+  },
+  {
+    "id": 5,
+    "中文名": "挑战★5",
+    "英文名": "Challenge 5",
+    "enemyMult": 2,
+    "spawnRate": 1.4,
+    "eliteInterval": 8,
+    "bossWaves": [
+      8,
+      16,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder"
+    ],
+    "desc": "怪物2倍，精英间隔8关，Boss在8/16/24关"
+  },
+  {
+    "id": 6,
+    "中文名": "挑战★6",
+    "英文名": "Challenge 6",
+    "enemyMult": 2.3,
+    "spawnRate": 1.5,
+    "eliteInterval": 6,
+    "bossWaves": [
+      6,
+      12,
+      18,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer"
+    ],
+    "desc": "怪物2.3倍，精英6关间隔"
+  },
+  {
+    "id": 7,
+    "中文名": "挑战★7",
+    "英文名": "Challenge 7",
+    "enemyMult": 2.6,
+    "spawnRate": 1.6,
+    "eliteInterval": 5,
+    "bossWaves": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar"
+    ],
+    "desc": "怪物2.6倍，精英5关间隔"
+  },
+  {
+    "id": 8,
+    "中文名": "挑战★8",
+    "英文名": "Challenge 8",
+    "enemyMult": 3,
+    "spawnRate": 1.8,
+    "eliteInterval": 4,
+    "bossWaves": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar",
+      "blinker"
+    ],
+    "desc": "怪物3倍，精英4关间隔"
+  },
+  {
+    "id": 9,
+    "中文名": "极限★9",
+    "英文名": "Extreme 9",
+    "enemyMult": 3.5,
+    "spawnRate": 2,
+    "eliteInterval": 3,
+    "bossWaves": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar",
+      "blinker",
+      "elite"
+    ],
+    "desc": "怪物3.5倍，精英3关间隔，极限挑战"
+  }
+];
 
-  { "id": "luck_2",         "name": "幸运之星",     "desc": "幸运 +2",             "icon": "🍀",   "rarity": "common",   "category": "economy",  "tags": ["economy"],     "statMods": { "luck": { "type": "add", "value": 2 } } },
-  { "id": "harvest_25",     "name": "丰收季节",     "desc": "收获 +25",            "icon": "💰",   "rarity": "common",   "category": "economy",  "tags": ["economy"],     "statMods": { "harvesting": { "type": "add", "value": 25 } } },
-  { "id": "xpGain_15",      "name": "经验加成",     "desc": "经验获取 +15%",       "icon": "📈",   "rarity": "rare",     "category": "economy",  "tags": ["economy"],     "statMods": { "xpGain": { "type": "add", "value": 0.15 } } },
-  { "id": "materialGain_20","name": "财源广进",     "desc": "材料获取 +20%",       "icon": "💰",   "rarity": "epic",     "category": "economy",  "tags": ["economy"],     "statMods": { "materialGain": { "type": "add", "value": 0.20 } } },
+__DATA_BUNDLE__['debug'] = [
+  {
+    "key": "currentWave",
+    "label": "波次",
+    "desc": "Current wave",
+    "group": "波次",
+    "expr": "WaveSystem.currentLevel",
+    "enabled": true
+  },
+  {
+    "key": "effectiveLevel",
+    "label": "有效等级",
+    "desc": "Effective level (wave+difficulty)",
+    "group": "波次",
+    "expr": "WaveSystem.effectiveLevel",
+    "enabled": true
+  },
+  {
+    "key": "difficultyOffset",
+    "label": "难度偏移",
+    "desc": "Difficulty offset",
+    "group": "波次",
+    "expr": "WaveSystem.difficultyOffset",
+    "enabled": true
+  },
+  {
+    "key": "difficultyName",
+    "label": "难度",
+    "desc": "Difficulty name",
+    "group": "波次",
+    "expr": "(WaveSystem.difficultyConfig||{}).中文名||''",
+    "enabled": true
+  },
+  {
+    "key": "waveActive",
+    "label": "激活",
+    "desc": "Wave active",
+    "group": "波次",
+    "expr": "WaveSystem.waveActive",
+    "enabled": true
+  },
+  {
+    "key": "waveTimer",
+    "label": "波次时间",
+    "desc": "Wave timer",
+    "group": "波次",
+    "expr": "WaveSystem.waveTimer.toFixed(1)",
+    "enabled": true
+  },
+  {
+    "key": "remainingBudget",
+    "label": "剩余预算",
+    "desc": "Remaining budget",
+    "group": "波次",
+    "expr": "WaveSystem._remainingBudget",
+    "enabled": true
+  },
+  {
+    "key": "spawnInterval",
+    "label": "生成间隔",
+    "desc": "Spawn interval",
+    "group": "波次",
+    "expr": "WaveSystem.spawnInterval.toFixed(2)",
+    "enabled": true
+  },
+  {
+    "key": "spawnsPerBatch",
+    "label": "每批生成",
+    "desc": "Spawns per batch",
+    "group": "波次",
+    "expr": "WaveSystem.spawnsPerBatch",
+    "enabled": true
+  },
+  {
+    "key": "spawnTimer",
+    "label": "生成计时",
+    "desc": "Spawn timer",
+    "group": "波次",
+    "expr": "WaveSystem.spawnTimer.toFixed(2)",
+    "enabled": true
+  },
+  {
+    "key": "aliveCount",
+    "label": "存活敌人",
+    "desc": "Alive enemies",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?EnemySystem.enemies.filter(e=>e.alive).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "totalEnemies",
+    "label": "总敌人数",
+    "desc": "Total enemies",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?EnemySystem.enemies.length:0)",
+    "enabled": true
+  },
+  {
+    "key": "enemyTypeCount",
+    "label": "敌人类型数",
+    "desc": "Enemy type count",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "enemyTypes",
+    "label": "敌人类型列表",
+    "desc": "Enemy types",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).join(','):'N/A')",
+    "enabled": true
+  },
+  {
+    "key": "aliveEnemyTypes",
+    "label": "存活类型",
+    "desc": "Alive enemy types",
+    "group": "敌人",
+    "expr": "(()=>{const m={};(typeof EnemySystem!=='undefined'?EnemySystem.enemies:[]).forEach(e=>{if(e.alive)m[e.typeId]=(m[e.typeId]||0)+1});return Object.entries(m).map(([k,v])=>k+':'+v).join(' ')})()",
+    "enabled": true
+  },
+  {
+    "key": "playerHp",
+    "label": "玩家HP",
+    "desc": "Player HP",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.hp.toFixed(0)+'/'+PlayerSystem.player.maxHp:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerSpeed",
+    "label": "玩家速度",
+    "desc": "Player speed",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.speed.toFixed(0):0)",
+    "enabled": true
+  },
+  {
+    "key": "playerMaterials",
+    "label": "材料",
+    "desc": "Materials",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.materials:0)",
+    "enabled": true
+  },
+  {
+    "key": "weaponCount",
+    "label": "武器数",
+    "desc": "Weapon count",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.weapons||[]).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "itemCount",
+    "label": "道具数",
+    "desc": "Item count",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.items||[]).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerKills",
+    "label": "击杀数",
+    "desc": "Kills",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.kills:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerLevel",
+    "label": "玩家等级",
+    "desc": "Player level",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.level:0)",
+    "enabled": true
+  },
+  {
+    "key": "bossActive",
+    "label": "Boss活跃",
+    "desc": "Boss active",
+    "group": "Boss",
+    "expr": "(typeof BossSystem!=='undefined'?BossSystem.isActive():false)",
+    "enabled": true
+  },
+  {
+    "key": "bossHp",
+    "label": "Boss HP",
+    "desc": "Boss HP",
+    "group": "Boss",
+    "expr": "(()=>{if(typeof BossSystem==='undefined')return'';const d=BossSystem.getHpBarData();return d?d.hp+'/'+d.maxHp:''})()",
+    "enabled": true
+  },
+  {
+    "key": "eliteInterval",
+    "label": "精英间隔",
+    "desc": "Elite interval",
+    "group": "波次",
+    "expr": "(WaveSystem.difficultyConfig||{}).eliteInterval||0",
+    "enabled": true
+  },
+  {
+    "key": "enemyMult",
+    "label": "怪物倍率",
+    "desc": "Enemy multiplier",
+    "group": "波次",
+    "expr": "((WaveSystem.difficultyConfig||{}).enemyMult||1).toFixed(1)",
+    "enabled": true
+  },
+  {
+    "key": "bossWaves",
+    "label": "Boss波次",
+    "desc": "Boss waves",
+    "group": "波次",
+    "expr": "((WaveSystem.difficultyConfig||{}).bossWaves||[]).join(',')",
+    "enabled": true
+  }
+];
 
-  { "id": "explosionSize_20","name": "爆破扩大",    "desc": "爆炸范围 +20%",       "icon": "💥",   "rarity": "rare",     "category": "special",  "tags": ["explosive"],   "statMods": { "explosionSize": { "type": "add", "value": 0.2 } } },
-  { "id": "explosionDmg_25","name": "爆破强化",     "desc": "爆炸伤害 +25%",       "icon": "💥",   "rarity": "rare",     "category": "special",  "tags": ["explosive"],   "statMods": { "explosionDamage": { "type": "add", "value": 0.25 } } },
-  { "id": "pierce_1",       "name": "穿透弹",       "desc": "穿透 +1",             "icon": "➡️",   "rarity": "rare",     "category": "special",  "tags": ["ranged"],      "statMods": { "projectilePierce": { "type": "add", "value": 1 } } },
-  { "id": "turretDmg_25",   "name": "炮台强化",     "desc": "炮台伤害 +25%",       "icon": "🤖",   "rarity": "epic",     "category": "special",  "tags": ["tech"],        "statMods": { "turretDamage": { "type": "add", "value": 0.25 } } },
-  { "id": "bulletCount_1",  "name": "弹幕",         "desc": "子弹 +1",             "icon": "🔫",   "rarity": "epic",     "category": "special",  "tags": ["ranged"],      "statMods": { "bulletCount": { "type": "add", "value": 1 } } },
-
-  { "id": "weapon_level_up",    "name": "武器精炼",   "desc": "随机一把武器等级 +1",     "icon": "⚔️",  "rarity": "rare",     "category": "weapon", "tags": [], "action": { "type": "weaponLevelUp" } },
-  { "id": "weapon_quality_up",  "name": "品质升华",   "desc": "随机一把武器品质提升一级", "icon": "✨",  "rarity": "epic",     "category": "weapon", "tags": [], "action": { "type": "weaponQualityUp" } },
-  { "id": "weapon_slot_1",      "name": "武器槽扩展", "desc": "武器槽 +1",               "icon": "📦",  "rarity": "legendary","category": "weapon", "tags": [], "action": { "type": "addWeaponSlot" } },
-
-  { "id": "passive_kill_explode","name": "杀戮快感",  "desc": "击杀时爆炸（范围100）",    "icon": "💥",  "rarity": "epic",     "category": "special","tags": ["explosive"], "action": { "type": "addPassive", "passiveId": "on_kill_explosion" } },
-  { "id": "passive_burn_spread","name": "燃烧扩散",  "desc": "燃烧效果传播",             "icon": "🔥",  "rarity": "epic",     "category": "special","tags": ["fire"],      "action": { "type": "addPassive", "passiveId": "burn_spread" } },
-  { "id": "passive_lifesteal",   "name": "生命契约",   "desc": "每击杀一个敌人回复5生命", "icon": "🩸",  "rarity": "legendary","category": "survival","tags": ["melee"],     "action": { "type": "addPassive", "passiveId": "life_on_hit" } }
-]
-;
+__DATA_BUNDLE__['rarityColors'] = [
+  {
+    "level": 1,
+    "key": "common",
+    "name": "普通",
+    "color": "#ffffff",
+    "bg": "rgba(255,255,255,0.12)"
+  },
+  {
+    "level": 2,
+    "key": "uncommon",
+    "name": "优秀",
+    "color": "#4A9BD1",
+    "bg": "rgba(74,155,209,0.12)"
+  },
+  {
+    "level": 3,
+    "key": "rare",
+    "name": "稀有",
+    "color": "#AD5AFF",
+    "bg": "rgba(173,90,255,0.12)"
+  },
+  {
+    "level": 4,
+    "key": "epic",
+    "name": "史诗",
+    "color": "#FF3B3B",
+    "bg": "rgba(255,59,59,0.12)"
+  },
+  {
+    "level": 5,
+    "key": "legendary",
+    "name": "传说",
+    "color": "#FFD700",
+    "bg": "rgba(255,215,0,0.15)"
+  }
+];

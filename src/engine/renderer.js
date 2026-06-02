@@ -407,14 +407,15 @@ const Renderer = {
                     ctx.fill();
                 }
 
-                if (w.quality === 'T3') {
-                    ctx.strokeStyle = '#ffcc00';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                } else if (w.quality === 'T2') {
-                    ctx.strokeStyle = '#aa44ff';
-                    ctx.lineWidth = 1.5;
-                    ctx.stroke();
+                if (w.quality && w.quality !== 'T1') {
+                    const qColor = RarityColorSystem && RarityColorSystem.getColor
+                        ? RarityColorSystem.getColor(w.quality)
+                        : null;
+                    if (qColor) {
+                        ctx.strokeStyle = qColor;
+                        ctx.lineWidth = w.quality === 'T3' || w.quality === 'T4' ? 2 : 1.5;
+                        ctx.stroke();
+                    }
                 }
                 ctx.shadowBlur = 0;
             }

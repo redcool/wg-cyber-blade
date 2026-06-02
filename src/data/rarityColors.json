@@ -1,0 +1,37 @@
+[
+  {
+    "level": 1,
+    "key": "common",
+    "name": "普通",
+    "color": "#ffffff",
+    "bg": "rgba(255,255,255,0.12)"
+  },
+  {
+    "level": 2,
+    "key": "uncommon",
+    "name": "优秀",
+    "color": "#4A9BD1",
+    "bg": "rgba(74,155,209,0.12)"
+  },
+  {
+    "level": 3,
+    "key": "rare",
+    "name": "稀有",
+    "color": "#AD5AFF",
+    "bg": "rgba(173,90,255,0.12)"
+  },
+  {
+    "level": 4,
+    "key": "epic",
+    "name": "史诗",
+    "color": "#FF3B3B",
+    "bg": "rgba(255,59,59,0.12)"
+  },
+  {
+    "level": 5,
+    "key": "legendary",
+    "name": "传说",
+    "color": "#FFD700",
+    "bg": "rgba(255,215,0,0.15)"
+  }
+]

@@ -1,3 +1,7 @@
+# 波次限时配置表
+# 列: level, duration
+# level: 波次编号（或 default 表示默认值）
+# duration: 该波次的限时（秒）
 default,30
 1,30
 2,30

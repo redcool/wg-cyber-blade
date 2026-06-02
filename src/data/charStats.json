@@ -1,0 +1,97 @@
+[
+  {
+    "key": "maxHp",
+    "中文名": "生命",
+    "英文名": "hp"
+  },
+  {
+    "key": "hpRegen",
+    "中文名": "回复",
+    "英文名": "hp regen"
+  },
+  {
+    "key": "speed",
+    "中文名": "速度",
+    "英文名": "speed"
+  },
+  {
+    "key": "damagePercent",
+    "中文名": "伤害%",
+    "英文名": "damage%"
+  },
+  {
+    "key": "attackSpeed",
+    "中文名": "攻速",
+    "英文名": "attack speed"
+  },
+  {
+    "key": "attackRange",
+    "中文名": "射程",
+    "英文名": "attack range"
+  },
+  {
+    "key": "armor",
+    "中文名": "护甲",
+    "英文名": "armor"
+  },
+  {
+    "key": "dodge",
+    "中文名": "闪避",
+    "英文名": "dodge"
+  },
+  {
+    "key": "critChance",
+    "中文名": "暴击率",
+    "英文名": "crit chance"
+  },
+  {
+    "key": "critDamage",
+    "中文名": "暴击伤害",
+    "英文名": "crit damage"
+  },
+  {
+    "key": "lifeSteal",
+    "中文名": "生命偷取",
+    "英文名": "life steal"
+  },
+  {
+    "key": "harvesting",
+    "中文名": "采集",
+    "英文名": "harvesting"
+  },
+  {
+    "key": "luck",
+    "中文名": "运气",
+    "英文名": "luck"
+  },
+  {
+    "key": "xpGain",
+    "中文名": "经验获取",
+    "英文名": "xp gain"
+  },
+  {
+    "key": "meleeDamage",
+    "中文名": "近战伤害",
+    "英文名": "melee damage"
+  },
+  {
+    "key": "rangedDamage",
+    "中文名": "远程伤害",
+    "英文名": "ranged damage"
+  },
+  {
+    "key": "elementalDamage",
+    "中文名": "元素伤害",
+    "英文名": "elemental damage"
+  },
+  {
+    "key": "engineering",
+    "中文名": "工程",
+    "英文名": "engineering"
+  },
+  {
+    "key": "weaponSlots",
+    "中文名": "武器槽位",
+    "英文名": "weapon slots"
+  }
+]

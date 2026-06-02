@@ -1,8 +1,50 @@
 // ============================================================
 // cyberblade/ui.js - UI系统（角色选择+商店+结算）
 // ============================================================
+// 角色属性格式化映射（代码逻辑，不在数据层）
+const _CHAR_FMT = {
+    dodge: v => `${(v * 100).toFixed(0)}%`,
+    critChance: v => `${(v * 100).toFixed(0)}%`,
+    critDamage: v => `${v.toFixed(1)}x`,
+    hpRegen: v => `${v.toFixed(1)}/s`,
+    damagePercent: v => `${(v * 100).toFixed(0)}%`,
+    attackSpeed: v => `${v.toFixed(1)}`,
+    attackRange: v => `${v}`,
+    lifeSteal: v => `${(v * 100).toFixed(0)}%`,
+    speed: v => `${v}`,
+    harvesting: v => `${v}`,
+    luck: v => `${v}`,
+    xpGain: v => `${(v * 100).toFixed(0)}%`,
+    engineering: v => `${v}`,
+    meleeDamage: v => `${v}`,
+    rangedDamage: v => `${v}`,
+    elementalDamage: v => `${v}`,
+    armor: v => `${v}`,
+    maxHp: v => `${v}`,
+};
+
+// 武器属性格式化映射（代码逻辑，不在数据层）
+const _WPN_FMT = {
+    cooldown_lv1: v => `${v.toFixed(2)}s`,
+    slowDuration: v => `${v}s`,
+    burnDps: v => `${v}/s`,
+    homingStrength: v => `${Math.round(v * 100)}%`,
+    slowAmount: v => `${Math.round(v * 100)}%`,
+    critChanceAdd: v => `+${Math.round(v * 100)}%`,
+    critDamageAdd: v => `+${(v * 100).toFixed(0)}%`,
+    speedMult: v => `+${Math.round(v * 100)}%`,
+    lifeStealAdd: v => `+${Math.round(v * 100)}%`,
+    sprayCone: v => `${v}`,
+};
+const _WPN_COND = {
+    slots: v => v > 1,
+};
+
 const UISystem = {
     _selectedDifficulty: 0,
+    _selectedWeaponId: null,
+    _weaponStatDefs: [],
+    _charStatDefs: [],
 
     init() {
         document.getElementById('startBtn').addEventListener('click', () => {
@@ -28,8 +70,13 @@ const UISystem = {
             const card = e.target.closest('.char-icon-card');
             if (!card) return;
             const id = card.dataset.charId;
+            // 锁定角色点击也可以选中（预览详情 + 显示选择框）
             if (card.classList.contains('locked')) {
                 this._showCharDetail(id);
+                if (CharacterSystem.selectedCharacterId !== id) {
+                    CharacterSystem.selectedCharacterId = id;
+                    this._renderCharSelect(); // 重新渲染网格以显示选择框
+                }
                 return;
             }
             if (CharacterSystem.select(id)) {
@@ -41,27 +88,48 @@ const UISystem = {
             const card = e.target.closest('.weapon-select-card');
             if (!card) return;
             const wid = card.dataset.weaponId;
-            if (wid) this._confirmWeapon(wid);
+            if (wid) {
+                this._selectWeapon(wid);
+            }
         });
-        document.getElementById('weaponSelectSkip').addEventListener('click', () => {
-            this._confirmWeapon('pistol');
+        document.getElementById('weaponSelectConfirm').addEventListener('click', () => {
+            if (this._selectedWeaponId) {
+                this._confirmWeapon(this._selectedWeaponId);
+            }
         });
         document.getElementById('weaponSelectBack').addEventListener('click', () => {
             this.showMenu();
         });
 
-        // 难度选择
+        // 调试窗口折叠切换
+        document.getElementById('hudDebug').addEventListener('click', (e) => {
+            if (e.target.closest('.debug-header')) {
+                document.getElementById('hudDebug').classList.toggle('collapsed');
+            }
+        });
+
+        // 难度选择：点击图标 → 预览详情（不开始游戏）
         document.getElementById('diffGrid').addEventListener('click', (e) => {
             const card = e.target.closest('.diff-card');
             if (!card) return;
             const level = parseInt(card.dataset.diff, 10);
-            this._confirmDifficulty(level);
+            this._selectDifficulty(level);
+        });
+        document.getElementById('startBattleBtn').addEventListener('click', () => {
+            this._startBattle();
         });
         document.getElementById('diffBack').addEventListener('click', () => {
             this._showWeaponSelect();
         });
 
         this.updateHUD();
+        // 加载属性标签表
+        const cache = typeof DataLoader !== 'undefined' && DataLoader._cache;
+        const bundle = typeof window !== 'undefined' && window.__DATA_BUNDLE__;
+        this._weaponStatDefs = (cache && cache.weaponStats) || (bundle && bundle.weaponStats) || [];
+        this._charStatDefs = (cache && cache.charStats) || (bundle && bundle.charStats) || [];
+        this._debugDefs = (cache && cache.debug) || (bundle && bundle.debug) || [];
+        this._debugEnabled = this._debugDefs.filter(d => d.enabled);
     },
 
     _showWeaponSelect() {
@@ -70,13 +138,13 @@ const UISystem = {
         if (!ch) return;
 
         document.getElementById('charSelectOverlay').classList.add('hidden');
+        document.getElementById('difficultyOverlay').classList.add('hidden');
         document.getElementById('weaponSelectOverlay').classList.remove('hidden');
 
         document.getElementById('weaponSelectHint').textContent =
             `${ch.name} · 选择一个初始武器`;
 
         const affinities = ch.tags || ch.weaponAffinities || [];
-        // 武器标签是旧体系(gun/bow/magic/medic/lance)，将其归一化后与角色标签匹配
         const normalizeWeaponTag = (t) => ({ gun: 'ranged', bow: 'ranged', magic: 'fire', medic: 'tech', lance: 'melee' }[t] || t);
         const basicWeapons = ShopSystem.allWeapons.filter(w =>
             affinities.includes(normalizeWeaponTag(w.tag)) && UnlockSystem.basicWeaponIds.has(w.id)
@@ -85,42 +153,80 @@ const UISystem = {
         const tagOrder = ['melee', 'ranged', 'fire', 'explosive', 'crit', 'tech', 'economy'];
         basicWeapons.sort((a, b) => tagOrder.indexOf(a.tag) - tagOrder.indexOf(b.tag));
 
+        // 选中第一个武器
+        this._selectedWeaponId = basicWeapons.length > 0 ? basicWeapons[0].id : 'pistol';
+
+        // 顶部详情面板
+        this._showWeaponDetail(this._selectedWeaponId);
+
+        // 底部武器图标网格（点击图标 → 查看详情）
         const grid = document.getElementById('weaponSelectGrid');
         grid.innerHTML = '';
 
         if (basicWeapons.length === 0) {
             const pistol = ShopSystem.allWeapons.find(w => w.id === 'pistol');
-            if (pistol) this._renderWeaponCard(grid, pistol);
+            if (pistol) this._renderWeaponIcon(grid, pistol, true);
         } else {
             for (const w of basicWeapons) {
-                this._renderWeaponCard(grid, w);
+                this._renderWeaponIcon(grid, w, w.id === this._selectedWeaponId);
             }
         }
     },
 
-    _renderWeaponCard(container, weapon) {
-        const card = document.createElement('div');
-        card.className = 'weapon-select-card';
-        card.dataset.weaponId = weapon.id;
+    _showWeaponDetail(weaponId) {
+        const weapon = ShopSystem.allWeapons.find(w => w.id === weaponId);
+        const detail = document.getElementById('weaponDetail');
+        if (!weapon || !detail) return;
 
         const tagDef = TagSystem.getTagDef(weapon.tag);
-        const tagHtml = tagDef ? `<span class="ws-tag" style="color:${this._tagColor(tagDef.id)}">${tagDef.icon}${tagDef.name}</span>` : '';
+        const tagStr = tagDef ? `${tagDef.icon} ${tagDef.name}` : weapon.tag || '—';
+        const tagColor = tagDef ? this._tagColor(tagDef.id) : '#ffffff';
 
-        const statsHtml = `
-            <span>⚔️${weapon.damageMult || 1.0}</span>
-            <span>⚡${(weapon.attackSpeedMult || 1.0).toFixed(1)}</span>
-            <span>🎯${weapon.bulletSpeed || '—'}</span>
-            ${weapon.pierce > 0 ? `<span>🔱${weapon.pierce}</span>` : ''}
+        // 构建属性列表（数据驱动，非0即显示，2列）
+        const statLines = [];
+        for (const def of this._weaponStatDefs) {
+            const val = weapon[def.key];
+            const cond = _WPN_COND[def.key];
+            const shouldShow = cond ? cond(val) : (val !== undefined && val !== 0 && val !== null && val !== '');
+            if (!shouldShow) continue;
+            const fmt = _WPN_FMT[def.key] || (v => v);
+            statLines.push(`<span class="stat-item"><b>${def['中文名']}</b> ${fmt(val)}</span>`);
+        }
+
+        detail.innerHTML = `
+            <div class="weapon-detail-avatar">${AssetSystem.weaponIconHTML(weapon.id, 72)}</div>
+            <div class="weapon-detail-info">
+                <div class="weapon-detail-name">${weapon.name}</div>
+                <div class="weapon-detail-tag" style="color:${tagColor}">${tagStr}</div>
+                <div class="weapon-detail-desc">${weapon.desc || ''}</div>
+                <div class="weapon-detail-stats">
+                    ${statLines.join('\n')}
+                </div>
+            </div>
+            <div class="weapon-detail-radar" id="weaponRadarContainer"></div>
         `;
+        const radarContainer = document.getElementById('weaponRadarContainer');
+        if (radarContainer) {
+            radarContainer.appendChild(this._renderWeaponRadarChart(weapon));
+        }
+    },
 
-        card.innerHTML = `
-            <div class="ws-icon">${AssetSystem.weaponIconHTML(weapon.id, 48)}</div>
-            <div class="ws-name">${weapon.name}</div>
-            ${tagHtml}
-            <div class="ws-desc">${weapon.desc}</div>
-            <div class="ws-stats">${statsHtml}</div>
-        `;
+    _selectWeapon(weaponId) {
+        this._selectedWeaponId = weaponId;
+        this._showWeaponDetail(weaponId);
+        // 更新网格高亮
+        const cards = document.querySelectorAll('#weaponSelectGrid .weapon-select-card');
+        for (const card of cards) {
+            card.classList.toggle('selected', card.dataset.weaponId === weaponId);
+        }
+    },
 
+    /** 渲染武器图标卡片（纯图标，点击后详情面板展示属性） */
+    _renderWeaponIcon(container, weapon, selected) {
+        const card = document.createElement('div');
+        card.className = `weapon-select-card ${selected ? 'selected' : ''}`;
+        card.dataset.weaponId = weapon.id;
+        card.innerHTML = `<div class="ws-icon">${AssetSystem.weaponIconHTML(weapon.id, 42)}</div>`;
         container.appendChild(card);
     },
 
@@ -130,24 +236,96 @@ const UISystem = {
         this._showDifficultySelect();
     },
 
+    /** 获取难度配置表（数据驱动） */
+    _getDifficultyDefs() {
+        const cache = typeof DataLoader !== 'undefined' && DataLoader._cache;
+        const bundle = typeof window !== 'undefined' && window.__DATA_BUNDLE__;
+        return (cache && cache.difficulty) || (bundle && bundle.difficulty) || [];
+    },
+
+    /** 获取敌人配置表 */
+    _getEnemyDefs() {
+        const cache = typeof DataLoader !== 'undefined' && DataLoader._cache;
+        const bundle = typeof window !== 'undefined' && window.__DATA_BUNDLE__;
+        return (cache && cache.enemies) || (bundle && bundle.enemies) || [];
+    },
+
     _showDifficultySelect() {
         document.getElementById('difficultyOverlay').classList.remove('hidden');
+        const defs = this._getDifficultyDefs();
+        const selected = this._selectedDifficulty;
+
+        // 更新顶部详情面板
+        this._renderDiffDetail(defs, selected);
+
+        // 渲染底部难度图标网格
         const grid = document.getElementById('diffGrid');
         grid.innerHTML = '';
-        for (let i = 0; i < 10; i++) {
+        for (const d of defs) {
             const card = document.createElement('div');
-            card.className = `diff-card ${i === this._selectedDifficulty ? 'selected' : ''}`;
-            card.dataset.diff = i;
-            const labels = ['标准', '★1', '★2', '★3', '★4', '★5', '★6', '★7', '★8', '★9'];
-            card.innerHTML = `<div class="diff-num">${i}</div><div class="diff-label">${labels[i]}</div>`;
+            card.className = `diff-card ${d.id === selected ? 'selected' : ''}`;
+            card.dataset.diff = d.id;
+            card.textContent = d.id;
             grid.appendChild(card);
         }
     },
 
-    _confirmDifficulty(level) {
+    /** 渲染难度详情面板 */
+    _renderDiffDetail(defs, selectedId) {
+        const d = defs.find(x => x.id === selectedId) || defs[0];
+        if (!d) return;
+        const detail = document.getElementById('diffDetail');
+        if (!detail) return;
+
+        const badge = detail.querySelector('.diff-detail-badge');
+        const nameEl = detail.querySelector('.diff-detail-name');
+        const descEl = detail.querySelector('.diff-detail-desc');
+        const bonusesEl = detail.querySelector('.diff-detail-bonuses');
+        if (badge) badge.textContent = d.id;
+        if (nameEl) nameEl.textContent = d['中文名'] + ' · ' + d['英文名'];
+        if (descEl) descEl.textContent = d.desc || '';
+
+        // 构建属性标签
+        const bonuses = [];
+        if (d.enemyMult > 1) bonuses.push(`怪物属性 ×${d.enemyMult.toFixed(1)}`);
+        if (d.spawnRate > 1) bonuses.push(`生成速率 ×${d.spawnRate.toFixed(1)}`);
+        if (d.eliteInterval > 0) bonuses.push(`精英每${d.eliteInterval}关`);
+        if (d.bossWaves && d.bossWaves.length > 0) bonuses.push(`Boss: ${d.bossWaves.join('、')}关`);
+        if (d.newEnemyTypes && d.newEnemyTypes.length > 0) {
+            // 从 enemies 数据查找中文名
+            const enemyDefs = this._getEnemyDefs();
+            const names = d.newEnemyTypes.map(eid => {
+                const def = enemyDefs.find(e => e.id === eid);
+                return def ? def.name : eid;
+            });
+            bonuses.push(`新敌人: ${names.join('、')}`);
+        }
+        if (bonuses.length === 0) bonuses.push('无额外加成');
+
+        if (bonusesEl) bonusesEl.innerHTML = bonuses.map(b => `<span class="diff-detail-bonus">${b}</span>`).join('');
+    },
+
+    /** 选择难度：更新详情 + 选中态（不开始游戏） */
+    _selectDifficulty(level) {
         this._selectedDifficulty = level;
+
+        // 更新详情面板
+        const defs = this._getDifficultyDefs();
+        this._renderDiffDetail(defs, level);
+
+        // 更新网格选中态
+        const cards = document.querySelectorAll('#diffGrid .diff-card');
+        for (const c of cards) {
+            c.classList.toggle('selected', parseInt(c.dataset.diff, 10) === level);
+        }
+    },
+
+    /** 开始战斗：隐藏难度面板 → 启动游戏 */
+    _startBattle() {
+        const level = this._selectedDifficulty;
+        if (level === -1) return;
         document.getElementById('difficultyOverlay').classList.add('hidden');
-        GameEngine.startGame(this._selectedWeapon, level);
+        GameEngine.startGame(this._selectedWeaponId, level);
     },
 
     showMenu() {
@@ -268,7 +446,7 @@ const UISystem = {
         }
     },
 
-    /** 在详情面板中显示指定角色的信息（含解锁状态） */
+    /** 在详情面板中显示指定角色的信息（含解锁状态 + 雷达图） */
     _showCharDetail(id) {
         const ch = CharacterSystem.allCharacters.find(c => c.id === id);
         const detail = document.getElementById('charDetail');
@@ -276,27 +454,23 @@ const UISystem = {
 
         const unlocked = ch.unlocked || UnlockSystem.isCharacterUnlocked(ch.id);
         if (unlocked) {
-            const s = ch.stats || {};
+            const s = ch;
             detail.innerHTML = `
                 <div class="char-detail-avatar">${AssetSystem.charIconHTML(ch.id, 80)}</div>
                 <div class="char-detail-info">
                     <div class="char-detail-name">${ch.name}</div>
                     <div class="char-detail-desc">${ch.desc}</div>
                     <div class="char-detail-stats">
-                        <span class="stat-item"><b>HP</b> ${s.maxHp}</span>
-                        <span class="stat-item"><b>速度</b> ${s.speed}</span>
-                        <span class="stat-item"><b>攻速</b> ${s.attackSpeed}</span>
-                        <span class="stat-item"><b>护甲</b> ${s.armor}</span>
-                        <span class="stat-item"><b>闪避</b> ${((s.dodge || 0) * 100).toFixed(0)}%</span>
-                        <span class="stat-item"><b>暴击</b> ${((s.critChance || 0) * 100).toFixed(0)}%</span>
-                        <span class="stat-item"><b>暴伤</b> ${(s.critMultiplier || 2.0).toFixed(1)}x</span>
-                        <span class="stat-item"><b>近战</b> ${s.meleeDamage || 0}</span>
-                        <span class="stat-item"><b>远攻</b> ${s.rangedDamage || 0}</span>
-                        <span class="stat-item"><b>元素</b> ${s.elementalDamage || 0}</span>
-                        <span class="stat-item"><b>工程</b> ${s.engineering || 0}</span>
+                        ${this._buildCharStatLines(ch)}
                     </div>
                 </div>
+                <div class="char-detail-radar" id="charRadarContainer"></div>
             `;
+            // 雷达图追加到右侧容器
+            const radarContainer = document.getElementById('charRadarContainer');
+            if (radarContainer) {
+                radarContainer.appendChild(this._renderRadarChart(ch));
+            }
         } else {
             let unlockDesc = '';
             const cond = ch.unlockCondition;
@@ -314,6 +488,313 @@ const UISystem = {
         }
         // 只有已解锁角色才能开始
         document.getElementById('startBtn').disabled = !unlocked;
+    },
+
+    /** 根据 charStats 数据驱动生成角色属性 HTML（仅显示非0值） */
+    _buildCharStatLines(ch) {
+        return (this._charStatDefs || []).map(def => {
+            const val = ch[def.key];
+            if (val === undefined || val === null || val === 0) return '';
+            const fmt = _CHAR_FMT[def.key] || (v => v);
+            return `<span class="stat-item"><b>${def['中文名']}</b> ${fmt(val)}</span>`;
+        }).filter(Boolean).join('\n');
+    },
+
+    // ─── 雷达图 ───────────────────────────────────────────────
+
+    /** 雷达图用 8 维属性键（与模板字符一致） */
+    _RADAR_KEYS: ['maxHp', 'speed', 'attackSpeed', 'armor', 'meleeDamage', 'rangedDamage', 'elementalDamage', 'engineering'],
+
+    /** 从 charStats 数据驱动获取角色雷达图轴标签 */
+    _getRadarLabels() {
+        return this._RADAR_KEYS.map(k => {
+            const d = (this._charStatDefs || []).find(def => def.key === k);
+            return d ? d['中文名'] : k;
+        });
+    },
+
+    /** 计算全角色各属性的平均值 */
+    _calcRadarAverages() {
+        const chars = CharacterSystem.allCharacters;
+        const sums = {}, counts = {};
+        for (const key of this._RADAR_KEYS) { sums[key] = 0; counts[key] = 0; }
+        for (const ch of chars) {
+            for (const key of this._RADAR_KEYS) {
+                if (typeof ch[key] === 'number') {
+                    sums[key] += ch[key];
+                    counts[key]++;
+                }
+            }
+        }
+        const avgs = {};
+        for (const key of this._RADAR_KEYS) {
+            avgs[key] = counts[key] > 0 ? sums[key] / counts[key] : 1;
+        }
+        return avgs;
+    },
+
+    /**
+     * 生成角色属性雷达图 Canvas
+     * 参考系: 外圈 = 2x 全角色平均值 (平均值在半径 50% 位置)
+     * @param {Object} ch - 角色数据对象
+     * @returns {HTMLCanvasElement}
+     */
+    _renderRadarChart(ch) {
+        const W = 180, H = 180, CX = 90, CY = 90, R = 64;
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = document.createElement('canvas');
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const keys = this._RADAR_KEYS;
+        const labels = this._getRadarLabels();
+        const n = keys.length;
+        const angleStep = (Math.PI * 2) / n;
+        const startAngle = -Math.PI / 2; // 12 点钟方向开始
+
+        // 计算该角色的归一化比值 (value / (avg * 2), 封顶 1.0)
+        const avgs = this._calcRadarAverages();
+        const ratios = {};
+        for (const key of keys) {
+            const val = typeof ch[key] === 'number' ? ch[key] : 0;
+            const avg = avgs[key] || 1;
+            ratios[key] = Math.min(1, val / (avg * 2));
+        }
+
+        ctx.clearRect(0, 0, W, H);
+
+        // ── 网格: 25% / 50% / 75% / 100% ──
+        for (let lv = 0.25; lv <= 1; lv += 0.25) {
+            ctx.beginPath();
+            for (let i = 0; i <= n; i++) {
+                const angle = startAngle + i * angleStep;
+                const x = CX + Math.cos(angle) * R * lv;
+                const y = CY + Math.sin(angle) * R * lv;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = lv === 1 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = lv === 1 ? 1 : 0.5;
+            ctx.stroke();
+        }
+
+        // ── 轴线 ──
+        for (let i = 0; i < n; i++) {
+            const angle = startAngle + i * angleStep;
+            const x = CX + Math.cos(angle) * R;
+            const y = CY + Math.sin(angle) * R;
+            ctx.beginPath();
+            ctx.moveTo(CX, CY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+
+        // ── 数据多边形 ──
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+            const key = keys[i % n];
+            const angle = startAngle + i * angleStep;
+            const r = R * ratios[key];
+            const x = CX + Math.cos(angle) * r;
+            const y = CY + Math.sin(angle) * r;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 255, 200, 0.12)';
+        ctx.fill();
+        ctx.strokeStyle = '#00ffc8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // ── 数据点 ──
+        for (let i = 0; i < n; i++) {
+            const key = keys[i];
+            const angle = startAngle + i * angleStep;
+            const r = R * ratios[key];
+            const x = CX + Math.cos(angle) * r;
+            const y = CY + Math.sin(angle) * r;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#00ffc8';
+            ctx.fill();
+        }
+
+        // ── 轴标签（根据左右半区分对齐方向，避免文字被画布裁剪） ──
+        for (let i = 0; i < n; i++) {
+            const angle = startAngle + i * angleStep;
+            const lx = CX + Math.cos(angle) * (R + 15);
+            const ly = CY + Math.sin(angle) * (R + 15);
+            ctx.textAlign = lx > CX + 2 ? 'left' : lx < CX - 2 ? 'right' : 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillText(labels[i], lx, ly);
+        }
+
+        return canvas;
+    },
+
+    // ─── 武器雷达图 ───────────────────────────────────────────
+
+    /** 雷达图用 6 维属性键 */
+    _WEAPON_RADAR_KEYS: ['damage', 'attackSpeed', 'bulletSpeed', 'range', 'pierce', 'bulletCount'],
+
+    /** 从 weaponStats 数据驱动获取武器雷达图轴标签 */
+    _getWeaponRadarLabels() {
+        return this._WEAPON_RADAR_KEYS.map(k => {
+            const d = (this._weaponStatDefs || []).find(def => def.key === k);
+            return d ? d['中文名'] : k;
+        });
+    },
+
+    /**
+     * 从武器对象中提取各维度原始值
+     * 攻速 = 1/cooldown (高=快), 射程 = max(attackRange, meleeRange)
+     */
+    _getWeaponRadarValues(w) {
+        return {
+            damage:      w.damage_lv1 || w.damage_lv2 || 0,
+            attackSpeed: w.cooldown_lv1 > 0 ? +(1 / w.cooldown_lv1).toFixed(2) : 1,
+            bulletSpeed: w.bulletSpeed || 0,
+            range:       Math.max(w.attackRange || 0, w.meleeRange || 0),
+            pierce:      w.pierce || 0,
+            bulletCount: w.bulletCount || 1,
+        };
+    },
+
+    /** 计算全武器各维度的平均值 */
+    _calcWeaponRadarAverages() {
+        const weapons = ShopSystem.allWeapons;
+        const keys = this._WEAPON_RADAR_KEYS;
+        const sums = {}, counts = {};
+        for (const k of keys) { sums[k] = 0; counts[k] = 0; }
+        for (const w of weapons) {
+            const vals = this._getWeaponRadarValues(w);
+            for (const k of keys) {
+                if (typeof vals[k] === 'number') {
+                    sums[k] += vals[k];
+                    counts[k]++;
+                }
+            }
+        }
+        const avgs = {};
+        for (const k of keys) {
+            avgs[k] = counts[k] > 0 ? sums[k] / counts[k] : 1;
+        }
+        return avgs;
+    },
+
+    /**
+     * 生成武器属性雷达图 Canvas
+     * 参考系: 外圈 = 2x 全武器平均值
+     * @param {Object} weapon - 武器数据对象
+     * @returns {HTMLCanvasElement}
+     */
+    _renderWeaponRadarChart(weapon) {
+        const W = 220, H = 220, CX = 110, CY = 110, R = 75;
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = document.createElement('canvas');
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const keys = this._WEAPON_RADAR_KEYS;
+        const labels = this._getWeaponRadarLabels();
+        const n = keys.length;
+        const angleStep = (Math.PI * 2) / n;
+        const startAngle = -Math.PI / 2;
+
+        // 归一化比值 (value / (avg * 2), 封顶 1.0)
+        const avgs = this._calcWeaponRadarAverages();
+        const vals = this._getWeaponRadarValues(weapon);
+        const ratios = {};
+        for (const k of keys) {
+            const avg = avgs[k] || 1;
+            ratios[k] = Math.min(1, (vals[k] || 0) / (avg * 2));
+        }
+
+        ctx.clearRect(0, 0, W, H);
+
+        // 网格
+        for (let lv = 0.25; lv <= 1; lv += 0.25) {
+            ctx.beginPath();
+            for (let i = 0; i <= n; i++) {
+                const angle = startAngle + i * angleStep;
+                const x = CX + Math.cos(angle) * R * lv;
+                const y = CY + Math.sin(angle) * R * lv;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = lv === 1 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = lv === 1 ? 1 : 0.5;
+            ctx.stroke();
+        }
+
+        // 轴线
+        for (let i = 0; i < n; i++) {
+            const angle = startAngle + i * angleStep;
+            const x = CX + Math.cos(angle) * R;
+            const y = CY + Math.sin(angle) * R;
+            ctx.beginPath();
+            ctx.moveTo(CX, CY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+
+        // 数据多边形
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+            const k = keys[i % n];
+            const angle = startAngle + i * angleStep;
+            const r = R * (ratios[k] || 0);
+            const x = CX + Math.cos(angle) * r;
+            const y = CY + Math.sin(angle) * r;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255, 200, 0, 0.12)';
+        ctx.fill();
+        ctx.strokeStyle = '#ffc800';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 数据点
+        for (let i = 0; i < n; i++) {
+            const k = keys[i];
+            const angle = startAngle + i * angleStep;
+            const r = R * (ratios[k] || 0);
+            const x = CX + Math.cos(angle) * r;
+            const y = CY + Math.sin(angle) * r;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffc800';
+            ctx.fill();
+        }
+
+        // 轴标签（根据左右半区分对齐方向）
+        for (let i = 0; i < n; i++) {
+            const angle = startAngle + i * angleStep;
+            const lx = CX + Math.cos(angle) * (R + 14);
+            const ly = CY + Math.sin(angle) * (R + 14);
+            ctx.textAlign = lx > CX + 2 ? 'left' : lx < CX - 2 ? 'right' : 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillText(labels[i], lx, ly);
+        }
+
+        return canvas;
     },
 
     showGameOver() {
@@ -600,44 +1081,109 @@ const UISystem = {
     _renderPlayerStatsCompact(player) {
         const container = document.getElementById('playerStats');
         container.innerHTML = '';
+        const titleEl = container.parentElement.querySelector('.panel-title');
         const statList = StatsSystem.getDisplayStats(player);
 
-        const hpDiv = document.createElement('div');
-        hpDiv.className = 'stat-item stat-item-hp';
-        hpDiv.innerHTML = `
-            <span class="stat-icon">❤️</span>
-            <span class="stat-label">生命</span>
-            <span class="stat-value danger">${Math.round(player.hp)}/${Math.round(player.maxHp)}</span>
-        `;
-        container.appendChild(hpDiv);
+        // --- 将所有条目（等级、HP、属性）合并为一个数组，一起分页 ---
+        const PER_PAGE = 14;
+        const allItems = [];
 
-        const compactOrder = ['hpRegen', 'speed', 'armor', 'damage', 'attackSpeed', 'attackRange', 'critChance', 'critMultiplier', 'lifeSteal', 'dodge', 'harvesting', 'luck'];
-        for (const id of compactOrder) {
-            const st = statList.find(s => s.id === id);
-            if (!st) continue;
-            const div = document.createElement('div');
-            let cls = '';
-            if (st.pctToCap !== null && st.pctToCap >= 85) cls = 'at-cap';
-            else if (['dodge', 'critChance', 'lifeSteal', 'hpRegen'].includes(st.id)) cls = 'positive';
-            else if (st.id === 'harvesting') cls = 'warning';
-            div.className = 'stat-item';
-            div.innerHTML = `
-                <span class="stat-icon">${st.icon}</span>
-                <span class="stat-label">${st.label}</span>
-                <span class="stat-value ${cls}">${st.value}</span>
-            `;
-            container.appendChild(div);
+        // 等级（特殊行，带 XP）
+        allItems.push({
+            _type: 'level',
+            icon: '⬆️',
+            label: '等级',
+            valueHtml: `<span class="stat-value warning">Lv.${player.level}</span><span class="stat-xp">XP ${Math.round(player.xp)}/${player.xpToNext}</span>`
+        });
+
+        // HP
+        allItems.push({
+            _type: 'hp',
+            icon: '❤️',
+            label: '生命',
+            valueHtml: `<span class="stat-value danger">${Math.round(player.hp)}/${Math.round(player.maxHp)}</span>`
+        });
+
+        // 其他属性（getDisplayStats 已过滤 deprecated=0）
+        for (const st of statList) {
+            if (st.id === 'maxHp') continue;
+            allItems.push(st);
         }
 
-        const lvDiv = document.createElement('div');
-        lvDiv.className = 'stat-item stat-level-row';
-        lvDiv.innerHTML = `
-            <span class="stat-icon">⬆️</span>
-            <span class="stat-label">等级</span>
-            <span class="stat-value warning">Lv.${player.level}</span>
-            <span class="stat-xp">XP ${Math.round(player.xp)}/${player.xpToNext}</span>
-        `;
-        container.appendChild(lvDiv);
+        // 分页
+        const pages = [];
+        let cur = [];
+        for (const item of allItems) {
+            cur.push(item);
+            if (cur.length >= PER_PAGE) {
+                pages.push(cur);
+                cur = [];
+            }
+        }
+        if (cur.length > 0) pages.push(cur);
+
+        // Tab 按钮放入 panel-title，左对齐
+        if (titleEl) {
+            titleEl.querySelectorAll('.stat-tab-btn').forEach(b => b.remove());
+            for (let i = 0; i < pages.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'stat-tab-btn' + (i === 0 ? ' active' : '');
+                btn.textContent = (i + 1).toString();
+                btn.dataset.tab = String(i);
+                btn.addEventListener('click', () => {
+                    titleEl.querySelectorAll('.stat-tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    body.querySelectorAll('.stat-tab-page').forEach(p => p.classList.remove('active'));
+                    body.querySelector(`.stat-tab-page[data-tab="${i}"]`).classList.add('active');
+                });
+                titleEl.appendChild(btn);
+            }
+        }
+
+        // 渲染分页内容
+        const body = document.createElement('div');
+        body.className = 'stat-tab-body';
+
+        for (let ti = 0; ti < pages.length; ti++) {
+            const pg = document.createElement('div');
+            pg.className = 'stat-tab-page' + (ti === 0 ? ' active' : '');
+            pg.dataset.tab = String(ti);
+
+            for (const item of pages[ti]) {
+                if (item._type === 'level' || item._type === 'hp') {
+                    // 特殊行（等级 / HP）
+                    const cls = item._type === 'level' ? 'stat-level-row' : 'stat-item-hp';
+                    const div = document.createElement('div');
+                    div.className = `stat-item ${cls}`;
+                    div.innerHTML = `
+                        <span class="stat-icon">${item.icon}</span>
+                        <span class="stat-label">${item.label}</span>
+                        ${item.valueHtml}
+                    `;
+                    pg.appendChild(div);
+                } else {
+                    // 普通属性行
+                    const div = document.createElement('div');
+                    let cls = '';
+                    if (item.pctToCap !== null && item.pctToCap >= 85) cls = 'at-cap';
+                    else if (['dodge', 'critChance', 'lifeSteal', 'hpRegen'].includes(item.id)) cls = 'positive';
+                    else if (item.id === 'harvesting') cls = 'warning';
+                    div.className = 'stat-item';
+                    let valueHtml = `<span class="stat-value ${cls}">${item.value}</span>`;
+                    if (item.note) valueHtml += `<span class="stat-note">${item.note}</span>`;
+                    div.innerHTML = `
+                        <span class="stat-icon">${item.icon}</span>
+                        <span class="stat-label">${item.label}</span>
+                        ${valueHtml}
+                    `;
+                    pg.appendChild(div);
+                }
+            }
+
+            body.appendChild(pg);
+        }
+
+        container.appendChild(body);
     },
 
     _renderShopGrid(player) {
@@ -690,7 +1236,25 @@ const UISystem = {
                 if (item.mods.speedMult) modParts.push(`${item.mods.speedMult > 0 ? '+' : ''}${Math.round(item.mods.speedMult * 100)}%移速`);
                 if (item.mods.attackRangeMult) modParts.push(`${item.mods.attackRangeMult > 0 ? '+' : ''}${Math.round((item.mods.attackRangeMult - 1) * 100)}%射程`);
             }
-            const descText = modParts.length > 0 ? modParts.join(' · ') : item.desc;
+            let descText, isStatsGrid;
+            if (isWeapon) {
+                // 数据驱动武器属性显示（仅非0值，CSS grid 2列，竖直对齐）
+                const statParts = [];
+                const shopKeys = ['damage_lv1', 'cooldown_lv1', 'attackRange', 'meleeRange', 'bulletCount', 'pierce', 'splashRadius', 'homingStrength', 'burnDps', 'chainCount', 'critChanceAdd', 'critDamageAdd', 'speedMult', 'lifeStealAdd', 'armorAdd', 'maxHpAdd', 'hpRegenAdd', 'knockback', 'sprayCone', 'slowAmount', 'slowDuration', 'healOnHit'];
+                for (const key of shopKeys) {
+                    const val = item[key];
+                    if (val === undefined || val === null || val === 0 || val === '') continue;
+                    const def = this._weaponStatDefs.find(d => d.key === key);
+                    if (!def) continue;
+                    const fmt = _WPN_FMT[key] || (v => v);
+                    statParts.push(`<span class="stat-item"><b>${def['中文名']}</b> ${fmt(val)}</span>`);
+                }
+                isStatsGrid = true;
+                descText = `<div class="stats-grid">${statParts.join('\n')}</div>`;
+            } else {
+                isStatsGrid = false;
+                descText = modParts.length > 0 ? modParts.join(' · ') : item.desc;
+            }
             const ownedText = isWeapon ? (ownedHas ? `<div class="mc-owned">已装备</div>` : '') : (count > 0 ? `<div class="mc-owned">已持 ×${count}</div>` : '');
             const affixHint = isWeapon ? '<div class="weapon-affixes"><span class="weapon-affix">📋购买后生成1个随机词条</span></div>' : '';
 
@@ -701,7 +1265,7 @@ const UISystem = {
                 <div class="mc-icon">${iconHtml}</div>
                 <div class="mc-name">${item.name}</div>
                 ${tagHtml}
-                <div class="mc-desc">${descText}</div>
+                <div class="${isStatsGrid ? 'mc-stats-grid' : 'mc-desc'}">${descText}</div>
                 ${ownedText}
                 ${affixHint}
                 <div class="mc-price-row">
@@ -850,12 +1414,14 @@ const UISystem = {
         // 资源
         document.getElementById('materialCount').textContent = p.materials;
 
-        // 升级数量（可升级次数）
-        const levelUpCount = GameEngine.levelUpPending ? 1 : 0;
+        // 角色等级标识（当前等级数 badge，有可升级时高亮）
+        const levelBadge = p.level > 1 ? p.level : 0;
         const el = document.getElementById('hudStatLevelUp');
-        if (levelUpCount > 0) {
+        if (levelBadge > 0) {
             el.classList.remove('hidden');
-            document.getElementById('hudLevelUpCount').textContent = levelUpCount;
+            document.getElementById('hudLevelUpCount').textContent = levelBadge;
+            // 有可用升级时添加脉冲高亮
+            el.classList.toggle('levelup-pending', !!GameEngine.levelUpPending);
         } else {
             el.classList.add('hidden');
         }
@@ -902,18 +1468,36 @@ const UISystem = {
         this._renderBossBar();
         this._renderHudSynergies(p);
 
-        // 调试：敌人生成状态
-        const debugEl = document.getElementById('hudDebug');
-        if (debugEl) {
-            const eTypes = typeof EnemySystem !== 'undefined' ? Object.keys(EnemySystem.types).join(',') : 'N/A';
-            const eCount = typeof EnemySystem !== 'undefined' ? EnemySystem.enemies.filter(e => e.alive).length : 0;
-            debugEl.textContent = [
-                `波次:${WaveSystem.currentLevel} 激活:${WaveSystem.waveActive} 预算:${WaveSystem._remainingBudget}`,
-                `倒计时:${Math.ceil(Math.max(0, WaveSystem.levelDuration - WaveSystem.waveTimer))}s`,
-                `敌人数:${eCount} 类型数:${Object.keys(EnemySystem.types).length}`,
-                `敌人类型:[${eTypes}]`,
-            ].join('\n');
+        // 调试面板（数据驱动，由 debug.csv 控制）
+        this._renderDebug();
+    },
+
+    /** 调试面板：按 group 分组，遍历 debug.csv 中 enabled 的条目并求值显示 */
+    _renderDebug() {
+        const body = document.querySelector('#hudDebug .debug-body');
+        if (!body) return;
+
+        const groups = {};
+        for (const d of this._debugEnabled) {
+            if (!groups[d.group]) groups[d.group] = [];
+            let value = '—';
+            try {
+                // 在全局作用域中安全求值（WaveSystem / EnemySystem 等都在 window 上）
+                value = new Function('return (' + d.expr + ')')();
+            } catch (e) {
+                value = 'err';
+            }
+            groups[d.group].push({ label: d.label, value, desc: d.desc });
         }
+
+        const lines = [];
+        for (const [groupName, items] of Object.entries(groups)) {
+            lines.push(`[${groupName}]`);
+            for (const item of items) {
+                lines.push(`  ${item.label}: ${item.value}`);
+            }
+        }
+        body.textContent = lines.join('\n');
     },
 
     /** Boss HP 条 */

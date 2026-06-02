@@ -158,6 +158,9 @@ const WaveSystem = {
     /** 难度偏移(0-10)，叠加到波次缩放 */
     difficultyOffset: 0,
 
+    /** 难度完整配置（从 difficulty.json 加载） */
+    difficultyConfig: null,
+
     /** 有效波次等级（含难度偏移） */
     get effectiveLevel() { return this.currentLevel + (this.difficultyOffset || 0); },
 
@@ -228,19 +231,24 @@ const WaveSystem = {
     // 计算属性
     // -------------------------------------------------------
 
-    /** 生成间隔（随波次递减） */
+    /** 生成间隔（随波次递减，受难度 spawnRate 影响） */
     get spawnInterval() {
-        return Math.max(0.3, 1.5 - (this.currentLevel - 1) * 0.03);
+        const base = Math.max(0.3, 1.5 - (this.currentLevel - 1) * 0.03);
+        const rate = this.difficultyConfig ? this.difficultyConfig.spawnRate : 1;
+        return base / rate;
     },
 
-    /** 每批生成数量 */
+    /** 每批生成数量（受难度 spawnRate 影响） */
     get spawnsPerBatch() {
         const lv = this.currentLevel;
-        if (lv <= 3) return 2;
-        if (lv <= 6) return 3;
-        if (lv <= 10) return 4;
-        if (lv <= 15) return 5;
-        return 6;
+        let base = 2;
+        if (lv <= 3) base = 2;
+        else if (lv <= 6) base = 3;
+        else if (lv <= 10) base = 4;
+        else if (lv <= 15) base = 5;
+        else base = 6;
+        const rate = this.difficultyConfig ? this.difficultyConfig.spawnRate : 1;
+        return Math.round(base * Math.max(1, rate * 0.7));
     },
 
     /** 同屏上限 */
@@ -259,14 +267,16 @@ const WaveSystem = {
         this.currentLevel++;
         const config = this._getConfig();
 
-        // 支持两种配置格式：WAVE_INTERVALS 用 budgetMul，waves.json 用 minBudget/maxBudget
+        // 预算 = avgBudget × 缓变倍率（而非 × effectiveLevel，避免指数暴增）
+        // 缓变: wave1=×1.0, wave5=×2.2, wave10=×3.7, wave17+=×6(封顶)
+        const budgetScale = Math.min(6, 1 + (this.effectiveLevel - 1) * 0.3);
         if (config && config.minBudget !== undefined && config.maxBudget !== undefined) {
             const avgBudget = (config.minBudget + config.maxBudget) / 2;
-            this._remainingBudget = Math.floor(avgBudget * this.effectiveLevel);
+            this._remainingBudget = Math.floor(avgBudget * budgetScale);
         } else {
             const baseBudget = 10;
             const budgetMul = config ? config.budgetMul : 1.0;
-            this._remainingBudget = Math.floor(baseBudget * budgetMul * this.effectiveLevel);
+            this._remainingBudget = Math.floor(baseBudget * budgetMul * budgetScale);
         }
 
         // Boss 波: 预留 10 budget
@@ -297,6 +307,12 @@ const WaveSystem = {
         if (typeof EnemySystem !== 'undefined') {
             EnemySystem.enemies = [];
         }
+        // 清理所有子弹
+        if (typeof BulletSystem !== 'undefined' && BulletSystem.clear) {
+            BulletSystem.clear();
+        }
+        // 角色重置到待机状态
+        this._resetPlayerIdle();
     },
 
     // -------------------------------------------------------
@@ -348,6 +364,28 @@ const WaveSystem = {
     /**
      * 生成一批敌人
      */
+    /** 构建完整的可用敌人类型池（含难度解锁 + 精英注入） */
+    _buildTypePool(config) {
+        // 基础池：从可用 Tier 展开
+        const tiers = config.availableTiers || [1];
+        const pool = new Set();
+        for (const t of tiers) {
+            const def = ENEMY_TIERS[t];
+            if (def) def.types.forEach(id => pool.add(id));
+        }
+        // 难度解锁额外敌人（newEnemyTypes）
+        const cfg = this.difficultyConfig;
+        if (cfg && cfg.newEnemyTypes && cfg.newEnemyTypes.length > 0) {
+            cfg.newEnemyTypes.forEach(id => pool.add(id));
+        }
+        // 精英间隔注入
+        if (cfg && cfg.eliteInterval > 0 && this.currentLevel > 0 &&
+            this.currentLevel % cfg.eliteInterval === 0) {
+            pool.add('elite');
+        }
+        return [...pool];
+    },
+
     _spawnBatch(player) {
         const config = this._getConfig();
         if (!config) return;
@@ -358,6 +396,8 @@ const WaveSystem = {
         const pattern = config.pattern || 'random';
         const positions = SPAWN_PATTERNS[pattern].getPositions(count, player);
         const spawnList = [];
+        const typePool = this._buildTypePool(config);
+        const diffMult = this.difficultyConfig ? this.difficultyConfig.enemyMult : 1;
 
         // 计算 Build 克制类型
         let counterTypes = [];
@@ -378,14 +418,8 @@ const WaveSystem = {
                 typeId = counterTypes[Math.floor(Math.random() * counterTypes.length)];
             }
 
-            if (!typeId) {
-                // 从可用 Tier 中选
-                const tiers = config.availableTiers || [1];
-                const tier = tiers[Math.floor(Math.random() * tiers.length)];
-                const tierDef = ENEMY_TIERS[tier];
-                if (tierDef) {
-                    typeId = tierDef.types[Math.floor(Math.random() * tierDef.types.length)];
-                }
+            if (!typeId && typePool.length > 0) {
+                typeId = typePool[Math.floor(Math.random() * typePool.length)];
             }
 
             if (typeId) {
@@ -398,7 +432,7 @@ const WaveSystem = {
         }
 
         if (spawnList.length > 0 && typeof EnemySystem !== 'undefined') {
-            EnemySystem.createBatch(spawnList, this.effectiveLevel);
+            EnemySystem.createBatch(spawnList, this.effectiveLevel, diffMult);
         }
     },
 
@@ -460,18 +494,39 @@ const WaveSystem = {
         return Math.max(0, 60 - this.waveTimer);
     },
 
-    /** 是否 Boss 波 */
+    /** 是否 Boss 波（优先使用难度配置中的 bossWaves） */
     isBossWave() {
-        return this.currentLevel > 0 && this.currentLevel % 5 === 0;
+        if (this.currentLevel <= 0) return false;
+        const cfg = this.difficultyConfig;
+        if (cfg && cfg.bossWaves && cfg.bossWaves.length > 0) {
+            return cfg.bossWaves.includes(this.currentLevel);
+        }
+        return this.currentLevel % 5 === 0;
     },
 
     // -------------------------------------------------------
     // 重置
     // -------------------------------------------------------
 
+    /** 重置角色攻击动画 → 待机 */
+    _resetPlayerIdle() {
+        const p = typeof PlayerSystem !== 'undefined' ? PlayerSystem.player : null;
+        if (!p) return;
+        if (p.weaponParams) {
+            for (const key of Object.keys(p.weaponParams)) {
+                const wp = p.weaponParams[key];
+                wp._attackAnimTimer = 0;
+                wp._attackAnimDuration = 0;
+            }
+        }
+        p.weaponAnimations = [];
+        p._sweepPending = null;
+    },
+
     reset() {
         this.currentLevel = 0;
         this.difficultyOffset = 0;
+        this.difficultyConfig = null;
         this.waveActive = false;
         this.waveTransitioning = false;
         this.waveTimer = 0;

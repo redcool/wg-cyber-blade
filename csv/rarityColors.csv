@@ -1,0 +1,12 @@
+# 等级颜色配置表 (Brotato 土豆兄弟 风格)
+# level: 等级 1-5
+# key: 程序内部标识
+# name: 显示名称
+# color: 前景色
+# bg: 半透明背景色
+level,key,name,color,bg
+1,common,普通,#ffffff,"rgba(255,255,255,0.12)"
+2,uncommon,优秀,#4A9BD1,"rgba(74,155,209,0.12)"
+3,rare,稀有,#AD5AFF,"rgba(173,90,255,0.12)"
+4,epic,史诗,#FF3B3B,"rgba(255,59,59,0.12)"
+5,legendary,传说,#FFD700,"rgba(255,215,0,0.15)"

@@ -441,34 +441,38 @@ const EnemySystem = {
      * @param {number} waveLevel
      * @returns {{ hp: number, damage: number, speed: number }}
      */
-    scaleByWave(type, waveLevel) {
+    scaleByWave(type, waveLevel, difficultyMult) {
         const level = Math.max(1, waveLevel || 1);
-        const hpMult = 1 + level * 0.12;
-        const dmgMult = 1 + level * 0.10;
-        const spdMult = 1 + level * 0.04;
+        // 难度曲线: 每波 +15%HP +15%DMG +5%SPD（增强玩家危险感）
+        const hpMult = 1 + level * 0.15;
+        const dmgMult = 1 + level * 0.15;
+        const spdMult = 1 + level * 0.05;
 
         let extraHp = 0;
         let extraDmg = 0;
-        if (type.isElite && level >= 10) {
-            extraHp = (level - 10) * 0.10;
-            extraDmg = (level - 10) * 0.10;
+        // 精英从第8波开始额外 +15%/级
+        if (type.isElite && level >= 8) {
+            extraHp = (level - 8) * 0.15;
+            extraDmg = (level - 8) * 0.15;
         }
-        if (type.isBoss && level >= 15) {
-            extraHp = (level - 15) * 0.15;
-            extraDmg = (level - 15) * 0.15;
+        // Boss从第12波开始额外 +20%/级
+        if (type.isBoss && level >= 12) {
+            extraHp = (level - 12) * 0.20;
+            extraDmg = (level - 12) * 0.20;
         }
 
+        const diffMult = difficultyMult || 1;
         return {
-            hp: Math.floor((type.hp || 30) * (hpMult + extraHp)),
-            damage: Math.floor((type.damage || 8) * (dmgMult + extraDmg)),
-            speed: Math.floor((type.speed || 80) * spdMult),
+            hp: Math.floor((type.hp || 30) * (hpMult + extraHp) * diffMult),
+            damage: Math.floor((type.damage || 8) * (dmgMult + extraDmg) * diffMult),
+            speed: Math.floor((type.speed || 80) * spdMult * (1 + (diffMult - 1) * 0.5)), // 速度缩放减半，避免太极端
         };
     },
 
     /**
      * 创建敌人实例
      */
-    create(typeId, x, y, waveLevel) {
+    create(typeId, x, y, waveLevel, difficultyMult) {
         const type = this.types[typeId];
         if (!type) {
             console.warn('[EnemySystem] 未知敌人类型:', typeId, '已有类型:', Object.keys(this.types));
@@ -476,7 +480,7 @@ const EnemySystem = {
         }
 
         const level = Math.max(1, waveLevel || 1);
-        const scaled = this.scaleByWave(type, level);
+        const scaled = this.scaleByWave(type, level, difficultyMult);
 
         const enemy = {
             typeId,
@@ -526,11 +530,11 @@ const EnemySystem = {
     /**
      * 批量创建（波次系统调用）
      */
-    createBatch(spawnList, waveLevel) {
+    createBatch(spawnList, waveLevel, difficultyMult) {
         if (!spawnList || spawnList.length === 0) return [];
         const results = [];
         for (const item of spawnList) {
-            const e = this.create(item.typeId, item.x, item.y, waveLevel);
+            const e = this.create(item.typeId, item.x, item.y, waveLevel, difficultyMult);
             if (e) results.push(e);
         }
         return results;

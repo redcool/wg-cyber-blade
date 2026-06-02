@@ -1,18 +1,8 @@
 // ============================================================
-// stats.js — v3 新四层伤害公式 + 六类属性系统
+// stats.js — 属性系统 + statDefs 定义
+// 伤害公式已移至 formula.js (FormulaSystem)
+// 使用 FormulaSystem.TAG_TO_FLAT_STAT 获取武器-属性映射
 // ============================================================
-
-/** Weapon Tag → Flat Stat 映射表 */
-const TAG_TO_FLAT_STAT = {
-    melee:     'meleeDamage',
-    ranged:    'rangedDamage',
-    fire:      'elementalDamage',
-    explosive: 'elementalDamage',
-    crit:      null,
-    tech:      'engineering',
-    economy:   null,
-};
-
 const StatsSystem = {
     // -------------------------------------------------------
     // 1. 属性定义（六类 ~35 属性）
@@ -65,157 +55,65 @@ const StatsSystem = {
         bulletCount:    { category: 'offense', label: '子弹数量（旧）', icon: '🔫', min: 1, max: 20, fmt: 'int', _deprecated: true, desc: (v) => `子弹 +${v}` },
         bulletPierce:   { category: 'special', label: '穿透（旧）',   icon: '➡️', min: 0, max: 10, fmt: 'int', _deprecated: true, desc: (v) => `穿透 +${v}` },
         bulletSpeed:    { category: 'offense', label: '弹速（旧）',   icon: '➡️', min: 100, max: 2000, fmt: 'int', _deprecated: true, desc: (v) => `弹道速度 +${Math.round(v * 100)}%` },
-        pickupRange:    { category: 'mobility', label: '拾取范围（旧）', icon: '🧲', min: 10, max: 300, fmt: 'int', _deprecated: true, desc: (v) => `拾取范围 +${v}` },
+        pickupRange:    { category: 'mobility', label: '拾取范围', icon: '🧲', min: 10, max: 300, fmt: 'int', desc: (v) => `拾取范围 +${v}` },
     },
 
     // -------------------------------------------------------
-    // 2. 四层伤害公式
+    // 2. 伤害公式 → 委托给 FormulaSystem
     // -------------------------------------------------------
 
     /** 伤害公式类别顺序 */
     DAMAGE_LAYERS: ['B', 'F', 'P', 'C', 'S'],
 
     /**
-     * 获取 Base 层伤害
-     * B = weapon.baseDamage || (player._baseDamage × weapon.damageMult)
-     * @param {Object} weapon
-     * @param {Object} player
-     * @returns {number}
+     * @deprecated 请使用 FormulaSystem._calcBaseDamage
      */
     _calcBaseDamage(weapon, player) {
-        const baseAtk = player._baseDamage || 15;
-        const mult = weapon.damageMult || 1.0;
-        return baseAtk * mult;
+        return FormulaSystem._calcBaseDamage(weapon, player, 1);
     },
 
     /**
-     * 获取 Flat 层伤害：按武器 Tag 选择对应 flat stat
-     * @param {Object} weapon
-     * @param {Object} player
-     * @returns {number}
+     * @deprecated 请使用 FormulaSystem._calcFlatDamage
      */
     _calcFlatDamage(weapon, player) {
-        const tag = weapon.tag || '';
-        const flatStat = TAG_TO_FLAT_STAT[tag];
-        if (!flatStat) return 0;
-        return player[flatStat] || 0;
+        return FormulaSystem._calcFlatDamage(weapon, player);
     },
 
     /**
-     * 获取 Percent 层倍率
-     * P = 1 + player.damagePercent
-     *
-     * 兼容旧字段: player.damage 是绝对基础伤害值（非百分比），不能用作 P 层。
-     * 如果 damagePercent 未定义，返回 1.0（无百分比加成），
-     * 基础伤害由 _calcBaseDamage 处理。
-     * @param {Object} player
-     * @returns {number}
+     * @deprecated 请使用 FormulaSystem._calcPercentMultiplier
      */
     _calcPercentMultiplier(player) {
-        if (player.damagePercent !== undefined && player.damagePercent !== null) {
-            return 1 + player.damagePercent;
-        }
-        // 旧字段 player.damage 是绝对值，不是百分比
-        // P 层默认 1.0（无百分比加成）
-        return 1.0;
+        return FormulaSystem._calcPercentMultiplier(player);
     },
 
     /**
-     * 获取 Crit 层倍率（单次暴击判定）
-     * 直接设置 player._lastCrit
-     * @param {Object} player
-     * @returns {number}
+     * @deprecated 请使用 FormulaSystem._calcCritMultiplier
      */
-    _calcCritMultiplier(player) {
-        const critChance = player.critChance || 0;
-        const isCrit = Math.random() < critChance;
-        player._lastCrit = isCrit;
-
-        if (!isCrit) return 1.0;
-
-        let cd = player.critDamage;
-        if (cd === undefined || cd === null) {
-            cd = player.critMultiplier || 2.0; // 兼容旧字段
-        }
-        return cd;
+    _calcCritMultiplier(player, weaponParams) {
+        return FormulaSystem._calcCritMultiplier(player, weaponParams);
     },
 
     /**
-     * 获取 Special 层倍率（Phase 1: 仅 berserkerBlood）
-     * @param {Object} player
-     * @param {Object} target
-     * @returns {number}
+     * @deprecated 请使用 FormulaSystem._getSpecialModifier
      */
     _getSpecialModifier(player, target) {
-        let S = 1.0;
-
-        // berserkerBlood → lowHp 条件
-        if (player.berserkerBlood && player.hp !== undefined && player.maxHp !== undefined) {
-            if (player.hp < player.maxHp * 0.3) {
-                S *= 1.30;
-            }
-        }
-
-        // TODO Phase 2: 从 items.json / passives.json 加载 specialConditions
-        // TODO Phase 2: 检查 target 状态 (burning/slowed/elite)
-
-        return S;
+        return FormulaSystem._getSpecialModifier(player, target);
     },
 
     /**
-     * 计算单次打击的最终伤害（含实际暴击判定）
-     * @param {Object} weapon - 武器数据对象
-     * @param {Object} player - 玩家属性对象
-     * @param {Object} target - 目标对象（敌人，含状态）
-     * @returns {number} 最终伤害（整数）
-     *
-     * 算法: FinalDamage = round( (B + F) × P × C × S )
+     * 计算单次打击的最终伤害
+     * 委托给 FormulaSystem.calcDamage
      */
-    calcDamage(weapon, player, target) {
-        const B = this._calcBaseDamage(weapon, player);
-        const F = this._calcFlatDamage(weapon, player);
-        const P = this._calcPercentMultiplier(player);
-
-        // Crit 层含随机判定，_calcCritMultiplier 直接设置 player._lastCrit
-        const C = this._calcCritMultiplier(player);
-
-        const S = this._getSpecialModifier(player, target);
-
-        const result = Math.round((B + F) * P * C * S);
-        return result;
+    calcDamage(weapon, player, target, weaponParams) {
+        return FormulaSystem.calcDamage(weapon, player, target, weaponParams);
     },
 
     /**
-     * 计算 DPS 期望（用于属性面板显示）
-     * @param {Object} weapon - 武器数据
-     * @param {Object} player - 玩家属性
-     * @returns {number} - 期望每秒伤害
-     *
-     * 算法:
-     * 1. avgDamage = (B+F) × P × (1 + critChance × (critDamage-1)) × S_default
-     *    S_default = 1.0 (不应用条件倍率)
-     * 2. attackSpeed = player.attackSpeed × weapon.attackSpeedMult
-     * 3. dps = avgDamage × attackSpeed
+     * 计算 DPS 期望
+     * 委托给 FormulaSystem.calcDPS
      */
-    calcDPS(weapon, player) {
-        const B = this._calcBaseDamage(weapon, player);
-        const F = this._calcFlatDamage(weapon, player);
-        const P = this._calcPercentMultiplier(player);
-
-        let cd = player.critDamage;
-        if (cd === undefined || cd === null) {
-            cd = player.critMultiplier || 2.0;
-        }
-        const critChance = player.critChance || 0;
-        const C_exp = 1 + critChance * (cd - 1);
-
-        // DPS 不应用 Special 层条件倍率
-        const avgDamage = (B + F) * P * C_exp;
-
-        const weaponSpeedMult = weapon.attackSpeedMult || 1.0;
-        const atkSpeed = (player.attackSpeed || 1.0) * weaponSpeedMult;
-
-        return avgDamage * atkSpeed;
+    calcDPS(weapon, player, weaponParams) {
+        return FormulaSystem.calcDPS(weapon, player, weaponParams);
     },
 
     /**
@@ -377,10 +275,41 @@ const StatsSystem = {
     },
 
     // -------------------------------------------------------
-    // 4. 经验系统（不变）
+    // 4. 经验系统（characterLevel.csv xpRequired 驱动）
     // -------------------------------------------------------
 
+    /** characterLevel 缓存（按 level 升序） */
+    _xpTable: null,
+
+    /**
+     * 加载等级成长表并提取 xpRequired 为 _xpTable
+     * @param {Object[]} rows - characterLevel.json 数据
+     */
+    loadXpTable(rows) {
+        rows = (rows || []).sort((a, b) => a.level - b.level);
+        this._xpTable = rows;
+    },
+
+    /** 从 table 获取累计 XP，level >=1 */
+    _cumulativeFromTable(level) {
+        if (!this._xpTable || this._xpTable.length === 0) return 0;
+        const idx = Math.min(Math.max(level - 1, 0), this._xpTable.length - 1);
+        return this._xpTable[idx].xpRequired || 0;
+    },
+
+    /**
+     * 获取当前等级 → 下一级所需经验值
+     * @param {number} level - 当前等级 (>=1)
+     * @returns {number} 需要经验值
+     */
     xpForLevel(level) {
+        if (level < 1) level = 1;
+        if (this._xpTable && this._xpTable.length > 0) {
+            const next = this._cumulativeFromTable(level + 1);
+            const curr = this._cumulativeFromTable(level);
+            return Math.max(1, next - curr);
+        }
+        // 无表回退: 原始公式
         if (level <= 1) return 20;
         if (level <= 5) return Math.floor(20 + (level - 1) * 15);
         if (level <= 10) return Math.floor(80 + (level - 5) * 30);
@@ -431,5 +360,5 @@ const StatsSystem = {
 
 // CJS 导出（浏览器中 module 为 undefined，不生效；Node 中生效）
 if (typeof module !== 'undefined') {
-    module.exports = { StatsSystem, TAG_TO_FLAT_STAT };
+    module.exports = { StatsSystem };
 }

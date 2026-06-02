@@ -1,0 +1,30 @@
+# 调试信息配置表
+# 如果 expr 列包含逗号，必须用双引号括起来
+key,label,desc,group,expr,enabled
+currentWave,波次,Current wave,波次,WaveSystem.currentLevel,true
+effectiveLevel,有效等级,Effective level (wave+difficulty),波次,WaveSystem.effectiveLevel,true
+difficultyOffset,难度偏移,Difficulty offset,波次,WaveSystem.difficultyOffset,true
+difficultyName,难度,Difficulty name,波次,(WaveSystem.difficultyConfig||{}).中文名||'',true
+waveActive,激活,Wave active,波次,WaveSystem.waveActive,true
+waveTimer,波次时间,Wave timer,波次,WaveSystem.waveTimer.toFixed(1),true
+remainingBudget,剩余预算,Remaining budget,波次,WaveSystem._remainingBudget,true
+spawnInterval,生成间隔,Spawn interval,波次,WaveSystem.spawnInterval.toFixed(2),true
+spawnsPerBatch,每批生成,Spawns per batch,波次,WaveSystem.spawnsPerBatch,true
+spawnTimer,生成计时,Spawn timer,波次,WaveSystem.spawnTimer.toFixed(2),true
+aliveCount,存活敌人,Alive enemies,敌人,(typeof EnemySystem!=='undefined'?EnemySystem.enemies.filter(e=>e.alive).length:0),true
+totalEnemies,总敌人数,Total enemies,敌人,(typeof EnemySystem!=='undefined'?EnemySystem.enemies.length:0),true
+enemyTypeCount,敌人类型数,Enemy type count,敌人,(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).length:0),true
+enemyTypes,敌人类型列表,Enemy types,敌人,"(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).join(','):'N/A')",true
+aliveEnemyTypes,存活类型,Alive enemy types,敌人,"(()=>{const m={};(typeof EnemySystem!=='undefined'?EnemySystem.enemies:[]).forEach(e=>{if(e.alive)m[e.typeId]=(m[e.typeId]||0)+1});return Object.entries(m).map(([k,v])=>k+':'+v).join(' ')})()",true
+playerHp,玩家HP,Player HP,玩家,(typeof PlayerSystem!=='undefined'?PlayerSystem.player.hp.toFixed(0)+'/'+PlayerSystem.player.maxHp:0),true
+playerSpeed,玩家速度,Player speed,玩家,(typeof PlayerSystem!=='undefined'?PlayerSystem.player.speed.toFixed(0):0),true
+playerMaterials,材料,Materials,玩家,(typeof PlayerSystem!=='undefined'?PlayerSystem.player.materials:0),true
+weaponCount,武器数,Weapon count,玩家,(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.weapons||[]).length:0),true
+itemCount,道具数,Item count,玩家,(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.items||[]).length:0),true
+playerKills,击杀数,Kills,玩家,(typeof PlayerSystem!=='undefined'?PlayerSystem.player.kills:0),true
+playerLevel,玩家等级,Player level,玩家,(typeof PlayerSystem!=='undefined'?PlayerSystem.player.level:0),true
+bossActive,Boss活跃,Boss active,Boss,(typeof BossSystem!=='undefined'?BossSystem.isActive():false),true
+bossHp,Boss HP,Boss HP,Boss,"(()=>{if(typeof BossSystem==='undefined')return'';const d=BossSystem.getHpBarData();return d?d.hp+'/'+d.maxHp:''})()",true
+eliteInterval,精英间隔,Elite interval,波次,(WaveSystem.difficultyConfig||{}).eliteInterval||0,true
+enemyMult,怪物倍率,Enemy multiplier,波次,((WaveSystem.difficultyConfig||{}).enemyMult||1).toFixed(1),true
+bossWaves,Boss波次,Boss waves,波次,"((WaveSystem.difficultyConfig||{}).bossWaves||[]).join(',')",true

@@ -22,7 +22,7 @@ const BulletSystem = {
         b.maxRange = extra.range || 0;
         b.isPlayer = isPlayer;
         b.hits = [];
-        b.radius = isPlayer ? 4 : 3;
+        b.radius = isPlayer ? 2 : 3;
         b.weaponId = weaponId || 'pistol';
         // 清除池复用污染（强制重置所有特殊属性，防止上一轮残留）
         b.isMortar = false;

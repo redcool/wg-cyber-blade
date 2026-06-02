@@ -1,0 +1,183 @@
+[
+  {
+    "id": 0,
+    "中文名": "标准",
+    "英文名": "Standard",
+    "enemyMult": 1,
+    "spawnRate": 1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "默认难度，怪物属性为标准值"
+  },
+  {
+    "id": 1,
+    "中文名": "挑战★1",
+    "英文名": "Challenge 1",
+    "enemyMult": 1.2,
+    "spawnRate": 1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "怪物属性提升至1.2倍"
+  },
+  {
+    "id": 2,
+    "中文名": "挑战★2",
+    "英文名": "Challenge 2",
+    "enemyMult": 1.4,
+    "spawnRate": 1.1,
+    "eliteInterval": 0,
+    "bossWaves": null,
+    "newEnemyTypes": [],
+    "desc": "怪物属性1.4倍，生成速度略增"
+  },
+  {
+    "id": 3,
+    "中文名": "挑战★3",
+    "英文名": "Challenge 3",
+    "enemyMult": 1.6,
+    "spawnRate": 1.2,
+    "eliteInterval": 15,
+    "bossWaves": [
+      15
+    ],
+    "newEnemyTypes": [
+      "tank"
+    ],
+    "desc": "怪物属性1.6倍，15关出Boss，新增重装机兵"
+  },
+  {
+    "id": 4,
+    "中文名": "挑战★4",
+    "英文名": "Challenge 4",
+    "enemyMult": 1.8,
+    "spawnRate": 1.3,
+    "eliteInterval": 10,
+    "bossWaves": [
+      10,
+      20
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged"
+    ],
+    "desc": "怪物属性1.8倍，每10关出精英，Boss在10/20关"
+  },
+  {
+    "id": 5,
+    "中文名": "挑战★5",
+    "英文名": "Challenge 5",
+    "enemyMult": 2,
+    "spawnRate": 1.4,
+    "eliteInterval": 8,
+    "bossWaves": [
+      8,
+      16,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder"
+    ],
+    "desc": "怪物2倍，精英间隔8关，Boss在8/16/24关"
+  },
+  {
+    "id": 6,
+    "中文名": "挑战★6",
+    "英文名": "Challenge 6",
+    "enemyMult": 2.3,
+    "spawnRate": 1.5,
+    "eliteInterval": 6,
+    "bossWaves": [
+      6,
+      12,
+      18,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer"
+    ],
+    "desc": "怪物2.3倍，精英6关间隔"
+  },
+  {
+    "id": 7,
+    "中文名": "挑战★7",
+    "英文名": "Challenge 7",
+    "enemyMult": 2.6,
+    "spawnRate": 1.6,
+    "eliteInterval": 5,
+    "bossWaves": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar"
+    ],
+    "desc": "怪物2.6倍，精英5关间隔"
+  },
+  {
+    "id": 8,
+    "中文名": "挑战★8",
+    "英文名": "Challenge 8",
+    "enemyMult": 3,
+    "spawnRate": 1.8,
+    "eliteInterval": 4,
+    "bossWaves": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar",
+      "blinker"
+    ],
+    "desc": "怪物3倍，精英4关间隔"
+  },
+  {
+    "id": 9,
+    "中文名": "极限★9",
+    "英文名": "Extreme 9",
+    "enemyMult": 3.5,
+    "spawnRate": 2,
+    "eliteInterval": 3,
+    "bossWaves": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24
+    ],
+    "newEnemyTypes": [
+      "tank",
+      "ranged",
+      "exploder",
+      "healer",
+      "mortar",
+      "blinker",
+      "elite"
+    ],
+    "desc": "怪物3.5倍，精英3关间隔，极限挑战"
+  }
+]

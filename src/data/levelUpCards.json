@@ -1,46 +1,1283 @@
 [
-
-  { "id": "maxHp_20",       "name": "生命强化",     "desc": "最大生命 +20%",       "icon": "❤️",  "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "maxHp": { "type": "mult", "value": 0.20 } } },
-  { "id": "maxHp_40",       "name": "生命祝福",     "desc": "最大生命 +40%",       "icon": "❤️",  "rarity": "rare",     "category": "survival", "tags": [],             "statMods": { "maxHp": { "type": "mult", "value": 0.40 } } },
-  { "id": "armor_3",        "name": "合金护甲",     "desc": "护甲 +3",             "icon": "🛡️",  "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "armor": { "type": "add", "value": 3 } } },
-  { "id": "armor_6",        "name": "重甲锻造",     "desc": "护甲 +6",             "icon": "🛡️",  "rarity": "rare",     "category": "survival", "tags": ["melee"],       "statMods": { "armor": { "type": "add", "value": 6 } } },
-  { "id": "dodge_3",        "name": "幽影步法",     "desc": "闪避 +3%",            "icon": "💨",   "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "dodge": { "type": "add", "value": 0.03 } } },
-  { "id": "hpRegen_1",      "name": "再生之力",     "desc": "生命回复 +1/秒",       "icon": "💚",   "rarity": "common",   "category": "survival", "tags": [],             "statMods": { "hpRegen": { "type": "add", "value": 1.0 } } },
-  { "id": "lifeSteal_3",    "name": "嗜血本能",     "desc": "生命偷取 +3%",        "icon": "🩸",   "rarity": "rare",     "category": "survival", "tags": ["melee"],       "statMods": { "lifeSteal": { "type": "add", "value": 0.03 } } },
-
-  { "id": "damage_10",      "name": "攻击强化",     "desc": "伤害 +10%",           "icon": "🗡️",  "rarity": "common",   "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.10 } } },
-  { "id": "damage_25",      "name": "毁灭之力",     "desc": "伤害 +25%",           "icon": "🗡️",  "rarity": "rare",     "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.25 } } },
-  { "id": "damage_50",      "name": "末日审判",     "desc": "伤害 +50%",           "icon": "🗡️",  "rarity": "epic",     "category": "offense",  "tags": [],             "statMods": { "damagePercent": { "type": "add", "value": 0.50 } } },
-  { "id": "attackSpeed_15", "name": "疾风连击",     "desc": "攻速 +15%",           "icon": "⚡",   "rarity": "common",   "category": "offense",  "tags": [],             "statMods": { "attackSpeed": { "type": "mult", "value": 0.15 } } },
-  { "id": "attackSpeed_30", "name": "狂战士之怒",   "desc": "攻速 +30%",           "icon": "⚡",   "rarity": "rare",     "category": "offense",  "tags": ["melee"],       "statMods": { "attackSpeed": { "type": "mult", "value": 0.30 } } },
-  { "id": "critChance_5",   "name": "精准锁定",     "desc": "暴击率 +5%",          "icon": "💥",   "rarity": "common",   "category": "offense",  "tags": ["crit"],        "statMods": { "critChance": { "type": "add", "value": 0.05 } } },
-  { "id": "critDamage_50",  "name": "致命一击",     "desc": "暴击伤害 +50%",       "icon": "🔥",   "rarity": "rare",     "category": "offense",  "tags": ["crit"],        "statMods": { "critDamage": { "type": "add", "value": 0.5 } } },
-  { "id": "melee_flat_5",   "name": "近战专精",     "desc": "近战伤害 +5",         "icon": "⚔️",   "rarity": "common",   "category": "offense",  "tags": ["melee"],       "statMods": { "meleeDamage": { "type": "add", "value": 5 } } },
-  { "id": "ranged_flat_5",  "name": "远程专精",     "desc": "远程伤害 +5",         "icon": "🏹",   "rarity": "common",   "category": "offense",  "tags": ["ranged"],      "statMods": { "rangedDamage": { "type": "add", "value": 5 } } },
-  { "id": "elemental_flat_5","name": "元素之力",    "desc": "元素伤害 +5",         "icon": "🔮",   "rarity": "common",   "category": "offense",  "tags": ["fire","explosive"], "statMods": { "elementalDamage": { "type": "add", "value": 5 } } },
-  { "id": "eng_flat_5",     "name": "工程强化",     "desc": "工程 +5",             "icon": "🤖",   "rarity": "common",   "category": "offense",  "tags": ["tech"],        "statMods": { "engineering": { "type": "add", "value": 5 } } },
-
-  { "id": "speed_10",       "name": "疾跑",         "desc": "移速 +10%",           "icon": "⚡",   "rarity": "common",   "category": "mobility", "tags": [],             "statMods": { "speed": { "type": "mult", "value": 0.10 } } },
-  { "id": "speed_20",       "name": "神行太保",     "desc": "移速 +20%",           "icon": "⚡",   "rarity": "rare",     "category": "mobility", "tags": [],             "statMods": { "speed": { "type": "mult", "value": 0.20 } } },
-  { "id": "range_15",       "name": "鹰眼",         "desc": "射程 +15%",           "icon": "🎯",   "rarity": "common",   "category": "mobility", "tags": ["ranged"],      "statMods": { "attackRange": { "type": "mult", "value": 0.15 } } },
-  { "id": "range_30",       "name": "千里眼",       "desc": "射程 +30%",           "icon": "🎯",   "rarity": "rare",     "category": "mobility", "tags": ["ranged"],      "statMods": { "attackRange": { "type": "mult", "value": 0.30 } } },
-
-  { "id": "luck_2",         "name": "幸运之星",     "desc": "幸运 +2",             "icon": "🍀",   "rarity": "common",   "category": "economy",  "tags": ["economy"],     "statMods": { "luck": { "type": "add", "value": 2 } } },
-  { "id": "harvest_25",     "name": "丰收季节",     "desc": "收获 +25",            "icon": "💰",   "rarity": "common",   "category": "economy",  "tags": ["economy"],     "statMods": { "harvesting": { "type": "add", "value": 25 } } },
-  { "id": "xpGain_15",      "name": "经验加成",     "desc": "经验获取 +15%",       "icon": "📈",   "rarity": "rare",     "category": "economy",  "tags": ["economy"],     "statMods": { "xpGain": { "type": "add", "value": 0.15 } } },
-  { "id": "materialGain_20","name": "财源广进",     "desc": "材料获取 +20%",       "icon": "💰",   "rarity": "epic",     "category": "economy",  "tags": ["economy"],     "statMods": { "materialGain": { "type": "add", "value": 0.20 } } },
-
-  { "id": "explosionSize_20","name": "爆破扩大",    "desc": "爆炸范围 +20%",       "icon": "💥",   "rarity": "rare",     "category": "special",  "tags": ["explosive"],   "statMods": { "explosionSize": { "type": "add", "value": 0.2 } } },
-  { "id": "explosionDmg_25","name": "爆破强化",     "desc": "爆炸伤害 +25%",       "icon": "💥",   "rarity": "rare",     "category": "special",  "tags": ["explosive"],   "statMods": { "explosionDamage": { "type": "add", "value": 0.25 } } },
-  { "id": "pierce_1",       "name": "穿透弹",       "desc": "穿透 +1",             "icon": "➡️",   "rarity": "rare",     "category": "special",  "tags": ["ranged"],      "statMods": { "projectilePierce": { "type": "add", "value": 1 } } },
-  { "id": "turretDmg_25",   "name": "炮台强化",     "desc": "炮台伤害 +25%",       "icon": "🤖",   "rarity": "epic",     "category": "special",  "tags": ["tech"],        "statMods": { "turretDamage": { "type": "add", "value": 0.25 } } },
-  { "id": "bulletCount_1",  "name": "弹幕",         "desc": "子弹 +1",             "icon": "🔫",   "rarity": "epic",     "category": "special",  "tags": ["ranged"],      "statMods": { "bulletCount": { "type": "add", "value": 1 } } },
-
-  { "id": "weapon_level_up",    "name": "武器精炼",   "desc": "随机一把武器等级 +1",     "icon": "⚔️",  "rarity": "rare",     "category": "weapon", "tags": [], "action": { "type": "weaponLevelUp" } },
-  { "id": "weapon_quality_up",  "name": "品质升华",   "desc": "随机一把武器品质提升一级", "icon": "✨",  "rarity": "epic",     "category": "weapon", "tags": [], "action": { "type": "weaponQualityUp" } },
-  { "id": "weapon_slot_1",      "name": "武器槽扩展", "desc": "武器槽 +1",               "icon": "📦",  "rarity": "legendary","category": "weapon", "tags": [], "action": { "type": "addWeaponSlot" } },
-
-  { "id": "passive_kill_explode","name": "杀戮快感",  "desc": "击杀时爆炸（范围100）",    "icon": "💥",  "rarity": "epic",     "category": "special","tags": ["explosive"], "action": { "type": "addPassive", "passiveId": "on_kill_explosion" } },
-  { "id": "passive_burn_spread","name": "燃烧扩散",  "desc": "燃烧效果传播",             "icon": "🔥",  "rarity": "epic",     "category": "special","tags": ["fire"],      "action": { "type": "addPassive", "passiveId": "burn_spread" } },
-  { "id": "passive_lifesteal",   "name": "生命契约",   "desc": "每击杀一个敌人回复5生命", "icon": "🩸",  "rarity": "legendary","category": "survival","tags": ["melee"],     "action": { "type": "addPassive", "passiveId": "life_on_hit" } }
+  {
+    "id": "maxHp",
+    "level": 1,
+    "name": "生命强化",
+    "desc": "最大生命 +20%",
+    "icon": "❤️",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 2,
+    "name": "生命祝福",
+    "desc": "最大生命 +40%",
+    "icon": "❤️",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.40",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 3,
+    "name": "生命祝福",
+    "desc": "最大生命 +60%",
+    "icon": "❤️",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.60",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "maxHp",
+    "level": 4,
+    "name": "生命不朽",
+    "desc": "最大生命 +80%",
+    "icon": "❤️",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "maxHp:0.80",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 1,
+    "name": "合金护甲",
+    "desc": "护甲 +3",
+    "icon": "🛡️",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "armor:3",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 2,
+    "name": "重甲锻造",
+    "desc": "护甲 +6",
+    "icon": "🛡️",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:6",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 3,
+    "name": "钢甲壁垒",
+    "desc": "护甲 +9",
+    "icon": "🛡️",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:9",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "armor",
+    "level": 4,
+    "name": "不灭战甲",
+    "desc": "护甲 +12",
+    "icon": "🛡️",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "armor:12",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 1,
+    "name": "幽影步法",
+    "desc": "闪避 +3%",
+    "icon": "💨",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.03",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 2,
+    "name": "风影步",
+    "desc": "闪避 +6%",
+    "icon": "💨",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.06",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 3,
+    "name": "虚空漫步",
+    "desc": "闪避 +9%",
+    "icon": "💨",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.09",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "dodge",
+    "level": 4,
+    "name": "幻影之舞",
+    "desc": "闪避 +12%",
+    "icon": "💨",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "dodge:0.12",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 1,
+    "name": "再生之力",
+    "desc": "生命回复 +1/秒",
+    "icon": "💚",
+    "rarity": "common",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:1",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 2,
+    "name": "生命源泉",
+    "desc": "生命回复 +2/秒",
+    "icon": "💚",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:2",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 3,
+    "name": "大地之愈",
+    "desc": "生命回复 +3/秒",
+    "icon": "💚",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:3",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "hpRegen",
+    "level": 4,
+    "name": "永恒之泉",
+    "desc": "生命回复 +4/秒",
+    "icon": "💚",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [],
+    "statAdd": "hpRegen:4",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 1,
+    "name": "嗜血本能",
+    "desc": "生命偷取 +3%",
+    "icon": "🩸",
+    "rarity": "rare",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.03",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 2,
+    "name": "血之渴望",
+    "desc": "生命偷取 +6%",
+    "icon": "🩸",
+    "rarity": "epic",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.06",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "lifeSteal",
+    "level": 3,
+    "name": "生命契约",
+    "desc": "生命偷取 +9%",
+    "icon": "🩸",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "lifeSteal:0.09",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 1,
+    "name": "攻击强化",
+    "desc": "伤害 +10%",
+    "icon": "🗡️",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 2,
+    "name": "毁灭之力",
+    "desc": "伤害 +25%",
+    "icon": "🗡️",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "damage",
+    "level": 3,
+    "name": "末日审判",
+    "desc": "伤害 +50%",
+    "icon": "🗡️",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "damagePercent:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 1,
+    "name": "疾风连击",
+    "desc": "攻速 +15%",
+    "icon": "⚡",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 2,
+    "name": "狂战士之怒",
+    "desc": "攻速 +30%",
+    "icon": "⚡",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "attackSpeed",
+    "level": 3,
+    "name": "时停之刃",
+    "desc": "攻速 +45%",
+    "icon": "⚡",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "attackSpeed:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 1,
+    "name": "精准锁定",
+    "desc": "暴击率 +5%",
+    "icon": "💥",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.05",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 2,
+    "name": "致命瞄准",
+    "desc": "暴击率 +10%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critChance",
+    "level": 3,
+    "name": "百发百中",
+    "desc": "暴击率 +15%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "critChance:0.15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 1,
+    "name": "暴击强化",
+    "desc": "暴击伤害 +50%",
+    "icon": "🔥",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:0.5",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 2,
+    "name": "毁灭暴击",
+    "desc": "暴击伤害 +100%",
+    "icon": "🔥",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:1.0",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "critDamage",
+    "level": 3,
+    "name": "致命裁决",
+    "desc": "暴击伤害 +150%",
+    "icon": "🔥",
+    "rarity": "legendary",
+    "category": "offense",
+    "tags": [
+      "crit"
+    ],
+    "statAdd": "",
+    "statMult": "critDamage:1.5",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 1,
+    "name": "近战专精",
+    "desc": "近战伤害 +5",
+    "icon": "⚔️",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 2,
+    "name": "近战大师",
+    "desc": "近战伤害 +10",
+    "icon": "⚔️",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "meleeDmg",
+    "level": 3,
+    "name": "近战宗师",
+    "desc": "近战伤害 +15",
+    "icon": "⚔️",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "meleeDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 1,
+    "name": "远程专精",
+    "desc": "远程伤害 +5",
+    "icon": "🏹",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 2,
+    "name": "远程大师",
+    "desc": "远程伤害 +10",
+    "icon": "🏹",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "rangedDmg",
+    "level": 3,
+    "name": "远程宗师",
+    "desc": "远程伤害 +15",
+    "icon": "🏹",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "rangedDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 1,
+    "name": "元素之力",
+    "desc": "元素伤害 +5",
+    "icon": "🔮",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 2,
+    "name": "元素风暴",
+    "desc": "元素伤害 +10",
+    "icon": "🔮",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "elementalDmg",
+    "level": 3,
+    "name": "元素毁灭",
+    "desc": "元素伤害 +15",
+    "icon": "🔮",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "fire",
+      "explosive"
+    ],
+    "statAdd": "elementalDamage:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 1,
+    "name": "工程强化",
+    "desc": "工程 +5",
+    "icon": "🤖",
+    "rarity": "common",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:5",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 2,
+    "name": "工程大师",
+    "desc": "工程 +10",
+    "icon": "🤖",
+    "rarity": "rare",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:10",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "engDmg",
+    "level": 3,
+    "name": "工程宗师",
+    "desc": "工程 +15",
+    "icon": "🤖",
+    "rarity": "epic",
+    "category": "offense",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "engineering:15",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 1,
+    "name": "疾跑",
+    "desc": "移速 +10%",
+    "icon": "⚡",
+    "rarity": "common",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 2,
+    "name": "神行太保",
+    "desc": "移速 +20%",
+    "icon": "⚡",
+    "rarity": "rare",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "speed",
+    "level": 3,
+    "name": "瞬影",
+    "desc": "移速 +30%",
+    "icon": "⚡",
+    "rarity": "epic",
+    "category": "mobility",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "speed:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 1,
+    "name": "鹰眼",
+    "desc": "射程 +15%",
+    "icon": "🎯",
+    "rarity": "common",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 2,
+    "name": "千里眼",
+    "desc": "射程 +30%",
+    "icon": "🎯",
+    "rarity": "rare",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "range",
+    "level": 3,
+    "name": "全知之眼",
+    "desc": "射程 +45%",
+    "icon": "🎯",
+    "rarity": "epic",
+    "category": "mobility",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "attackRange:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 1,
+    "name": "幸运之星",
+    "desc": "幸运 +2",
+    "icon": "🍀",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:2",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 2,
+    "name": "幸运光环",
+    "desc": "幸运 +4",
+    "icon": "🍀",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:4",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "luck",
+    "level": 3,
+    "name": "幸运女神",
+    "desc": "幸运 +6",
+    "icon": "🍀",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "luck:6",
+    "statMult": "",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 1,
+    "name": "收获",
+    "desc": "金币量 +5%",
+    "icon": "🪙",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.05",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 2,
+    "name": "收获",
+    "desc": "金币量 +8%",
+    "icon": "🪙",
+    "rarity": "common",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.10",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 3,
+    "name": "丰收",
+    "desc": "金币量 +12",
+    "icon": "🪙",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 4,
+    "name": "丰收",
+    "desc": "金币量 +16%",
+    "icon": "🪙",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "harvest",
+    "level": 5,
+    "name": "大丰收",
+    "desc": "金币量 +20%",
+    "icon": "🪙",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "harvesting:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 1,
+    "name": "经验加成",
+    "desc": "经验获取 +15%",
+    "icon": "📈",
+    "rarity": "rare",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.15",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 2,
+    "name": "经验祝福",
+    "desc": "经验获取 +30%",
+    "icon": "📈",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.30",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "xpGain",
+    "level": 3,
+    "name": "经验洪流",
+    "desc": "经验获取 +45%",
+    "icon": "📈",
+    "rarity": "legendary",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "xpGain:0.45",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "materialGain",
+    "level": 1,
+    "name": "财源广进",
+    "desc": "材料获取 +20%",
+    "icon": "💰",
+    "rarity": "epic",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "materialGain:0.20",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "materialGain",
+    "level": 2,
+    "name": "黄金之河",
+    "desc": "材料获取 +40%",
+    "icon": "💰",
+    "rarity": "legendary",
+    "category": "economy",
+    "tags": [
+      "economy"
+    ],
+    "statAdd": "",
+    "statMult": "materialGain:0.40",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 1,
+    "name": "爆破扩大",
+    "desc": "爆炸范围 +20%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 2,
+    "name": "毁灭扩撒",
+    "desc": "爆炸范围 +40%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.4",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionSize",
+    "level": 3,
+    "name": "核爆范围",
+    "desc": "爆炸范围 +60%",
+    "icon": "💥",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionSize:0.6",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 1,
+    "name": "爆破强化",
+    "desc": "爆炸伤害 +25%",
+    "icon": "💥",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 2,
+    "name": "爆破毁灭",
+    "desc": "爆炸伤害 +50%",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "explosionDmg",
+    "level": 3,
+    "name": "末日爆破",
+    "desc": "爆炸伤害 +75%",
+    "icon": "💥",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "explosionDamage:0.75",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 1,
+    "name": "穿透弹",
+    "desc": "穿透 +1",
+    "icon": "➡️",
+    "rarity": "rare",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:1",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 2,
+    "name": "穿透强化",
+    "desc": "穿透 +2",
+    "icon": "➡️",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "pierce",
+    "level": 3,
+    "name": "无尽穿透",
+    "desc": "穿透 +3",
+    "icon": "➡️",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "projectilePierce:3",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "turretDmg",
+    "level": 1,
+    "name": "炮台强化",
+    "desc": "炮台伤害 +25%",
+    "icon": "🤖",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "",
+    "statMult": "turretDamage:0.25",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "turretDmg",
+    "level": 2,
+    "name": "炮台毁灭",
+    "desc": "炮台伤害 +50%",
+    "icon": "🤖",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "tech"
+    ],
+    "statAdd": "",
+    "statMult": "turretDamage:0.50",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "bulletCount",
+    "level": 1,
+    "name": "弹幕",
+    "desc": "子弹 +1",
+    "icon": "🔫",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "bulletCount:1",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "bulletCount",
+    "level": 2,
+    "name": "弹幕大师",
+    "desc": "子弹 +2",
+    "icon": "🔫",
+    "rarity": "legendary",
+    "category": "special",
+    "tags": [
+      "ranged"
+    ],
+    "statAdd": "",
+    "statMult": "bulletCount:2",
+    "actionType": "",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 1,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "rare",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 2,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "epic",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponLevelUp",
+    "level": 3,
+    "name": "武器精炼",
+    "desc": "随机一把武器等级 +1",
+    "icon": "⚔️",
+    "rarity": "legendary",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponLevelUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponQualityUp",
+    "level": 1,
+    "name": "品质升华",
+    "desc": "随机一把武器品质提升",
+    "icon": "✨",
+    "rarity": "epic",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "weaponQualityUp",
+    "actionValue": ""
+  },
+  {
+    "id": "weaponSlot",
+    "level": 1,
+    "name": "武器槽扩展",
+    "desc": "武器槽 +1",
+    "icon": "📦",
+    "rarity": "legendary",
+    "category": "weapon",
+    "tags": [],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addWeaponSlot",
+    "actionValue": ""
+  },
+  {
+    "id": "passiveKillExplode",
+    "level": 1,
+    "name": "杀戮快感",
+    "desc": "击杀时爆炸",
+    "icon": "💥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "explosive"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "on_kill_explosion"
+  },
+  {
+    "id": "passiveBurnSpread",
+    "level": 1,
+    "name": "燃烧扩散",
+    "desc": "燃烧效果传播",
+    "icon": "🔥",
+    "rarity": "epic",
+    "category": "special",
+    "tags": [
+      "fire"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "burn_spread"
+  },
+  {
+    "id": "passiveLifeSteal",
+    "level": 1,
+    "name": "生命契约",
+    "desc": "击杀回复5生命",
+    "icon": "🩸",
+    "rarity": "legendary",
+    "category": "survival",
+    "tags": [
+      "melee"
+    ],
+    "statAdd": "",
+    "statMult": "",
+    "actionType": "addPassive",
+    "actionValue": "life_on_hit"
+  }
 ]

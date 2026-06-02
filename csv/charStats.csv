@@ -1,0 +1,22 @@
+# 角色属性标签表
+# key,中文名,英文名
+key,中文名,英文名
+maxHp,生命,hp
+hpRegen,回复,hp regen
+speed,速度,speed
+damagePercent,伤害%,damage%
+attackSpeed,攻速,attack speed
+attackRange,射程,attack range
+armor,护甲,armor
+dodge,闪避,dodge
+critChance,暴击率,crit chance
+critDamage,暴击伤害,crit damage
+lifeSteal,生命偷取,life steal
+harvesting,采集,harvesting
+luck,运气,luck
+xpGain,经验获取,xp gain
+meleeDamage,近战伤害,melee damage
+rangedDamage,远程伤害,ranged damage
+elementalDamage,元素伤害,elemental damage
+engineering,工程,engineering
+weaponSlots,武器槽位,weapon slots

@@ -27,33 +27,50 @@
 const CHEST_TYPES = {
     normal: {
         name: '普通宝箱',
-        color: '#aaaaaa',
+        color: '#aaaaaa',  // 运行时从 RarityColorSystem 覆盖
         rarityWeights: { common: 70, rare: 25, epic: 5, legendary: 0 },
         itemCount: 2,
         goldRange: [10, 25],
     },
     elite: {
         name: '精英宝箱',
-        color: '#aa44ff',
+        color: '#aa44ff',  // 运行时从 RarityColorSystem 覆盖
         rarityWeights: { common: 40, rare: 35, epic: 20, legendary: 5 },
         itemCount: 3,
         goldRange: [25, 50],
     },
     legendary: {
         name: '传奇宝箱',
-        color: '#ff6600',
+        color: '#ff6600',  // 运行时从 RarityColorSystem 覆盖
         rarityWeights: { common: 10, rare: 20, epic: 30, legendary: 40 },
         itemCount: 3,
         goldRange: [50, 100],
     },
 };
 
-const RARITY_COLORS = {
-    common: '#aaaaaa',
-    rare: '#4488ff',
-    epic: '#aa44ff',
-    legendary: '#ff6600',
+/** 宝箱类型 → 稀有度 key 映射（用于 RarityColorSystem 取色） */
+const CHEST_RARITY_KEY = {
+    normal: 'common',
+    elite: 'rare',
+    legendary: 'legendary',
 };
+
+/**
+ * 获取稀有度颜色（优先从 RarityColorSystem，fallback 到硬编码）
+ */
+function _getRarityColor(rarity) {
+    if (typeof RarityColorSystem !== 'undefined' && RarityColorSystem.getColor) {
+        const col = RarityColorSystem.getColor(rarity);
+        if (col) return col;
+    }
+    const fallback = {
+        common: '#aaaaaa',
+        rare: '#4488ff',
+        epic: '#aa44ff',
+        legendary: '#ff6600',
+    };
+    return fallback[rarity] || '#aaaaaa';
+}
 
 /** 宝箱类型 → 武器初始 quality 映射 */
 const CHEST_QUALITY_MAP = {
@@ -69,6 +86,19 @@ const LootSystem = {
 
     /** 当前待开启的宝箱队列 */
     pendingChests: [],
+
+    /**
+     * 从 RarityColorSystem 同步宝箱颜色
+     * 在 init 阶段 DataLoader 加载完成后调用
+     */
+    _syncRarityColors() {
+        if (typeof RarityColorSystem === 'undefined') return;
+        for (const [chestType, def] of Object.entries(CHEST_TYPES)) {
+            const rarityKey = CHEST_RARITY_KEY[chestType] || 'common';
+            const col = RarityColorSystem.getColor(rarityKey);
+            if (col) def.color = col;
+        }
+    },
 
     /** 当前可选的奖励 */
     currentRewards: [],
@@ -244,7 +274,7 @@ const LootSystem = {
             desc: selected.desc,
             icon: selected.icon || '📦',
             rarity,
-            rarityColor: RARITY_COLORS[rarity] || '#aaaaaa',
+            rarityColor: _getRarityColor(rarity),
             tags: typeof TagSystem !== 'undefined' ? TagSystem.getTags(selected) : [],
         };
     },
@@ -281,7 +311,7 @@ const LootSystem = {
             desc: selected.desc,
             icon: selected.icon || '🗡️',
             rarity,
-            rarityColor: RARITY_COLORS[rarity] || '#aaaaaa',
+            rarityColor: _getRarityColor(rarity),
             tags: typeof TagSystem !== 'undefined' ? TagSystem.getTags(selected) : [],
             quality,
         };

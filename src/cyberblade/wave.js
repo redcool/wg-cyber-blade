@@ -146,7 +146,7 @@ const WaveSystem = {
         return { x, y };
     },
 
-    /** 清理场景：敌人消失（不掉材料）+ 子弹清除 + 金币清除 */
+    /** 清理场景：敌人消失（不掉材料）+ 子弹清除 + 金币清除 + 角色待机 */
     _cleanupWave() {
         for (const e of EnemySystem.enemies) {
             if (e.alive) {
@@ -158,6 +158,23 @@ const WaveSystem = {
         }
         BulletSystem.clear();
         GameWorld.materials = [];
+        // 角色重置到待机状态
+        this._resetPlayerIdle();
+    },
+
+    /** 重置角色攻击动画 → 待机 */
+    _resetPlayerIdle() {
+        const p = typeof PlayerSystem !== 'undefined' ? PlayerSystem.player : null;
+        if (!p) return;
+        if (p.weaponParams) {
+            for (const key of Object.keys(p.weaponParams)) {
+                const wp = p.weaponParams[key];
+                wp._attackAnimTimer = 0;
+                wp._attackAnimDuration = 0;
+            }
+        }
+        p.weaponAnimations = [];
+        p._sweepPending = null;
     },
 
     reset() {

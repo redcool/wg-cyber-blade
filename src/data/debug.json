@@ -1,0 +1,218 @@
+[
+  {
+    "key": "currentWave",
+    "label": "波次",
+    "desc": "Current wave",
+    "group": "波次",
+    "expr": "WaveSystem.currentLevel",
+    "enabled": true
+  },
+  {
+    "key": "effectiveLevel",
+    "label": "有效等级",
+    "desc": "Effective level (wave+difficulty)",
+    "group": "波次",
+    "expr": "WaveSystem.effectiveLevel",
+    "enabled": true
+  },
+  {
+    "key": "difficultyOffset",
+    "label": "难度偏移",
+    "desc": "Difficulty offset",
+    "group": "波次",
+    "expr": "WaveSystem.difficultyOffset",
+    "enabled": true
+  },
+  {
+    "key": "difficultyName",
+    "label": "难度",
+    "desc": "Difficulty name",
+    "group": "波次",
+    "expr": "(WaveSystem.difficultyConfig||{}).中文名||''",
+    "enabled": true
+  },
+  {
+    "key": "waveActive",
+    "label": "激活",
+    "desc": "Wave active",
+    "group": "波次",
+    "expr": "WaveSystem.waveActive",
+    "enabled": true
+  },
+  {
+    "key": "waveTimer",
+    "label": "波次时间",
+    "desc": "Wave timer",
+    "group": "波次",
+    "expr": "WaveSystem.waveTimer.toFixed(1)",
+    "enabled": true
+  },
+  {
+    "key": "remainingBudget",
+    "label": "剩余预算",
+    "desc": "Remaining budget",
+    "group": "波次",
+    "expr": "WaveSystem._remainingBudget",
+    "enabled": true
+  },
+  {
+    "key": "spawnInterval",
+    "label": "生成间隔",
+    "desc": "Spawn interval",
+    "group": "波次",
+    "expr": "WaveSystem.spawnInterval.toFixed(2)",
+    "enabled": true
+  },
+  {
+    "key": "spawnsPerBatch",
+    "label": "每批生成",
+    "desc": "Spawns per batch",
+    "group": "波次",
+    "expr": "WaveSystem.spawnsPerBatch",
+    "enabled": true
+  },
+  {
+    "key": "spawnTimer",
+    "label": "生成计时",
+    "desc": "Spawn timer",
+    "group": "波次",
+    "expr": "WaveSystem.spawnTimer.toFixed(2)",
+    "enabled": true
+  },
+  {
+    "key": "aliveCount",
+    "label": "存活敌人",
+    "desc": "Alive enemies",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?EnemySystem.enemies.filter(e=>e.alive).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "totalEnemies",
+    "label": "总敌人数",
+    "desc": "Total enemies",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?EnemySystem.enemies.length:0)",
+    "enabled": true
+  },
+  {
+    "key": "enemyTypeCount",
+    "label": "敌人类型数",
+    "desc": "Enemy type count",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "enemyTypes",
+    "label": "敌人类型列表",
+    "desc": "Enemy types",
+    "group": "敌人",
+    "expr": "(typeof EnemySystem!=='undefined'?Object.keys(EnemySystem.types).join(','):'N/A')",
+    "enabled": true
+  },
+  {
+    "key": "aliveEnemyTypes",
+    "label": "存活类型",
+    "desc": "Alive enemy types",
+    "group": "敌人",
+    "expr": "(()=>{const m={};(typeof EnemySystem!=='undefined'?EnemySystem.enemies:[]).forEach(e=>{if(e.alive)m[e.typeId]=(m[e.typeId]||0)+1});return Object.entries(m).map(([k,v])=>k+':'+v).join(' ')})()",
+    "enabled": true
+  },
+  {
+    "key": "playerHp",
+    "label": "玩家HP",
+    "desc": "Player HP",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.hp.toFixed(0)+'/'+PlayerSystem.player.maxHp:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerSpeed",
+    "label": "玩家速度",
+    "desc": "Player speed",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.speed.toFixed(0):0)",
+    "enabled": true
+  },
+  {
+    "key": "playerMaterials",
+    "label": "材料",
+    "desc": "Materials",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.materials:0)",
+    "enabled": true
+  },
+  {
+    "key": "weaponCount",
+    "label": "武器数",
+    "desc": "Weapon count",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.weapons||[]).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "itemCount",
+    "label": "道具数",
+    "desc": "Item count",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?(PlayerSystem.player.items||[]).length:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerKills",
+    "label": "击杀数",
+    "desc": "Kills",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.kills:0)",
+    "enabled": true
+  },
+  {
+    "key": "playerLevel",
+    "label": "玩家等级",
+    "desc": "Player level",
+    "group": "玩家",
+    "expr": "(typeof PlayerSystem!=='undefined'?PlayerSystem.player.level:0)",
+    "enabled": true
+  },
+  {
+    "key": "bossActive",
+    "label": "Boss活跃",
+    "desc": "Boss active",
+    "group": "Boss",
+    "expr": "(typeof BossSystem!=='undefined'?BossSystem.isActive():false)",
+    "enabled": true
+  },
+  {
+    "key": "bossHp",
+    "label": "Boss HP",
+    "desc": "Boss HP",
+    "group": "Boss",
+    "expr": "(()=>{if(typeof BossSystem==='undefined')return'';const d=BossSystem.getHpBarData();return d?d.hp+'/'+d.maxHp:''})()",
+    "enabled": true
+  },
+  {
+    "key": "eliteInterval",
+    "label": "精英间隔",
+    "desc": "Elite interval",
+    "group": "波次",
+    "expr": "(WaveSystem.difficultyConfig||{}).eliteInterval||0",
+    "enabled": true
+  },
+  {
+    "key": "enemyMult",
+    "label": "怪物倍率",
+    "desc": "Enemy multiplier",
+    "group": "波次",
+    "expr": "((WaveSystem.difficultyConfig||{}).enemyMult||1).toFixed(1)",
+    "enabled": true
+  },
+  {
+    "key": "bossWaves",
+    "label": "Boss波次",
+    "desc": "Boss waves",
+    "group": "波次",
+    "expr": "((WaveSystem.difficultyConfig||{}).bossWaves||[]).join(',')",
+    "enabled": true
+  }
+]

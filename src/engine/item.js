@@ -5,57 +5,11 @@
 // ============================================================
 
 const ItemSystem = {
-    /** 所有道具定义（从 items.json 加载 + Phase 1 覆盖） */
+    /** 所有道具定义（从 items.json 加载） */
     allItems: [],
 
     /** 已持有的道具列表 */
     ownedItems: [],
-
-    /**
-     * Phase 1 硬编码 statMods 定义
-     * items.json 数据尚未包含 statMods 字段，
-     * 此映射提供 Phase 1 的 statMods + tags + triggers 数据。
-     * TODO Phase 2: 将 statMods 加入 items.csv，移除此映射
-     */
-    _itemDefs: {
-        // ---- common ----
-        hpUp:           { statMods: { maxHp: 30 }, tags: [] },
-        regen:          { statMods: { hpRegen: 1.0 }, tags: [] },
-        armorUp:        { statMods: { armor: 3 }, tags: [] },
-        dodgeUp:        { statMods: { dodge: 0.03 }, tags: [] },
-        lifesteal:      { statMods: { lifeSteal: 0.03 }, tags: [] },
-        critUp:         { statMods: { critChance: 0.04 }, tags: ['crit'] },
-        critDmg:        { statMods: { critDamage: 0.5 }, tags: ['crit'] },
-        speedUp:        { statMods: { speed: 20 }, tags: [] },
-        rangeUp:        { statMods: { attackRange: 45 }, tags: [] },
-        stim:           { statMods: { meleeDamage: 5, attackSpeed: 0.15 }, tags: ['melee'] },
-        penetrator:     { statMods: { projectilePierce: 1 }, tags: ['ranged'] },
-        heavy_bullets:  { statMods: { damagePercent: 0.15 }, tags: ['ranged'] },
-        harvestUp:      { statMods: { harvesting: 20 }, tags: ['economy'] },
-        luckUp:         { statMods: { luck: 2 }, tags: ['economy'] },
-        pickupUp:       { statMods: { pickupRange: 20 }, tags: [] },
-        scope:          { statMods: { attackRange: 30, critChance: 0.02 }, tags: ['ranged'] },
-
-        // ---- uncommon ----
-        thorn:          { statMods: {}, tags: [], triggers: [{ type: 'OnDamageTaken', chance: 1.0, effect: { type: 'reflectDamage', percent: 0.3 } }] },
-        blood_pact:     { statMods: { damagePercent: 0.20 }, tags: ['melee'], triggers: [{ type: 'PerSecond', chance: 1.0, interval: 1.0, effect: { type: 'heal', value: -5 } }] },
-
-        // ---- rare ----
-        energy_shield:  { statMods: { maxHp: 20 }, tags: [], triggers: [{ type: 'OnDamageTaken', chance: 1.0, effect: { type: 'heal', value: 5 } }] },
-        reactive_armor: { statMods: { armor: 5 }, tags: [], triggers: [{ type: 'OnDamageTaken', chance: 0.3, effect: { type: 'heal', value: 10 } }] },
-        glass_cannon:   { statMods: { damagePercent: 0.50, armor: -5 }, tags: ['ranged'] },
-        piggy:          { statMods: {}, tags: ['economy'], triggers: [{ type: 'PerSecond', chance: 1.0, interval: 5.0, effect: { type: 'heal', value: 1 } }] },
-        coupon:         { statMods: {}, tags: ['economy'] },
-        hunting_trophy: { statMods: { materialGain: 0.25 }, tags: ['economy'] },
-        magnet:         { statMods: {}, tags: ['tech'], triggers: [{ type: 'PerSecond', chance: 1.0, interval: 1.0, effect: { type: 'explosion', radius: 80, damagePercent: 0.5 } }] },
-        berserker:      { statMods: { critChance: 0.05 }, tags: ['melee'], triggers: [{ type: 'OnLowHP', chance: 1.0, effect: { type: 'heal', value: 30 } }] },
-
-        // ---- epic ----
-        replicator:     { statMods: {}, tags: ['ranged'], triggers: [{ type: 'OnHit', chance: 0.2, effect: { type: 'duplicateBullet', chance: 0.2 } }] },
-        burn_spreader:  { statMods: { burningSpread: 1 }, tags: ['fire'], triggers: [{ type: 'OnKill', chance: 0.5, effect: { type: 'spreadBurn', range: 80, layers: 1 } }] },
-        ice_core:       { statMods: { elementalDamage: 8 }, tags: ['fire', 'explosive'], triggers: [{ type: 'OnHit', chance: 0.3, effect: { type: 'applySlow', amount: 0.4, duration: 2.0 } }] },
-        element_amp:    { statMods: { elementalDamage: 12, damagePercent: 0.10 }, tags: ['fire'] },
-    },
 
     // -------------------------------------------------------
     // 4.1 数据加载
@@ -77,27 +31,18 @@ const ItemSystem = {
             items = await DataLoader.load('items');
         }
         if (!items || items.length === 0) {
-            // 降级：从全局 itemsData 或空数组
             items = [];
         }
 
-        // 用 Phase 1 _itemDefs 覆盖增强
-        this.allItems = items.map(item => {
-            const def = this._itemDefs[item.id];
-            if (!def) return item;
-
-            return {
-                ...item,
-                // Tag 覆盖（JSON 中 tags 为空时用 def 的）
-                tags: (item.tags && item.tags.length > 0) ? item.tags : (def.tags || []),
-                // statMods 从 def 来（JSON 暂无此字段）
-                statMods: def.statMods || {},
-                // triggers 从 def 来（JSON 中 triggers 为空时用 def 的）
-                triggers: (item.triggers && item.triggers.length > 0)
-                    ? this._parseTriggers(item.triggers, item.effects)
-                    : (def.triggers || []),
-            };
-        });
+        // 标准化：statMods 默认 {}，triggers 从 CSV triggers+effects 解析
+        this.allItems = items.map(item => ({
+            ...item,
+            statMods: item.statMods || {},
+            tags: item.tags || [],
+            triggers: (item.triggers && item.triggers.length > 0)
+                ? this._parseTriggers(item.triggers, item.effects)
+                : [],
+        }));
     },
 
     /**

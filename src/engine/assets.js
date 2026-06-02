@@ -35,8 +35,10 @@ const AssetSystem = {
                 'heal_gun','shield','holy_staff','life_wand','blessing',
                 'pike','cavalry_lance','trident',
             ],
-            item: ['hpUp','regen','armorUp','dodgeUp','critUp','critDmg','speedUp','lifesteal','rangeUp','harvestUp','pickupUp','luckUp','thorn','energy_shield','stim','replicator','magnet','piggy','blood_pact','scope','burn_spreader','ice_core','element_amp',
-            'reactive_armor','penetrator','heavy_bullets','coupon','hunting_trophy','glass_cannon','berserker'],
+            item: ['hp_up','regen','armor_up','speed_up','luck_up','harvest_up','pickup_up','range_up','crit_up','life_steal','melee_dmg','ranged_dmg',
+            'stim','heavy_bullets','penetrator','medkit','war_helm','adrenaline','thieves_blade','elemental_ring','xp_boost','hunting_trophy','coupon','magnet',
+            'glass_cannon','energy_shield','blood_pact','replicator','scope','reactive_armor','life_stealer','iron_will','berserker','ice_core','burn_spreader','element_amp',
+            'tardigrade','ricochet','titan_heart','ghost_cloak','kings_crown','baby_eagle','bloody_hand','lightning_core','anvil'],
             char: ['swordsman','gunslinger','fire_mage','archer','mech','assassin','medic','paladin','engineer','berserker','dragon_knight'],
             enemy: ['basic','fast','exploder','tank','healer','ranged','mortar','blinker','elite','boss'],
         };

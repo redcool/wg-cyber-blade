@@ -1,0 +1,29 @@
+伤害计算模拟: 剑客 + 等离子刀 vs Wave1 basic
+四层伤害公式
+FinalDamage = round((B + F) × P × C × S)
+层	变量	值	说明
+B	_baseDamage × damageMult	15 × 1.5 = 22.5	等离子刀T1×1.0, lv1×1.0
+F	tag=melee → meleeDamage	0	剑客meleeDamage=0
+P	1 + damagePercent	1 + 0 = 1.0	 
+C	暴击层	1.0(非暴) / 0(暴击)	见下方
+S	特殊倍率	1.0	无触发
+暴击情况
+- 暴击率: min(0.8, 0.05 + 0) = 5%
+- 未暴击: C = 1.0 → 23 伤害/刀
+- 暴击(当前): C = 0 → 0 伤害 ← BUG!
+- 暴击(预期): C = 2.0 → 45 伤害
+⚠️ 发现的BUG: 剑客critDamage=0 覆盖了默认值2.0, 导致 critMultiplier=0, 暴击伤害归零。_calcCritMultiplier 中 if (cd === undefined || cd === null) 条件无法捕获 critDamage=0。
+敌人(Wave1 basic)
+basic(HP:30 DMG:8) → 缩放×1.15 → HP:34 伤害:9
+护甲3减伤: 3/(3+50)=5.7% → 实际承伤: 8/hit
+击杀: 2刀 (34÷23=1.48)
+可承受: 120HP÷8 = 15次攻击
+DPS
+冷却 = 1/1.2 × 0.5 = 0.417s
+DPS = 23.6 / 0.417 = 56.7
+总结
+- 一刀23, 2刀杀一个basic怪
+- 玩家挨15下才死 → 难度确实太低了（配合你刚调高的 +15%/wave 中后期会好一些）
+- critDamage=0的BUG需要修——_calcCritMultiplier 应把 0 同样视为"未设置"走默认2.0
+- meleeDamage=0 意味着 F 层完全没贡献——角色属性中的 meleeDamage/rangedDamage/elementalDamage 目前全是0, 还没有与装备系统联动
+

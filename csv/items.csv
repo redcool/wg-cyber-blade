@@ -1,54 +1,48 @@
-# 道具数值表
-# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
-# 可在 Excel / Google Sheets 中直接编辑
-#
-# 列顺序 (10列):
-# id, name, desc, cost, icon, unique, rarity, tags, triggers, effects
-#
-# unique: true=独特道具(全局唯一); 空=false=可重复购买
-# rarity: common|uncommon|rare|epic|legendary
-# tags: 用 | 分隔 (melee|gun|bow|magic|medic|lance 等)
-# triggers: 用 | 分隔 (OnHit|OnKill|OnDamage|OnWaveStart 等)
-# effects: JSON 数组，描述具体效果 [{type:"...", chance:0.2}]
-#
-# 注意: apply 函数在代码中定义(src/shop.js)，不再序列化到 CSV
-#
-id,name,desc,cost,icon,unique,rarity,tags,triggers,effects
-#
-# ====== 生存类 (Survival) ======
-hpUp,生命核心,最大生命 +30,6,❤️,false,common,,,
-regen,再生芯片,生命回复 +1/秒,5,💚,false,common,,,
-armorUp,合金装甲,护甲 +3,7,🛡️,false,common,,,
-dodgeUp,幽影斗篷,闪避 +3%（上限60%）,8,💨,false,common,,,
-lifesteal,吸血鬼之牙,生命偷取 +3%,8,🩸,false,common,,,
-energy_shield,能量屏障,每8秒抵挡1次伤害,12,🛡️,true,rare,,,
-thorn,荆棘装甲,反弹30%伤害给攻击者,8,🌵,true,uncommon,,,
-reactive_armor,反应装甲,受伤后50%概率回5HP(冷却3s),10,⚙️,true,rare,,,
-#
-# ====== 进攻类 (Offensive) ======
-critUp,精准目镜,暴击率 +5%,7,💥,false,common,,,
-critDmg,暴伤增幅器,暴击伤害 +50%,9,🔥,false,common,,,
-speedUp,战术推进器,移动速度 +15%,6,⚡,false,common,,,
-rangeUp,全息瞄准镜,攻击范围 +15%,6,🎯,false,common,,,
-stim,战斗兴奋剂,+25%攻速 +25%受伤,8,💉,false,common,,,
-penetrator,穿甲弹头,穿透 +1,10,🔩,false,common,,,
-heavy_bullets,重型弹丸,+30%伤害 -10%攻速,12,🔫,false,common,,,
-replicator,子弹复制器,20%概率射出双倍子弹,14,🖨️,true,epic,gun|ranged,OnHit,"[{""type"":""duplicateBullet"",""chance"":0.2}]"
-#
-# ====== 经济类 (Economy) ======
-harvestUp,贪婪芯片,材料收获 +25%,5,💰,false,common,,,
-luckUp,四叶幸运草,幸运 +3,5,🍀,false,common,,,
-pickupUp,磁力场,拾取范围 +40,4,🧲,false,common,,,
-piggy,存钱罐,每波获得15%金币利息,6,🐷,true,rare,,,
-coupon,折扣券,商店价格-2（最低1金）,6,🎫,true,rare,,,
-hunting_trophy,狩猎勋章,精英掉落材料+50%,8,🏆,true,rare,,,
-#
-# ====== 特殊类 (Special) ======
-blood_pact,献血契约,-2HP/秒 +40%伤害,6,🩸,true,uncommon,,,
-scope,高倍望远镜,+50%射程 -15%伤害,8,🔭,false,common,,,
-glass_cannon,玻璃大炮,+35%伤害 -3护甲,10,💎,true,rare,,,
-magnet,磁暴线圈,周围2秒15伤(半径120),10,🧲,true,rare,,,
-burn_spreader,燃烧扩散器,燃烧死亡传播(范围200),12,🔥,true,epic,,,
-ice_core,极寒之核,冰爆范围+50% 伤害+50%,12,❄️,true,epic,,,
-element_amp,元素增幅器,喷射穿透+2 伤害+20%,14,⚡,true,epic,,,
-berserker,狂战士之血,低血量+50%攻速+30%伤害,10,💢,true,rare,,,
+# id,name,desc,cost,icon,qualifies,itemClass,rarity,tags,effects,statMods
+hp_up,生命强化,+15 最大生命,20,❤️,,,common,,,"{""maxHp"":15}"
+hp_regen,治疗宝珠,+1 生命回复/秒,15,💚,,,common,,,"{""hpRegen"":1}"
+speed_up,运动鞋,+10 移速,20,👟,,,common,,,"{""speed"":10}"
+armor_up,护甲片,+2 护甲,25,🛡️,,,common,,,"{""armor"":2}"
+dodge_up,轻羽披风,+3% 闪避,25,🌬️,,,common,,,"{""dodge"":0.03}"
+dmg_up,锐利尖刺,+10% 伤害,25,⚡,,,common,,,"{""damagePercent"":0.1}"
+attack_speed,速攻手套,+8% 攻速,25,💨,,,common,,,"{""attackSpeed"":0.08}"
+crit_up,锋利刀刃,+3%暴击 -2%伤害,25,💥,,,common,,,"{""critChance"":0.03,""damagePercent"":-0.02}"
+life_steal,吸血牙,+3%偷取 -2生命,25,🩸,,,common,,,"{""lifeSteal"":0.03,""maxHp"":-2}"
+melee_dmg,力量手套,+3近战 -1远程,20,⚔️,melee,,common,,,"{""meleeDamage"":3,""rangedDamage"":-1}"
+ranged_dmg,精准手套,+3远程 -1近战,20,🏹,gun|bow,,common,,,"{""rangedDamage"":3,""meleeDamage"":-1}"
+pickup_up,磁力手套,+12 拾取范围,15,🧲,,,common,,,"{""pickupRange"":12}"
+range_up,瞄准镜,+30 射程 -3%攻速,20,🎯,,,common,,,"{""attackRange"":30,""attackSpeed"":-0.03}"
+bigger_hp,巨人药剂,+30 最大生命 -5%速度,30,🧪,,,uncommon,,,"{""maxHp"":30,""speed"":-5}"
+rapid_fire,速射核心,+15%攻速 -2护甲,35,🔥,,,uncommon,,,"{""attackSpeed"":0.15,""armor"":-2}"
+pierce_shot,穿甲弹,+2穿透 -5%伤害,30,💀,gun|bow,,uncommon,,,"{""projectilePierce"":2,""damagePercent"":-0.05}"
+thorns_item,荆棘甲,反弹 5 伤害,25,🌵,,,uncommon,reflective,"[{""type"":""reflect"",""value"":5}]",{}
+elemental_dmg,元素水晶,+3 元素伤害,30,🔮,,,uncommon,,,"{""elementalDamage"":3}"
+regen_belt,生命腰带,+2生命回复 +20生命,30,💚,,,uncommon,,,"{""hpRegen"":2,""maxHp"":20}"
+lucky_coin,幸运币,+3%暴击 +15%经验,30,🪙,,,uncommon,,,"{""critChance"":0.03,""xpGain"":0.15}"
+evasion_cloak,幻影斗篷,+5%闪避 +20生命,35,🌀,,,uncommon,,,"{""dodge"":0.05,""maxHp"":20}"
+warrior_ring,战士之戒,+15%伤害 -3%攻速,35,💍,,,uncommon,,,"{""damagePercent"":0.15,""attackSpeed"":-0.03}"
+steel_boots,铁靴,+3护甲 +20生命 -5%移速,30,👢,,,uncommon,,,"{""armor"":3,""maxHp"":20,""speed"":-5}"
+fury_blade,狂暴之刃,+10%攻速 击杀+2%攻速(5秒),35,🗡️,,,uncommon,onKill,"[{""type"":""buffAttackSpeed"",""value"":0.02,""duration"":5}]","{""attackSpeed"":0.1}"
+sniper_scope,狙击镜,+45射程 -5%伤害,30,🔭,gun|bow,,uncommon,,,"{""attackRange"":45,""damagePercent"":-0.05}"
+repair_kit,维修包,+3生命回复 -2%闪避,30,🔧,,,uncommon,,,"{""hpRegen"":3,""dodge"":-0.02}"
+giant_heart,泰坦之心,+50 最大生命,50,❤️‍🔥,,,rare,,,"{""maxHp"":50}"
+berserker_axe,狂战士斧,+25%伤害 -5护甲,60,🪓,,,rare,,,"{""damagePercent"":0.25,""armor"":-5}"
+vampire_cape,吸血鬼披风,+5%偷取 -15生命,55,🧛,,,rare,,,"{""lifeSteal"":0.05,""maxHp"":-15}"
+phoenix_wing,凤凰羽翼,+8%攻速 +5%伤害,55,🪶,,,rare,,,"{""attackSpeed"":0.08,""damagePercent"":0.05}"
+stone_armor,岩石铠甲,+8护甲 -15移速,50,🪨,,,rare,,,"{""armor"":8,""speed"":-15}"
+shadow_blade,暗影之刃,+8%暴击 -2生命回复,55,🗡️,,,rare,,,"{""critChance"":0.08,""hpRegen"":-2}"
+energy_shield,能量护盾,受到伤害回蓝 30%,50,🛡️,,,rare,onHit,"[{""type"":""restoreMana"",""chance"":0.3,""value"":5}]",{}
+replicator,复制器,20%概率双倍子弹,60,🔄,gun|bow,,rare,onFire,"[{""type"":""duplicateBullet"",""chance"":0.2}]",{}
+magnet_item,超强磁铁,拾取范围×2,40,🧲,,,rare,,,"{""pickupRange"":999}"
+coupon_item,打折券,商店8折,30,🎫,,,rare,shopDiscount,,{}
+explosive_rounds,爆破弹,"击中爆炸(120范围,50%伤害)",60,💥,gun|bow,,rare,onHit,"[{""type"":""explosion"",""radius"":120,""damagePercent"":0.5}]",{}
+scroll_knowledge,知识卷轴,+25%经验 +5%伤害,45,📜,,,rare,,,"{""xpGain"":0.25,""damagePercent"":0.05}"
+tardigrade,水熊虫基因,致命伤免死一次,80,🧬,,,legendary,revive,"[{""type"":""revive"",""value"":1}]","{""maxHp"":30}"
+ricochet_item,弹射核心,子弹弹射+2,90,🎱,gun|bow,,legendary,ricochet,"[{""type"":""ricochet"",""count"":2}]",{}
+atomic_core,原子核心,+50%伤害 +10%暴击,100,☢️,,,legendary,,,"{""damagePercent"":0.5,""critChance"":0.1}"
+blood_orb,血之宝珠,+8%偷取 +10%伤害 -20生命,80,🔴,,,legendary,,,"{""lifeSteal"":0.08,""damagePercent"":0.1,""maxHp"":-20}"
+divine_armor,神圣铠甲,+12护甲 +50生命,100,✨,,,legendary,,,"{""armor"":12,""maxHp"":50}"
+ninja_tabi,忍者足袋,+30移速 +10%闪避,90,👟,,,legendary,,,"{""speed"":30,""dodge"":0.1}"
+anvil,神之铁砧,物品+1升级,120,🔨,,,legendary,upgrade,"[{""type"":""upgradeItems"",""count"":1}]",{}
+healing_spring,生命之泉,+5生命回复 +50生命,80,🌊,,,legendary,,,"{""hpRegen"":5,""maxHp"":50}"
+celestial_wings,天使之翼,+20%闪避 +15%攻速 -50生命,100,👼,,,legendary,,,"{""dodge"":0.2,""attackSpeed"":0.15,""maxHp"":-50}"

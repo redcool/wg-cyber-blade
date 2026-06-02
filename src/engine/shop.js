@@ -75,6 +75,7 @@ const ShopSystem = {
      */
     RARITY: {
         common:    { name: '普通', color: '#aaaaaa', weight: 60, minWave: 1,  costMult: 1.0 },
+        uncommon:  { name: '优秀', color: '#4A9BD1', weight: 40, minWave: 2,  costMult: 1.2 },
         rare:      { name: '稀有', color: '#4488ff', weight: 25, minWave: 3,  costMult: 1.5 },
         epic:      { name: '史诗', color: '#aa44ff', weight: 10, minWave: 6,  costMult: 2.5 },
         legendary: { name: '传说', color: '#ff6600', weight: 5,  minWave: 10, costMult: 4.0 },
@@ -574,6 +575,32 @@ const ShopSystem = {
     },
 
     /**
+     * 从 RarityColorSystem 同步 color/name/bg 到 RARITY 和 qualityDefs
+     * 在 init 阶段 DataLoader 完成加载后调用
+     */
+    _syncRarityColors() {
+        if (typeof RarityColorSystem === 'undefined') return;
+
+        // 同步 RARITY (common/uncommon/rare/epic/legendary → color/name)
+        for (const [key, def] of Object.entries(this.RARITY)) {
+            const col = RarityColorSystem.getColor(key);
+            const name = RarityColorSystem.getName(key);
+            if (col) def.color = col;
+            if (name) def.name = name;
+        }
+
+        // 同步 qualityDefs (T1~T4 → 映射到 common/uncommon/rare/epic)
+        for (const [qKey, qDef] of Object.entries(this.qualityDefs)) {
+            const col = RarityColorSystem.getColor(qKey);
+            const bg = RarityColorSystem.getBg(qKey);
+            const name = RarityColorSystem.getName(qKey);
+            if (col) qDef.color = col;
+            if (bg) qDef.bg = bg;
+            if (name) qDef.name = name;
+        }
+    },
+
+    /**
      * 投掷武器品质 (T1~T4)
      * @param {number} currentWave
      * @returns {string} 'T1'|'T2'|'T3'|'T4'
@@ -697,9 +724,11 @@ const ShopSystem = {
     _ensureAffixCount(weapon) {
         if (!weapon.affixes) weapon.affixes = [];
         const level = weapon.level || 1;
-        const expected = 1 + Math.floor((level - 1) / 3);
+        const quality = weapon.quality || 'T1';
+        // T1=1个词条, T2/T3/T4=2个词条, 最多2个
+        const maxAffixes = quality === 'T1' ? 1 : 2;
         const existingIds = weapon.affixes.map(a => a.id);
-        while (weapon.affixes.length < expected) {
+        while (weapon.affixes.length < maxAffixes) {
             const newId = this._rollNewAffixId(existingIds);
             if (!newId) break;
             const newAff = this._rollAffix(level);
@@ -731,10 +760,11 @@ const ShopSystem = {
         player.materials -= cost;
         weapon._rerollCount = (weapon._rerollCount || 0) + 1;
         const level = weapon.level || 1;
-        const expectedCount = 1 + Math.floor((level - 1) / 3);
+        const quality = weapon.quality || 'T1';
+        const maxCount = quality === 'T1' ? 1 : 2;
         weapon.affixes = [];
         const existingIds = [];
-        for (let i = 0; i < expectedCount; i++) {
+        for (let i = 0; i < maxCount; i++) {
             const newId = this._rollNewAffixId(existingIds);
             const aff = this._rollAffix(level);
             aff.id = newId || Object.keys(this.affixDefs)[Math.floor(Math.random() * Object.keys(this.affixDefs).length)];
@@ -835,6 +865,16 @@ const ShopSystem = {
             burnMaxStacks: def.burnMaxStacks || 0,
             meleeRange: def.meleeRange || 0,
             sprayCone: def.sprayCone || 0,
+            // 新字段: 暴击独立面板
+            critChanceAdd: def.critChanceAdd || 0,
+            critDamageAdd: def.critDamageAdd || 0,
+            // 新字段: 武器类别（BroTato Class 系统）
+            class: def.class || 'Primitive',
+            // 新字段: 击退力度
+            knockback: (def.knockback !== undefined && def.knockback !== null) ? def.knockback : 0,
+            // FormulaSystem 引用
+            _weaponDef: def,
+            _weaponLevel: maxLevel,
         };
     },
 
