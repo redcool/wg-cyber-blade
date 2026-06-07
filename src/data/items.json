@@ -654,7 +654,9 @@
       "shopDiscount"
     ],
     "effects": null,
-    "statMods": {}
+    "statMods": {
+      "shopDiscount": 0.8
+    }
   },
   {
     "id": "explosive_rounds",

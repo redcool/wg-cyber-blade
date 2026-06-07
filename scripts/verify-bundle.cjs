@@ -1,0 +1,18 @@
+const fs=require('fs');
+const w=fs.readFileSync('src/data/data-bundle.js','utf-8');
+const start=w.indexOf("__DATA_BUNDLE__['characters'] = ");
+const sub=w.substring(start);
+const arrStart=sub.indexOf('[');
+const arrEnd=sub.indexOf('];',arrStart);
+const jsonStr=sub.substring(arrStart,arrEnd+1);
+const chars=JSON.parse(jsonStr);
+console.log('=== data-bundle.js characters:',chars.length,'===');
+chars.forEach(x=>console.log(x.id.padEnd(15),'|',x.name.padEnd(8),'| icon=',x.icon,'| maxW=',x.maxWeapons));
+console.log('---');
+console.log('crossbowman pc:',JSON.stringify(chars.find(x=>x.id==='crossbowman').preferredClasses));
+console.log('crossbowman pc2:',JSON.stringify(chars.find(x=>x.id==='crossbowman').preferredClasses_2));
+console.log('boxer pc:',JSON.stringify(chars.find(x=>x.id==='boxer').preferredClasses));
+console.log('boxer pc2:',JSON.stringify(chars.find(x=>x.id==='boxer').preferredClasses_2));
+console.log('ninja pc2:',JSON.stringify(chars.find(x=>x.id==='ninja').preferredClasses_2));
+console.log('ji_master pc2:',JSON.stringify(chars.find(x=>x.id==='ji_master').preferredClasses_2));
+console.log('teng_pai_guard pc2:',JSON.stringify(chars.find(x=>x.id==='teng_pai_guard').preferredClasses_2));

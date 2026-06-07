@@ -334,25 +334,20 @@ const WaveSystem = {
             this._bossSpawned = true;
         }
 
-        // 生成敌人
+        // 生成敌人 (Brotato 风格: 倒计时归零前持续刷怪, 不受 budget 限制)
         if (this.spawnTimer >= this.spawnInterval) {
             this.spawnTimer = 0;
             const alive = (typeof EnemySystem !== 'undefined')
                 ? EnemySystem.enemies.filter(e => e.alive).length
                 : 0;
-            if (this._remainingBudget > 0 && alive < this.maxSimultaneous) {
+            if (alive < this.maxSimultaneous) {
                 this._spawnBatch(player);
             }
         }
 
         // 检查结束条件
-        const aliveCount = (typeof EnemySystem !== 'undefined')
-            ? EnemySystem.enemies.filter(e => e.alive).length
-            : 0;
-        if (this._remainingBudget <= 0 && aliveCount === 0) {
-            this.endWave();
-        } else if (this.waveTimer >= this.levelDuration) {
-            // 安全超时
+        // 倒计时必须归零才结束 (不允许"杀光提前结束" — 用户反馈"12秒结束"不正常)
+        if (this.waveTimer >= this.levelDuration) {
             this.endWave();
         }
     },
@@ -390,7 +385,8 @@ const WaveSystem = {
         const config = this._getConfig();
         if (!config) return;
 
-        const count = Math.min(this.spawnsPerBatch, Math.ceil(this._remainingBudget));
+        // 固定每批数量 (Brotato 风格, 不再受 _remainingBudget 限制)
+        const count = this.spawnsPerBatch;
         if (count <= 0) return;
 
         const pattern = config.pattern || 'random';
@@ -409,8 +405,6 @@ const WaveSystem = {
         }
 
         for (let i = 0; i < positions.length; i++) {
-            if (this._remainingBudget <= 0) break;
-
             let typeId = null;
             const useCounter = counterTypes.length > 0 && Math.random() < 0.3;
 
@@ -423,11 +417,8 @@ const WaveSystem = {
             }
 
             if (typeId) {
-                const cost = this._getCostForType(typeId);
-                if (cost > 0 && this._remainingBudget >= cost) {
-                    spawnList.push({ typeId, x: positions[i].x, y: positions[i].y });
-                    this._remainingBudget -= cost;
-                }
+                // 不再预算检查 (Brotato 风格: 倒计时归零才停)
+                spawnList.push({ typeId, x: positions[i].x, y: positions[i].y });
             }
         }
 
@@ -504,6 +495,14 @@ const WaveSystem = {
         return this.currentLevel % 5 === 0;
     },
 
+    /**
+     * 是否为最后一关（普通模式通关点）
+     * 仅在非无尽模式下判定: currentLevel >= MAX_LEVEL 视为终局
+     */
+    isFinalLevel() {
+        return this.currentLevel >= WaveSystem.MAX_LEVEL;
+    },
+
     // -------------------------------------------------------
     // 重置
     // -------------------------------------------------------
@@ -520,7 +519,6 @@ const WaveSystem = {
             }
         }
         p.weaponAnimations = [];
-        p._sweepPending = null;
     },
 
     reset() {
@@ -535,6 +533,14 @@ const WaveSystem = {
         this._remainingBudget = 0;
         this._bossWaveBudget = 0;
     },
+
+    /**
+     * 普通模式最高关卡（终局/通关点）
+     * - 玩家每达成第 MAX_LEVEL 关,显示通关结算界面
+     * - 第 19 关商店提供"无尽模式"按钮,允许继续挑战更高关
+     * - 无尽模式下不再有上限
+     */
+    MAX_LEVEL: 20,
 };
 
 // ============================================================

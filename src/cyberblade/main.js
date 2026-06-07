@@ -31,20 +31,18 @@ GameEngine.startGame = function(startWeaponId, difficulty) {
     GameWorld.materials = [];
     this.levelUpPending = false;
     UnlockSystem.resetSession();
+    this.endlessMode = false;  // 普通模式新开,重置无尽标志
 
-    // 2. 创建玩家
+    // 2. 创建玩家（内部已调用 applyToPlayer）
     PlayerSystem.create(GameWorld.width / 2, GameWorld.height / 2);
     const p = PlayerSystem.player;
 
-    // 3. 应用角色属性（新 CharacterSystem）
-    CharacterSystem.applyToPlayer(p, CharacterSystem.selectedCharacterId);
-
-    // 4. 注册角色被动
+    // 3. 注册角色被动
     if (p._passiveIds && p._passiveIds.length > 0) {
         PassiveSystem.registerMany(p._passiveIds, 'character', p);
     }
 
-    // 5. 装备初始武器
+    // 4. 装备初始武器
     if (startWeaponId) {
         const def = ShopSystem.getWeaponDef(startWeaponId);
         if (def) {
@@ -83,18 +81,26 @@ GameEngine.startGame = function(startWeaponId, difficulty) {
         ShopSystem._updateWeaponParams(p, w.id);
     }
 
-    // 6. 计算初始羁绊加成
-    const synergies = TagSystem.getActiveSynergies(p.weapons);
-    const bonuses = TagSystem.mergeSynergyBonuses(synergies);
-    TagSystem.applyBonuses(p, bonuses);
+    // 5. 计算初始羁绊加成（_updateSynergies 内部已调用 TagSystem 计算并应用）
+    PlayerSystem._updateSynergies();
 
-    // 7. 设置 LootSystem 回调：宝箱开完后流转到升级/商店
+    // 6. 设置 LootSystem 回调：宝箱开完后流转到升级/商店/通关
     LootSystem.onAllChestsOpened = () => {
         const pp = PlayerSystem.player;
         if (pp && pp.xp >= pp.xpToNext) {
             pp.xp -= pp.xpToNext;
             pp.level++;
             pp.xpToNext = StatsSystem.xpForLevel(pp.level);
+        }
+        // 通关判定: 第 20 关 boss 死亡 + 宝箱开完 + 非无尽模式 → 结算界面
+        if (WaveSystem.isFinalLevel() && !GameEngine.endlessMode) {
+            GameEngine.state = 'victory';
+            if (typeof AudioSystem !== 'undefined') {
+                if (AudioSystem._bgmPaused) AudioSystem.resumeBGM();
+                else AudioSystem.unduckBGM();
+            }
+            UISystem.showVictory();
+            return;
         }
         if (GameEngine.levelUpPending) {
             GameEngine.levelUpPending = false;
@@ -182,7 +188,7 @@ GameEngine._updatePlaying = function(dt) {
 
         // 先生成商店物品（保留锁定商品）
         const lockedItems = [...ShopSystem.lockedItems];
-        ShopSystem.generateItems(player, WaveSystem.currentLevel);
+        ShopSystem.generateItems(player, WaveSystem.currentLevel, Math.max(0, 4 - lockedItems.length));
         for (const li of lockedItems) {
             if (!ShopSystem.items.some(it => it.id === li.id && it.type === li.type)) {
                 ShopSystem.items.push({ ...li, locked: true });
@@ -190,19 +196,21 @@ GameEngine._updatePlaying = function(dt) {
         }
 
         // 流程：宝箱 → 升级 → 商店
+        // 三个场景都让 BGM 继续播放(不停),只把音量降低 50%
         if (LootSystem.hasPendingChests && LootSystem.hasPendingChests()) {
             this.state = 'loot';
-            if (typeof AudioSystem !== 'undefined') AudioSystem.pauseBGM();
+            if (typeof AudioSystem !== 'undefined') AudioSystem.duckBGM(0.5);
             UISystem.showChestReward();
         } else if (this.levelUpPending) {
             this.levelUpPending = false;
             this.state = 'levelup';
-            if (typeof AudioSystem !== 'undefined') AudioSystem.pauseBGM();
+            if (typeof AudioSystem !== 'undefined') AudioSystem.duckBGM(0.5);
             LevelUpSystem.generateCards(player, player.level || 1);
             UISystem.showLevelUp();
         } else {
             this.state = 'shopping';
-            if (typeof AudioSystem !== 'undefined') AudioSystem.pauseBGM();
+            // 商店场景：BGM 继续播放但音量降 50%（不要停止）
+            if (typeof AudioSystem !== 'undefined') AudioSystem.duckBGM(0.5);
             UISystem.showShop();
         }
     }
@@ -219,12 +227,20 @@ GameEngine._updateShopping = function(dt) {
 // ======================== 碰撞检测 ========================
 
 GameEngine._checkBulletCollisions = function(player) {
+    const enemyGrid = EnemySystem._grid;
+    const useGrid = (typeof SpatialGrid !== 'undefined') && enemyGrid;
+
     for (let i = BulletSystem.bullets.length - 1; i >= 0; i--) {
         const b = BulletSystem.bullets[i];
         if (!b.isPlayer) {
             if (b.isMortar) continue;
-            const dx = b.x - player.x, dy = b.y - player.y;
-            if (dx * dx + dy * dy < (b.radius + player.radius) * (b.radius + player.radius)) {
+            // 扫掠碰撞: 子弹胶囊体(本帧移动线段) vs 玩家圆
+            if (Collision.capsuleVsCircle(
+                b._prevX ?? b.x, b._prevY ?? b.y,
+                b.x, b.y,
+                b.radius,
+                player.x, player.y, player.radius
+            )) {
                 const actualDmg = PlayerSystem.takeDamage(b.damage);
                 // 触发 OnDamageTaken 事件
                 ItemSystem.onEvent('OnDamageTaken', player, { attacker: null, damage: actualDmg });
@@ -235,78 +251,106 @@ GameEngine._checkBulletCollisions = function(player) {
             continue;
         }
 
+        // 网格粗筛: 用子弹当前位置 + 最大碰撞范围查候选怪
+        // 范围 = b.radius + 最大怪半径(20 像素) + 上一帧位移上限(50 像素防穿模)
+        const queryRadius = b.radius + 30 + 50;
+        const candidateEnemies = useGrid
+            ? SpatialGrid.queryRadiusUnique(enemyGrid, b.x, b.y, queryRadius)
+            : EnemySystem.enemies;
+
         let bulletUsed = false;
-        for (const enemy of EnemySystem.enemies) {
+        for (const enemy of candidateEnemies) {
             if (!enemy.alive) continue;
             if (b.hits.includes(enemy)) continue;
-            const dx = b.x - enemy.x, dy = b.y - enemy.y;
-            if (dx * dx + dy * dy < (b.radius + enemy.radius) * (b.radius + enemy.radius)) {
-                if (enemy.alive) {
-                    CombatLogSystem.addDamage(enemy.x, enemy.y, b.damage);
-                }
-                if (typeof AudioSystem !== 'undefined') AudioSystem.play('enemy_hit');
-                const result = EnemySystem.takeDamage(enemy, b.damage);
-                b.hits.push(enemy);
+            // 圆形碰撞 + 扫掠(防高速穿模): 子弹胶囊体 vs 敌人圆
+            if (!Collision.capsuleVsCircle(
+                b._prevX ?? b.x, b._prevY ?? b.y,
+                b.x, b.y,
+                b.radius,
+                enemy.x, enemy.y, enemy.radius
+            )) continue;
 
-                // 触发 OnHit 事件
-                ItemSystem.onEvent('OnHit', player, { target: enemy, damage: b.damage });
-                PassiveSystem.onEvent('OnHit', player, { target: enemy, damage: b.damage });
-                // 暴击事件
-                if (player._lastCrit) {
-                    ItemSystem.onEvent('OnCrit', player, { target: enemy, damage: b.damage });
-                    PassiveSystem.onEvent('OnCrit', player, { target: enemy, damage: b.damage });
-                }
+            if (enemy.alive) {
+                CombatLogSystem.addDamage(enemy.x, enemy.y, b.damage);
+            }
+            if (typeof AudioSystem !== 'undefined') AudioSystem.play('enemy_hit');
+            const result = EnemySystem.takeDamage(enemy, b.damage);
+            b.hits.push(enemy);
 
-                // 减速效果
-                if (b.slowAmount > 0) {
-                    enemy.slowTimer = b.slowDuration;
-                    enemy.slowFactor = 1 - b.slowAmount;
-                }
+            // 触发 OnHit 事件
+            ItemSystem.onEvent('OnHit', player, { target: enemy, damage: b.damage });
+            PassiveSystem.onEvent('OnHit', player, { target: enemy, damage: b.damage });
+            // 暴击事件
+            if (player._lastCrit) {
+                ItemSystem.onEvent('OnCrit', player, { target: enemy, damage: b.damage });
+                PassiveSystem.onEvent('OnCrit', player, { target: enemy, damage: b.damage });
+            }
 
-                // 燃烧效果
-                if (b.burnDps > 0 && enemy.alive) {
-                    PlayerSystem._applyBurn(enemy, b.burnDps, 3.0, b.burnMaxStacks || 3);
-                }
+            // 减速效果
+            if (b.slowAmount > 0) {
+                enemy.slowTimer = b.slowDuration;
+                enemy.slowFactor = 1 - b.slowAmount;
+            }
 
-                // 冰爆效果
-                if (b.iceExplosionRadius > 0 || (b.splashRadius > 0 && b.slowAmount > 0)) {
-                    const iceRadius = b.splashRadius || b.iceExplosionRadius || 40;
+            // 燃烧效果
+            if (b.burnDps > 0 && enemy.alive) {
+                PlayerSystem._applyBurn(enemy, b.burnDps, 3.0, b.burnMaxStacks || 3);
+            }
+
+            // 冰爆效果
+            if (b.iceExplosionRadius > 0 || (b.splashRadius > 0 && b.slowAmount > 0)) {
+                const iceRadius = b.splashRadius || b.iceExplosionRadius || 40;
+                if (useGrid) {
+                    const nearbyIce = SpatialGrid.queryRadiusUnique(enemyGrid, enemy.x, enemy.y, iceRadius);
+                    for (const other of nearbyIce) {
+                        if (!other.alive || other === enemy) continue;
+                        const iceDmg = Math.floor(b.damage * 0.5);
+                        EnemySystem.takeDamage(other, Math.max(1, iceDmg));
+                        other.slowTimer = 1.5;
+                        other.slowFactor = 0.5;
+                    }
+                } else {
                     for (const other of EnemySystem.enemies) {
                         if (!other.alive || other === enemy) continue;
-                        const dx = other.x - enemy.x, dy = other.y - enemy.y;
-                        if (Math.sqrt(dx*dx + dy*dy) < iceRadius) {
+                        if (Collision.circlesOverlap(
+                            { x: enemy.x, y: enemy.y, radius: iceRadius },
+                            other
+                        )) {
                             const iceDmg = Math.floor(b.damage * 0.5);
                             EnemySystem.takeDamage(other, Math.max(1, iceDmg));
                             other.slowTimer = 1.5;
                             other.slowFactor = 0.5;
                         }
                     }
-                    ParticleSystem.explosion(enemy.x, enemy.y, '#44ccff', 10);
                 }
-
-                // 连锁电击
-                if (b.chainCount > 0) {
-                    BulletSystem.chainLightning(b, enemy);
-                }
-
-                // 治愈弹
-                if (b.healOnHit > 0) {
-                    PlayerSystem.heal(b.healOnHit);
-                    ParticleSystem.emit(player.x, player.y, 4, {
-                        speed: 40, color: '#00ff88', life: 0.25, size: 5, type: 'glow'
-                    });
-                }
-
-                if (result === -1) {
-                    this._handleEnemyKill(enemy, b.damage);
-                }
-
-                if (b.pierce <= 0 && b.chainCount <= 0) {
-                    bulletUsed = true;
-                    break;
-                }
-                b.pierce--;
+                ParticleSystem.explosion(enemy.x, enemy.y, '#44ccff', 10);
             }
+
+            // 连锁电击
+            if (b.chainCount > 0) {
+                BulletSystem.chainLightning(b, enemy);
+            }
+
+            // 治愈弹
+            if (b.healOnHit > 0) {
+                PlayerSystem.heal(b.healOnHit);
+                ParticleSystem.emit(player.x, player.y, 4, {
+                    speed: 40, color: '#00ff88', life: 0.25, size: 5, type: 'glow'
+                });
+            }
+
+            if (result === -1) {
+                this._handleEnemyKill(enemy, b.damage);
+            }
+
+            // 远程击退(很弱 + 大体型抗性)
+            EnemySystem.applyKnockback(enemy, b.x - enemy.x, b.y - enemy.y, 0, b.knockback || 80, { ranged: true });
+
+            if (b.pierce <= 0 && b.chainCount <= 0) {
+                bulletUsed = true;
+                break;
+            }
+            b.pierce--;
         }
 
         if (bulletUsed) {
@@ -406,6 +450,16 @@ GameEngine._handleEnemyKill = function(enemy, damage) {
         if (typeof CombatLogSystem !== 'undefined') CombatLogSystem.logLifeSteal(healAmt);
     }
 
+    // 击杀回血（武器 killHeal 字段）
+    let killHealTotal = 0;
+    if (p.weaponParams) {
+        for (const w of (p.weapons || [])) {
+            const params = p.weaponParams[w.id];
+            if (params && params.killHeal > 0) killHealTotal += params.killHeal;
+        }
+    }
+    if (killHealTotal > 0) PlayerSystem.heal(killHealTotal);
+
     this._dropMaterials(enemy);
 
     // 宝箱掉落（Boss 宝箱由 BossSystem.destroy 管理，不在此处处理）
@@ -420,7 +474,10 @@ GameEngine._handleEnemyKill = function(enemy, damage) {
 
 // ======================== 商店/状态流转 ========================
 
-GameEngine.closeShop = function() {
+GameEngine.closeShop = function(endless = false) {
+    // endless: true=无尽模式, false=普通模式(第 20 关会触发通关)
+    // 显式默认 false:避免历史 endlessMode 泄漏到普通路径
+    GameEngine.endlessMode = !!endless;
     UISystem.hideShop();
     this.levelUpPending = false;
 
@@ -428,9 +485,7 @@ GameEngine.closeShop = function() {
 
     // 重新计算羁绊加成
     if (p && p.weapons) {
-        const synergies = TagSystem.getActiveSynergies(p.weapons);
-        const bonuses = TagSystem.mergeSynergyBonuses(synergies);
-        TagSystem.applyBonuses(p, bonuses);
+        PlayerSystem._updateSynergies();
     }
 
     if (p && p.piggyBank && p.materials > 0) {
@@ -440,7 +495,14 @@ GameEngine.closeShop = function() {
 
     WaveSystem.startNextLevel();
     this.state = 'playing';
-    if (typeof AudioSystem !== 'undefined') AudioSystem.resumeBGM();
+    // 出商店/升级:从 duck 状态恢复(因为进入 playing,需要满音量 BGM)
+    if (typeof AudioSystem !== 'undefined') {
+        if (AudioSystem._bgmPaused) {
+            AudioSystem.resumeBGM();  // 兼容未来真停止 BGM 的场景
+        } else {
+            AudioSystem.unduckBGM();
+        }
+    }
     this.announceTimer = 1.5;
     UISystem.updateHUD();
 };
@@ -458,6 +520,50 @@ GameEngine.onLevelUpClosed = function() {
     }
     this.state = 'shopping';
     UISystem.showShop();
+};
+
+// ======================== 暂停 / 中止界面 ========================
+
+GameEngine.pauseGame = function() {
+    if (this.state !== 'playing') return;
+    this._prevStateBeforePause = 'playing';
+    this.state = 'paused';
+    UISystem.showPause();
+    if (typeof AudioSystem !== 'undefined') AudioSystem.pauseBGM();
+};
+
+GameEngine.resumeGame = function() {
+    if (this.state !== 'paused') return;
+    this.state = this._prevStateBeforePause || 'playing';
+    this._prevStateBeforePause = null;
+    UISystem.hidePause();
+    if (typeof AudioSystem !== 'undefined') AudioSystem.resumeBGM();
+};
+
+GameEngine.newGameFromPause = function() {
+    // 从中止界面 → 新开: 回到角色/武器选择
+    this.state = 'menu';
+    this._prevStateBeforePause = null;
+    UISystem.hidePause();
+    if (typeof AudioSystem !== 'undefined') AudioSystem.stopBGM();
+    UISystem.showMenu();
+};
+
+GameEngine.exitGame = function() {
+    UISystem.hidePause();
+    if (typeof AudioSystem !== 'undefined') AudioSystem.stopBGM();
+    // 关闭当前标签页;若浏览器拒绝则回退到菜单
+    try { window.close(); } catch (e) { /* ignore */ }
+    setTimeout(() => {
+        // 如果 window.close 没生效,回退到主菜单
+        this.state = 'menu';
+        UISystem.showMenu();
+    }, 100);
+};
+
+GameEngine.togglePause = function() {
+    if (this.state === 'playing') this.pauseGame();
+    else if (this.state === 'paused') this.resumeGame();
 };
 
 

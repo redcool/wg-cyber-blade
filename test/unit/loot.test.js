@@ -207,6 +207,20 @@ describe('LootSystem - 奖励生成', () => {
         expect(legendary.length).toBe(3);
     });
 
+    // === LT6b: 高级宝箱 = 4 选项 (高于传奇) ===
+    it('LT6b: advanced 高级宝箱返回 4 个选项 (高于传奇)', () => {
+        const player = makePlayer();
+        const advanced = LootSystem.generateRewards('advanced', player);
+        expect(advanced.length).toBe(4);
+    });
+
+    // === LT6c: spawnChest 支持 advanced 类型 ===
+    it('LT6c: spawnChest 支持 advanced 高级宝箱', () => {
+        const chest = LootSystem.spawnChest(0, 0, 'advanced');
+        expect(chest.type).toBe('advanced');
+        expect(LootSystem.pendingChests.length).toBe(1);
+    });
+
     it('LT7: 未知 chestType 返回空数组', () => {
         const player = makePlayer();
         expect(LootSystem.generateRewards('unknown', player)).toEqual([]);

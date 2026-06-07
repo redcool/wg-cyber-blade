@@ -12,17 +12,20 @@ const GameWorld = {
 // 游戏引擎主循环（骨架 — 具体游戏逻辑在 cyberblade/main.js 中补充）
 const GameEngine = {
     running: false,
-    state: 'menu', // menu, playing, shopping, levelup, gameover
+    state: 'menu', // menu, playing, shopping, levelup, gameover, loot, pause, victory
     lastTime: 0,
     announceTimer: 0,
     levelUpPending: false,
+    /**
+     * 无尽模式标志: 第 19 关商店选择"无尽模式"后置 true,关卡无上限
+     * 非无尽模式: 第 20 关 boss 死亡 → 通关结算 (state='victory')
+     * 无尽模式: 第 20 关 boss 死亡 → 掉高级宝箱 → 继续 21+
+     */
+    endlessMode: false,
 
     async init() {
+        // AssetSystem.init 内部已经 await DataLoader.preloadAll (asset 依赖 csv 列表)
         await AssetSystem.init();
-        // 预加载全部 JSON 数据（预热 DataLoader 缓存）
-        if (typeof DataLoader !== 'undefined' && DataLoader.preloadAll) {
-            await DataLoader.preloadAll();
-        }
         // 加载等级成长表到 FormulaSystem + StatsSystem
         if (typeof FormulaSystem !== 'undefined' && FormulaSystem.loadLevelTable) {
             const levelData = (typeof DataLoader !== 'undefined' && DataLoader._cache && DataLoader._cache.characterLevel)
@@ -83,6 +86,7 @@ const GameEngine = {
             } else if (this.state === 'shopping') {
                 this._updateShopping(scaledDt);
             }
+            // 'paused' / 'menu' / 'levelup' / 'gameover' / 'loot': 跳过 update, 渲染继续 (overlay 在上层)
 
             this._render();
         } catch (e) {

@@ -299,17 +299,20 @@ describe('ShopSystem - 商品生成', () => {
         global.DataLoader._cache = { weapons: MOCK_WEAPONS };
     });
 
-    it('S19: generateItems 生成 2~3 武器 + 0~1 道具', () => {
+    it('S19: generateItems 4 槽独立 roll, 至少 1 件道具 (Brotato 风格防 0 道具)', () => {
         const player = makePlayer({ weapons: [{ id: 'plasma', level: 1, quality: 'T1' }] });
 
-        ShopSystem.generateItems(player, 5);
-        const weapons = ShopSystem.items.filter(it => it.type === 'weapon');
-        const items = ShopSystem.items.filter(it => it.type === 'item');
+        // 跑多次以覆盖各种概率分布, 验证硬约束
+        for (let trial = 0; trial < 50; trial++) {
+            ShopSystem.generateItems(player, 5);
+            const weapons = ShopSystem.items.filter(it => it.type === 'weapon');
+            const items = ShopSystem.items.filter(it => it.type === 'item');
 
-        expect(weapons.length).toBeGreaterThanOrEqual(2);
-        expect(weapons.length).toBeLessThanOrEqual(3);
-        expect(items.length).toBeGreaterThanOrEqual(0);
-        expect(items.length).toBeLessThanOrEqual(1);
+            // 4 槽总 = 4
+            expect(weapons.length + items.length).toBe(4);
+            // 至少 1 件道具 (硬约束, 即使 4 槽全 roll 武器也强制最后一槽改 item)
+            expect(items.length).toBeGreaterThanOrEqual(1);
+        }
     });
 
     it('S20: 生成的武器有完整字段', () => {
@@ -421,14 +424,15 @@ describe('ShopSystem - 刷新', () => {
         expect(ShopSystem.reroll(null, 5)).toBe(false);
     });
 
-    it('S29: refreshCost 固定为 2', () => {
+    it('S29: reroll 递增 refreshCost (Brotato 风格, 限制无限刷新)', () => {
         const player = makePlayer({ materials: 100 });
-        // 多次刷新验证成本不变
+        const initialCost = ShopSystem.refreshCost; // 2
+
         for (let i = 0; i < 5; i++) {
             ShopSystem.reroll(player, 5);
         }
-        // refreshCost 应仍为 2
-        expect(ShopSystem.refreshCost).toBe(2);
+        // 5 次 reroll 后 refreshCost 应 +5 (与 refresh() 行为一致)
+        expect(ShopSystem.refreshCost).toBe(initialCost + 5);
     });
 });
 
@@ -501,7 +505,8 @@ describe('ShopSystem - 购买', () => {
         expect(player.weapons[0].level).toBe(1);
     });
 
-    it('S34: 购买武器—同 ID 合并升级', () => {
+    it('S34: 购买武器—槽位未满时同 ID 不合并 (加新槽位)', () => {
+        // 新设计: 槽位未满 (1/4), 即使有同 id 也不升级, 而是开新槽位
         const player = makePlayer({
             weapons: [{ id: 'plasma', level: 1, quality: 'T1' }],
             weaponSlots: 4,
@@ -509,10 +514,32 @@ describe('ShopSystem - 购买', () => {
 
         const result = ShopSystem.buyItem(0, player); // plasma (quality T1)
         expect(result).not.toBeNull();
+        expect(result.action).toBe('bought');
+        expect(player.weapons.length).toBe(2); // 多开一槽
+        expect(player.weapons[1].level).toBe(1); // 新武器 1 级, 不升级
+        expect(player.weapons[0].level).toBe(1); // 原武器不动
+    });
+
+    it('S34b: 购买武器—槽位已满时同 ID 合并升级', () => {
+        // 设计: 槽位已满 (4/4), 同 id 武器合并升级 (merged)
+        const player = makePlayer({
+            weapons: [
+                { id: 'plasma', level: 1, quality: 'T1' },
+                { id: 'axe', level: 1, quality: 'T1' },
+                { id: 'hammer', level: 1, quality: 'T1' },
+                { id: 'spear', level: 1, quality: 'T1' },
+            ],
+            weaponSlots: 4,
+        });
+
+        // 找 plasma 索引
+        const plasmaIdx = ShopSystem.items.findIndex(it => it.id === 'plasma');
+        const result = ShopSystem.buyItem(plasmaIdx, player);
+        expect(result).not.toBeNull();
         expect(result.action).toBe('merged');
-        expect(player.weapons.length).toBe(1); // 数量不变
-        expect(player.weapons[0].level).toBe(2); // level+1
-        expect(player.weapons[0].quality).toBe('T1'); // 品质固定 T1（系统已移除）
+        expect(player.weapons.length).toBe(4); // 数量不变
+        const plasma = player.weapons.find(w => w.id === 'plasma');
+        expect(plasma.level).toBe(2); // 升级
     });
 
     it('S35: 购买武器—槽满返回 null', () => {
@@ -661,6 +688,45 @@ describe('ShopSystem - 武器管理', () => {
         expect(player.weaponParams.plasma.behavior).toBe('melee_sweep');
         expect(player.weaponParams.plasma.level).toBe(2);
     });
+
+    // === S46-S47: sellWeapon 出售武器 + 至少保留 1 把武器 安全检查 ===
+    it('S46: sellWeapon 成功出售第 2 把武器,保留 1 把', () => {
+        const player = makePlayer({
+            weapons: [
+                { id: 'plasma', level: 1, quality: 'T1' },
+                { id: 'rifle', level: 1, quality: 'T1' },
+            ],
+            materials: 0,
+        });
+        player.weaponParams = {};
+        // sellWeapon 通过 global PlayerSystem 拿 player
+        global.PlayerSystem = { player };
+
+        const result = ShopSystem.sellWeapon(1);
+        expect(result).toBe(true);
+        expect(player.weapons.length).toBe(1);
+        expect(player.weapons[0].id).toBe('plasma');
+        // 退款 = floor(cost/2)+1 = floor(12/2)+1 = 7
+        expect(player.materials).toBe(7);
+
+        delete global.PlayerSystem;
+    });
+
+    it('S47: sellWeapon 武器只剩 1 把时拒绝 (返回 false,保持 1 把)', () => {
+        const player = makePlayer({
+            weapons: [{ id: 'plasma', level: 1, quality: 'T1' }],
+            materials: 0,
+        });
+        player.weaponParams = {};
+        global.PlayerSystem = { player };
+
+        const result = ShopSystem.sellWeapon(0);
+        expect(result).toBe(false);
+        expect(player.weapons.length).toBe(1);  // 仍保留 1 把
+        expect(player.materials).toBe(0);       // 没有退款
+
+        delete global.PlayerSystem;
+    });
 });
 
 describe('ShopSystem - 重置', () => {
@@ -758,3 +824,109 @@ describe('ShopSystem - 集成', () => {
         expect(ShopSystem._pity.items.totalRolls).toBeGreaterThanOrEqual(5);
     });
 });
+
+// ============================================================
+// Bug1/Bug2 修复测试: 武器 tier-aware 解析 + 适配警告
+// ============================================================
+import { WeaponDisplay } from '../../src/cyberblade/weaponDisplay.js';
+
+describe('WeaponDisplay - Bug1 tier + Bug2 适配判定', () => {
+    test('Bug1 S53: getWeaponTierValue picks lv{minLevel}, not lv1', () => {
+        // pike-like: minLevel=2, damage_lv1=0(占位), damage_lv2=35
+        const pike = { id: 'pike', minLevel: 2, damage_lv1: 0, damage_lv2: 35, damage_lv3: 55, cooldown_lv1: 0.8, cooldown_lv2: 0.74, attackRange: 160 };
+        expect(WeaponDisplay.getWeaponTierValue(pike, 'damage_lv1')).toBe(35);
+        expect(WeaponDisplay.getWeaponTierValue(pike, 'cooldown_lv1')).toBe(0.74);
+
+        // cavalry_lance-like: minLevel=3
+        const cl = { id: 'cavalry_lance', minLevel: 3, damage_lv1: 0, damage_lv3: 95, cooldown_lv1: 1.1 };
+        expect(WeaponDisplay.getWeaponTierValue(cl, 'damage_lv1')).toBe(95);
+
+        // sword-like: minLevel=1, 正常
+        const sword = { id: 'sword', minLevel: 1, damage_lv1: 12, damage_lv2: 18 };
+        expect(WeaponDisplay.getWeaponTierValue(sword, 'damage_lv1')).toBe(12);
+
+        // 防御: 非 tier 字段应原样读取
+        expect(WeaponDisplay.getWeaponTierValue(pike, 'attackRange')).toBe(160);
+
+        // 防御: null 武器/键 → 0
+        expect(WeaponDisplay.getWeaponTierValue(null, 'damage_lv1')).toBe(0);
+        expect(WeaponDisplay.getWeaponTierValue(pike, null)).toBe(0);
+        expect(WeaponDisplay.getWeaponTierValue(pike, '')).toBe(0);
+
+        // 防御: 无 minLevel (缺失字段) → 默认 1
+        const noMin = { id: 'x', damage_lv1: 5 };
+        expect(WeaponDisplay.getWeaponTierValue(noMin, 'damage_lv1')).toBe(5);
+
+        // 防御: minLevel 越界 → 默认 1
+        const bad = { id: 'x', minLevel: 9, damage_lv1: 7 };
+        expect(WeaponDisplay.getWeaponTierValue(bad, 'damage_lv1')).toBe(7);
+    });
+
+    test('Bug1 S54: 真实数据中 5 把高解锁级武器详情可显示伤害', () => {
+        // 验证真实 weapons.json 中受影响武器的 tier 跳转
+        // 走 dataLoader 路径 (通过 ShopSystem.allWeapons 在 beforeAll 加载)
+        const dataLoader = global.DataLoader;
+        // shop.test.js 用 MOCK data, 这里直接 require 真实 JSON
+        const fs = require('fs');
+        const path = require('path');
+        const realWeapons = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../src/data/weapons.json'), 'utf-8'));
+        const affectedIds = ['magnum', 'minigun', 'void_staff', 'pike', 'cavalry_lance'];
+        for (const id of affectedIds) {
+            const w = realWeapons.find(x => x.id === id);
+            expect(w).toBeDefined();
+            const dmg = WeaponDisplay.getWeaponTierValue(w, 'damage_lv1');
+            expect(dmg).toBeGreaterThan(0);
+        }
+    });
+
+    test('Bug2 S55: isWeaponNotPreferred detects char+weapon mismatch', () => {
+        // 刺客: 偏好 Blade/Precise + dagger/rapier...
+        const assassin = { id: 'assassin', preferredClasses: ['Precise', 'Blade'], preferredClasses_2: ['dagger', 'rapier', 'kris', 'stiletto', 'composite'] };
+        // 长枪: class=Heavy, class_2=pike → 不适配
+        const pike = { id: 'pike', class: 'Heavy', class_2: 'pike' };
+        expect(WeaponDisplay.isWeaponNotPreferred(pike, assassin)).toBe(true);
+
+        // 圣骑士: 偏好 Blade+Medical+Heavy + lance/halberd
+        const paladin = { id: 'paladin', preferredClasses: ['Blade', 'Medical', 'Heavy'], preferredClasses_2: ['longsword', 'holy', 'heal', 'lance', 'halberd'] };
+        // cavalry_lance 真实数据: class=Heavy, class_2=lance
+        const lance = { id: 'cavalry_lance', class: 'Heavy', class_2: 'lance' };
+        expect(WeaponDisplay.isWeaponNotPreferred(lance, paladin)).toBe(false);
+
+        // class 1 命中 (Blade 配 Blade)
+        const dagger = { id: 'dagger', class: 'Blade', class_2: 'dagger' };
+        expect(WeaponDisplay.isWeaponNotPreferred(dagger, assassin)).toBe(false);
+
+        // 防御: 武器 class 缺失时应返回 false (不误报)
+        expect(WeaponDisplay.isWeaponNotPreferred({ id: 'fake' }, assassin)).toBe(false);
+        expect(WeaponDisplay.isWeaponNotPreferred(pike, null)).toBe(false);
+        expect(WeaponDisplay.isWeaponNotPreferred(null, assassin)).toBe(false);
+    });
+
+    test('S56: getWeaponFitScore returns 0/0.5/1 (Report 3 progress bar)', () => {
+        // 0/2 → 0 (红)
+        const assassin = { id: 'assassin', preferredClasses: ['Precise', 'Blade'], preferredClasses_2: ['dagger', 'rapier', 'kris', 'stiletto', 'composite'] };
+        const pike = { id: 'pike', class: 'Heavy', class_2: 'pike' };
+        expect(WeaponDisplay.getWeaponFitScore(pike, assassin)).toBe(0);
+
+        // 1/2 (class 命中) → 0.5 (黄)
+        const sword = { id: 'sword', class: 'Blade', class_2: 'something_else' };
+        expect(WeaponDisplay.getWeaponFitScore(sword, assassin)).toBe(0.5);
+
+        // 2/2 → 1 (绿)
+        const dagger = { id: 'dagger', class: 'Blade', class_2: 'dagger' };
+        expect(WeaponDisplay.getWeaponFitScore(dagger, assassin)).toBe(1);
+
+        // 1/2 (class_2 命中) → 0.5 (黄)
+        const rapier = { id: 'rapier', class: 'Heavy', class_2: 'rapier' };  // 刺客 pref2 含 rapier, pref1 不含 Heavy
+        expect(WeaponDisplay.getWeaponFitScore(rapier, assassin)).toBe(0.5);
+
+        // 防御: class/class_2 缺失 → 0.5 (信息不足)
+        const noInfo = { id: 'x' };
+        expect(WeaponDisplay.getWeaponFitScore(noInfo, assassin)).toBe(0.5);
+
+        // 防御: null → 0.5
+        expect(WeaponDisplay.getWeaponFitScore(null, assassin)).toBe(0.5);
+        expect(WeaponDisplay.getWeaponFitScore(pike, null)).toBe(0.5);
+    });
+});
+

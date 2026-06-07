@@ -1,54 +1,66 @@
-﻿# 角色数值表
-# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
+﻿# 角色数值表,,,,,,,,
+# 格式: CSV (逗号分隔)," 以 # 开头的行为注释行"
 # 可在 Excel / Google Sheets 中直接编辑
 #
-# ====== 列说明 (29列) ======
+# ====== 列说明 (31列) ======
 # --- 基础信息 ---
-# id:            角色唯一标识 (英文, 程序内部用)
+# id:            角色唯一标识 (英文," 程序内部用)"
 # name:          角色名 (中文)
 # desc:          角色描述
 # icon:          角色图标 (emoji)
-# unlocked:      是否默认解锁 (true=已解锁, false=需解锁)
-# weaponSlots:   武器槽位数 (如 6)
+# unlocked:      是否默认解锁 (true=已解锁," false=需解锁)"
+# maxWeapons:    可装备武器总数 (4-6, v1.1 替代旧 weaponSlots)
 #
 # --- 基础属性 (直接覆写/叠加入角色面板) ---
 # maxHp:         最大生命值 (整数)
-# hpRegen:       生命回复/秒 (小数, 如 0.1)
-# speed:         移动速度 (像素/秒, 如 120)
-# damagePercent: 百分比伤害修正 (小数, 0=无修正, 0.2=+20%)
-# attackSpeed:   攻速倍率 (小数, 1.0=基准, 1.2=快20%)
-# attackRange:   攻击范围 (像素, 如 200)
+# hpRegen:       生命回复/秒 (小数," 如 0.1)"
+# speed:         移动速度 (像素/秒," 如 120)"
+# damagePercent: 百分比伤害修正 (小数," 0=无修正"," 0.2=+20%)"
+# attackSpeed:   攻速倍率 (小数," 1.0=基准"," 1.2=快20%)"
+# attackRange:   攻击范围 (像素," 如 200)"
 # armor:         护甲 (整数)
-# dodge:         闪避概率 (小数, 0.03=3%)
-# critChance:    暴击率 (小数, 0.05=5%)
-# critDamage:    暴击伤害加算 (小数, 0=基础2x, 0.5=2.5x)
-# lifeSteal:     生命偷取 (小数, 0.02=2%)
+# dodge:         闪避概率 (小数," 0.03=3%)"
+# critChance:    暴击率 (小数," 0.05=5%)"
+# critDamage:    暴击伤害加算 (小数," 0=基础2x"," 0.5=2.5x)"
+# lifeSteal:     生命偷取 (小数," 0.02=2%)"
 #
 # --- 额外属性 ---
-# pickupRange:   拾取范围 (像素, 默认15)
-# harvesting:    采集倍率 (小数, 0=无加成)
-# luck:          幸运值 (整数, 影响商店品质/掉落)
-# xpGain:        经验获取倍率 (小数, 0=无加成)
-# meleeDamage:   近战伤害附加 (整数, 独立叠加)
+# pickupRange:   拾取范围 (像素," 默认15)"
+# harvesting:    采集倍率 (小数," 0=无加成)"
+# luck:          幸运值 (整数," 影响商店品质/掉落)"
+# xpGain:        经验获取倍率 (小数," 0=无加成)"
+# meleeDamage:   近战伤害附加 (整数," 独立叠加)"
 # rangedDamage:  远程伤害附加 (整数)
 # elementalDamage: 元素伤害附加 (整数)
-# engineering:   工程值 (整数, 影响科技类武器)
+# engineering:   工程值 (整数," 影响科技类武器)"
 #
 # --- 解锁 & 被动 ---
-# tags:          角色标签 (melee|gun|bow|magic|medic|lance, 用 | 分隔)
-# unlockType:    解锁条件类型 (空=默认, maxLevel=通关N关, totalKills=累计击杀N)
+# tags:          角色标签 (melee|gun|bow|magic|medic|lance," 用 | 分隔)"
+# unlockType:    解锁条件类型 (空=默认," maxLevel=通关N关"," totalKills=累计击杀N)"
 # unlockValue:   解锁条件数值
 # passives:      引用passives.json的被动ID (多个用 | 分隔)
 #
-id,name,desc,icon,unlocked,weaponSlots,maxHp,hpRegen,speed,damagePercent,attackSpeed,attackRange,armor,dodge,critChance,critDamage,lifeSteal,pickupRange,harvesting,luck,xpGain,meleeDamage,rangedDamage,elementalDamage,engineering,tags,unlockType,unlockValue,passives
-swordsman,剑客,近战达人擅长用剑斧类武器,⚔️,true,6,30,0.1,120,0,1.2,200,1,0.03,0.05,0,0.02,15,0,0,0,0,0,0,0,melee|lance,,,
-gunslinger,枪手,远程火力枪械精通,🔫,true,6,23,0.1,110,0,1.3,350,0,0.02,0.08,0,0,15,0,0,0,0,0,0,0,gun,,,
-fire_mage,火焰法师,元素掌控者魔法大师,🔥,true,6,20,0.1,100,0,0.9,320,0,0.02,0.05,0,0,15,0,1,0,0,0,0,0,magic,,,
-archer,弓箭游侠,远程精准打击暴击穿透流派,🏹,true,6,24,0.1,115,0,1.1,360,0,0.03,0.10,0,0,15,0,0,0,0,0,0,0,bow,,,
-mech,重型机甲,血厚防高但移速较慢,🦾,false,5,45,0.1,70,0,0.8,280,2,0,0.03,0,0,20,0,0,0,0,0,0,0,gun|melee|lance,maxLevel,5,
-assassin,疾影刺客,极速高伤但非常脆弱,🗡️,false,4,18,0.2,140,0,1.5,220,0,0.12,0.12,0,0.03,20,0,1,0,0,0,0,0,melee|bow|lance,totalKills,100,
-medic,医疗兵,回复支援型擅长医疗武器,💊,false,6,25,1,100,0,1.0,280,1,0.04,0.05,0,0.02,25,0,0,0,0,0,0,0,medic,totalKills,80,
-paladin,圣骑士,攻守兼备近战医疗双修,✨,false,6,35,0,90,0,0.9,220,1,0.02,0.05,0,0.03,15,0,0,0,0,0,0,0,melee|medic|lance,maxLevel,10,
-engineer,工程师,科技暴击流枪械元素双修,🔧,false,6,23,0.1,105,0,1.1,320,1,0.03,0.12,0,0,15,0,1,0,0,0,0,0,gun|magic,totalKills,200,
-berserker,狂战士,低血高伤嗜血狂暴,💢,false,5,15,0.1,130,0,1.6,180,0,0.05,0.08,0,0.08,15,0,0,0,0,0,0,0,melee|gun|bow|magic|medic|lance,maxLevel,15,
-dragon_knight,龙骑士,龙骑无双骑枪专精,🐉,false,5,38,0.1,120,0,1.0,280,1,0.02,0.06,0,0.02,20,0,0,0,0,0,0,0,lance,totalKills,300,
+# --- 武器偏好 ---
+# preferredClasses:    1级分类偏好 (12类, 管道符 | 分隔, 例: Blade|Heavy|Precise)
+# preferredClasses_2: 2级细分类偏好 (30类, 管道符 | 分隔, 例: katana|longsword|rapier)
+#
+id,name,desc,icon,unlocked,maxWeapons,maxHp,hpRegen,speed,damagePercent,attackSpeed,attackRange,armor,dodge,critChance,critDamage,lifeSteal,pickupRange,harvesting,luck,xpGain,meleeDamage,rangedDamage,elementalDamage,engineering,tags,unlockType,unlockValue,passives,preferredClasses,preferredClasses_2
+swordsman,剑客,近战达人擅长用剑斧类武器,⚔️,true,6,30,0.1,120,0,1.2,0,1,0.03,0.05,0,0.02,15,0,0,0,0,0,0,0,melee|lance,,,,Blade|Heavy|Precise,katana|longsword|rapier|lance|halberd
+gunslinger,枪手,远程火力枪械精通,🔫,true,6,23,0.1,110,0,1.3,0,0,0.02,0.08,0,0,15,0,0,0,0,0,0,0,gun,,,,Gun,pistol|revolver|rifle|sniper
+fire_mage,火焰法师,元素掌控者魔法大师,🔥,true,6,20,0.1,100,0,0.9,0,0,0.02,0.05,0,0,15,0,1,0,0,0,0,0,magic,,,,Elemental|Explosive,fire|lightning|force
+archer,弓箭游侠,远程精准打击暴击穿透流派,🏹,true,6,24,0.1,115,0,1.1,0,0,0.03,0.10,0,0,15,0,0,0,0,0,0,0,bow,,,,Bow|Crossbow,longbow|recurve|handcrossbow|heavycrossbow
+mech,重型机甲,血厚防高但移速较慢,🦾,true,5,45,0.1,70,0,0.8,0,2,0,0.03,0,0,20,0,0,0,0,0,0,0,gun|melee|lance,maxLevel,5,,Heavy|Gun,warhammer|greataxe|lmg|hmg|lance
+assassin,疾影刺客,极速高伤但非常脆弱,🗡️,true,4,18,0.2,140,0,1.5,0,0,0.12,0.12,0,0.03,20,0,1,0,0,0,0,0,melee|bow|lance,totalKills,100,,Precise|Blade,dagger|rapier|kris|stiletto|composite
+medic,医疗兵,回复支援型擅长医疗武器,💊,true,6,25,1,100,0,1.0,0,1,0.04,0.05,0,0.02,25,0,0,0,0,0,0,0,medic,totalKills,80,,Medical|Elemental,heal|regen|holy|force
+paladin,圣骑士,攻守兼备近战医疗双修,✨,true,6,35,0,90,0,0.9,0,1,0.02,0.05,0,0.03,15,0,0,0,0,0,0,0,melee|medic|lance,maxLevel,10,,Blade|Medical|Heavy,longsword|holy|heal|lance|halberd
+engineer,工程师,科技暴击流枪械元素双修,🔧,true,6,23,0.1,105,0,1.1,0,1,0.03,0.12,0,0,15,0,1,0,0,0,0,0,gun|magic,totalKills,200,,Gun|Elemental|Explosive,rifle|sniper|force|lightning|grenade|rocket
+berserker,狂战士,低血高伤嗜血狂暴,💢,true,5,15,0.1,130,0,1.6,0,0,0.05,0.08,0,0.08,15,0,0,0,0,0,0,0,melee|gun|bow|magic|medic|lance,maxLevel,15,,Blade|Blunt|Heavy|Precise|Bow|Crossbow|Gun|Explosive|Elemental|Medical|Support|Primitive,longsword|katana|saber|scimitar|dagger|rapier|machete|mace|hammer|club|staff|flail|war_staff|greataxe|warhammer|halberd|pike|lance|trident|greataxe|kris|stiletto|longbow|recurve|composite|handcrossbow|heavycrossbow|repeating|pistol|revolver|smg|rifle|sniper|shotgun|lmg|hmg|grenade|rocket|mine|bomb|fire|ice|lightning|wind|force|shadow|earth|holy|chaos|heal|regen|buff|cleanse|shield|aegis|barrier|stone|bone|wood
+dragon_knight,龙骑士,龙骑无双骑枪专精,🐉,true,5,38,0.1,120,0,1.0,0,1,0.02,0.06,0,0.02,20,0,0,0,0,0,0,0,lance,totalKills,300,,Heavy,lance|pike|trident
+crossbowman,弩手,弩系专精;中距高穿透;跨弩弓双系,🎯,true,6,25,0.1,100,0,0.9,0,1,0.04,0.08,0,0.02,20,0,0,0,0,0,0,0,bow,totalKills,60,,Crossbow|Bow,handcrossbow|heavycrossbow|repeating|longbow
+boxer,拳手,拳拳到肉的近战格斗家,🥊,true,4,22,0.15,130,0,1.4,0,0,0.05,0.1,0,0.03,18,0,0,0,0,0,0,0,melee|crit,totalKills,30,,Heavy|Blunt,fist|gauntlet|tonfa|flail|war_staff
+axeman,斧战士,重斧挥击的破坏者,🪓,true,5,32,0.05,95,0,0.85,0,2,0.02,0.04,0,0,15,0,0,0,0,0,0,0,melee,totalKills,50,,Heavy,greataxe|battleaxe|halberd|warhammer
+lancer,枪兵,长枪阵的破甲兵,🔱,true,5,28,0.08,110,0,1,0,1,0.03,0.06,0,0,18,0,0,0,0,0,0,0,melee|lance,maxLevel,3,,Heavy,lance|pike|halberd|trident
+blade_wielder,刀客,剑意无双的刀锋大师,🗡️,true,4,20,0.12,125,0,1.3,0,0,0.06,0.1,0.5,0.02,18,0,0,0,0,0,0,0,melee|crit,totalKills,80,,Blade|Precise,katana|longsword|rapier|saber|scimitar
+ninja,忍者,影中潜行的暗影杀手,🥷,true,5,16,0.15,150,0,1.5,0,0,0.15,0.12,0,0.04,20,0,0,0,0,0,0,0,melee|bow|crit,totalKills,150,,Precise|Blade,dagger|kris|stiletto|shuriken|composite|longbow
+ji_master,武斗家,内气外放的武学宗师,☯️,true,6,22,0.3,105,0,1,0,0,0.05,0.05,0,0.02,20,0,0,0,0,0,0,0,magic,maxLevel,8,,Elemental|Medical,force|wind|holy|heal|regen
+teng_pai_guard,盾卫,藤牌护身的坚守者,🛡️,true,6,36,0.2,95,0,0.95,0,3,0.08,0.04,0,0,18,0,0,0,0,0,0,0,melee|medic|lance,totalKills,120,,Medical|Heavy,shield|regen|lance|halberd

@@ -1,11 +1,9 @@
-﻿@echo off
+@echo off
 chcp 65001 >nul
 title PNG Picture Resize Tool
 cd /d "%~dp0"
 
-:: Default directory (relative to parent of bat location)
-set "DEFAULT_DIR=assets"
-
+set "DEFAULT_DIR=assets/chars2"
 set "INPUT_DIR=%~1"
 if "%INPUT_DIR%"=="" set "INPUT_DIR=%DEFAULT_DIR%"
 
@@ -17,19 +15,9 @@ echo   Scan directory: %INPUT_DIR%
 echo ============================================================
 echo.
 
-:: Check Python
-where python >nul 2>&1
+python -c "from PIL import Image" 2>nul
 if %errorlevel% neq 0 (
-    echo [ERROR] Python not found. Please install Python 3.
-    pause
-    exit /b 1
-)
-
-:: Check Pillow
-python -c "from PIL import Image; print('Pillow OK')" 2>nul
-if %errorlevel% neq 0 (
-    echo [INFO] Installing Pillow...
-    pip install Pillow
+    pip install Pillow >nul 2^>^&1
     if %errorlevel% neq 0 (
         echo [ERROR] Failed to install Pillow. Run manually: pip install Pillow
         pause

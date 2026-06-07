@@ -7,7 +7,7 @@ cd /d "%~dp0"
 :: =======================================
 :: Config (edit below)
 :: =======================================
-set "DEFAULT_DIR=assets/weapons"
+set "DEFAULT_DIR=assets/chars2"
 set "KEY_COLOR=0,0,0"
 set "TOLERANCE=80"
 set "INVERT=0"

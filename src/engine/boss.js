@@ -30,8 +30,9 @@ const BOSS_BEHAVIORS = {
             const dx = player.x - boss.x;
             const dy = player.y - boss.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
+            const touchDist = (boss.radius || 24) + (player.radius || 10) + 5;
 
-            if (dist > 5) {
+            if (dist > touchDist) {
                 const speed = (boss.speed || 40) * dt;
                 boss.x += (dx / dist) * speed + boss.knockbackX * dt;
                 boss.y += (dy / dist) * speed + boss.knockbackY * dt;
@@ -71,9 +72,10 @@ const BOSS_BEHAVIORS = {
             const dx = player.x - boss.x;
             const dy = player.y - boss.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
+            const touchDist = (boss.radius || 24) + (player.radius || 10) + 5;
 
             // 1.5× 加速
-            if (dist > 5) {
+            if (dist > touchDist) {
                 const speed = (boss.speed || 55) * 1.5 * dt;
                 boss.x += (dx / dist) * speed + boss.knockbackX * dt;
                 boss.y += (dy / dist) * speed + boss.knockbackY * dt;
@@ -285,9 +287,17 @@ const BossSystem = {
         if (!boss || !boss.alive) return;
         boss.alive = false;
 
-        // 掉落传奇宝箱
+        // 决定掉落宝箱类型:
+        //   - 无尽模式下第 20 关及以后 → 高级宝箱(高于传奇, 70% 必出传奇品质)
+        //   - 其他情况 → 传奇宝箱
+        let chestType = 'legendary';
+        if (typeof WaveSystem !== 'undefined' &&
+            typeof GameEngine !== 'undefined' && GameEngine.endlessMode &&
+            WaveSystem.currentLevel >= WaveSystem.MAX_LEVEL) {
+            chestType = 'advanced';
+        }
         if (typeof LootSystem !== 'undefined') {
-            LootSystem.spawnChest(boss.x, boss.y, 'legendary');
+            LootSystem.spawnChest(boss.x, boss.y, chestType);
         }
 
         // 大爆炸特效

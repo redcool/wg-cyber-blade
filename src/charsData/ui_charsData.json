@@ -64,6 +64,13 @@
   "shop_refresh_cost": "🔄 词条已重随: 🪙{0}",
   "shop_no_gold": "🪙 金币不足，需要 {0}",
   "shop_sold": "🗑️ 已卖出 {0}，退款 {1} 🪙",
+  "shop_sell_min": "🛡️ 至少保留 1 把武器",
+  "shop_endless": "♾️ 无尽模式",
+  "shop_endless_hint": "选择无尽模式后，第 20 关 boss 掉落高级宝箱，无通关条件",
+  "victory_title": "🏆 系统通关!",
+  "victory_subtitle": "击败第 {0} 关 Boss · 角色完成通关",
+  "victory_replay": "🔄 再来一局",
+  "victory_menu": "🏠 返回主菜单",
   "reroll_btn": "🔄 重掷",
   "levelup_reroll_cost": "（{0} 材料）",
   "levelup_reroll_free": "（免费）",
@@ -72,5 +79,6 @@
   "mod_moveSpeed": "{0}%移速",
   "mod_range": "{0}%射程",
   "gold_label": "金币",
-  "chest_reward_fallback": "奖励"
+  "chest_reward_fallback": "奖励",
+  "weapon_not_preferred": "非偏好武器"
 }

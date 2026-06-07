@@ -24,6 +24,13 @@ const AudioSystem = {
     _bgmVolume: 0.8,
     _sfxVolume: 0.5,
 
+    // ---- BGM duck（商店场景的音量缩放） ----
+    _bgmDucked: false,
+    _bgmDuckMultiplier: 1.0,
+
+    // ---- BGM 列表循环 ----
+    _bgmPlaylistIndex: 0,
+
     // ---- BGM 文件播放 ----
     _bgmBuffer: null,      // 当前解码后的 AudioBuffer
     _bgmSourceNode: null,  // 当前 BufferSourceNode
@@ -40,7 +47,13 @@ const AudioSystem = {
 
     /** 初始化 AudioContext（需用户交互后才能创建） */
     init() {
-        if (this._ctx) return;
+        if (this._ctx) {
+            // 重复 init 时也尝试 resume,覆盖"自动挂起"场景（如切窗口/切 tab 后回来）
+            if (this._ctx.state === 'suspended') {
+                this._ctx.resume().catch(() => {});
+            }
+            return;
+        }
         try {
             this._ctx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -51,6 +64,14 @@ const AudioSystem = {
             this._sfxGain = this._ctx.createGain();
             this._sfxGain.gain.value = this._sfxVolume;
             this._sfxGain.connect(this._ctx.destination);
+
+            // 关键：创建后立即尝试 resume,不要等 startBGM 才 resume
+            // 浏览器(Safari/iOS 最严格)要求 ctx.resume() 必须在用户手势栈内调用,
+            // 否则即便后续处于手势中,音频仍处于 suspended 不可听。
+            // init() 由 startGame(按钮 click handler)同步触发,处于手势栈内。
+            if (this._ctx.state === 'suspended') {
+                this._ctx.resume().catch(() => {});
+            }
 
             // 从配置文件加载音量设置
             this._loadVolumeConfig();
@@ -75,8 +96,8 @@ const AudioSystem = {
                     if (typeof cfg.Audio.sfxVolume === 'number') {
                         this._sfxVolume = Math.max(0, Math.min(1, cfg.Audio.sfxVolume));
                     }
-                    // 如果 GainNode 已创建，立即应用
-                    if (this._bgmGain) this._bgmGain.gain.value = this._bgmVolume;
+                    // 如果 GainNode 已创建，立即应用（走 _applyBGMVolume 以保留 duck）
+                    if (this._bgmGain) this._applyBGMVolume();
                     if (this._sfxGain) this._sfxGain.gain.value = this._sfxVolume;
                     console.log('[AudioSystem] 已加载音量配置: BGM', this._bgmVolume, 'SFX', this._sfxVolume);
                 }
@@ -89,7 +110,7 @@ const AudioSystem = {
     /** 设置 BGM 音量（0~1），运行时生效 */
     setBGMVolume(vol) {
         this._bgmVolume = Math.max(0, Math.min(1, vol));
-        if (this._bgmGain) this._bgmGain.gain.value = this._bgmVolume;
+        if (this._bgmGain) this._applyBGMVolume();
     },
 
     /** 设置 SFX 音量（0~1），运行时生效 */
@@ -841,11 +862,14 @@ const AudioSystem = {
 
     // ============================================================
     // 背景音乐：从 data/audio.json 动态加载曲目列表
+    // 设计：单首 source.loop=true 内部循环 + 监听 ended 切换到下一首
     // ============================================================
 
     /**
      * 播放背景音乐
-     * @param {string} [trackId] - 曲目 ID，默认第一首
+     * - BGM_TRACKS 长度 = 1: 单曲循环
+     * - BGM_TRACKS 长度 ≥ 2: 列表循环（每首内部单曲循环，播完切下一首）
+     * @param {string} [trackId] - 起始曲目 ID，默认第一首
      */
     async startBGM(trackId) {
         if (!this._ensure()) return;
@@ -855,31 +879,75 @@ const AudioSystem = {
             await this._ctx.resume();
         }
 
-        // 从动态加载的曲目列表中查找
-        const track = BGM_TRACKS.find(t => t.id === trackId) || BGM_TRACKS[0];
+        // 确定起始曲目
+        const startIdx = trackId
+            ? Math.max(0, BGM_TRACKS.findIndex(t => t.id === trackId))
+            : 0;
+        this._bgmPlaylistIndex = startIdx >= 0 ? startIdx : 0;
+        this._bgmPlaying = true;
+        this._bgmPaused = false;
+        this._bgmDucked = false;
+        this._bgmDuckMultiplier = 1.0;  // 1.0 = 满音量
+        this._bgmCurrentEndHandler = null;
+
+        const track = BGM_TRACKS[this._bgmPlaylistIndex];
         if (!track) {
-            // 无 BGM 曲目时回退到程序化生成
             this._fallbackToProgrammatic();
             return;
         }
-
-        this._bgmPlaying = true;
         this._currentTrackId = track.id;
-        this._playFileBGM(track);
+        await this._playFileBGM(track);
     },
 
     /**
-     * 暂停 BGM（商店/菜单场景，保留曲目状态）
-     * 不停止 AudioContext，仅静音并释放 BGM 节点
+     * 静音但不停止（用于商店等"仍在播放但降低音量"场景）
+     * 通过 GainNode 平滑过渡到 50% 音量，停止时再恢复
+     * @param {number} multiplier - 0~1 缩放系数（1.0=满音量，0.5=50%）
+     */
+    duckBGM(multiplier) {
+        if (!this._bgmPlaying) return;
+        const m = (typeof multiplier === 'number') ? Math.max(0, Math.min(1, multiplier)) : 0.5;
+        this._bgmDucked = true;
+        this._bgmDuckMultiplier = m;
+        this._applyBGMVolume();
+    },
+
+    /** 恢复 duck 之前的音量 */
+    unduckBGM() {
+        if (!this._bgmDucked) return;
+        this._bgmDucked = false;
+        this._bgmDuckMultiplier = 1.0;
+        this._applyBGMVolume();
+    },
+
+    /**
+     * 把 BGM 音量应用到 GainNode（含 duck 系数）
+     * 用 linearRampToValueAtTime 做平滑过渡（避免咔哒声）
+     */
+    _applyBGMVolume() {
+        if (!this._bgmGain || !this._ctx) return;
+        const target = this._bgmVolume * this._bgmDuckMultiplier;
+        const now = this._ctx.currentTime;
+        try {
+            this._bgmGain.gain.cancelScheduledValues(now);
+            this._bgmGain.gain.setValueAtTime(this._bgmGain.gain.value, now);
+            this._bgmGain.gain.linearRampToValueAtTime(target, now + 0.25);
+        } catch (e) {
+            this._bgmGain.gain.value = target;
+        }
+    },
+
+    /**
+     * 完整停止 BGM（释放所有节点，清状态）
+     * 用于退出游戏、关卡切换等"真的不要了"场景
      */
     pauseBGM() {
         if (!this._bgmPlaying) return;
-        // 停止文件 BGM
+        // 真正停止节点（与 duckBGM 不同）
         if (this._bgmSourceNode) {
-            try { this._bgmSourceNode.stop(); this._bgmSourceNode.disconnect(); } catch(e) {}
+            try { this._bgmSourceNode.onended = null; this._bgmSourceNode.stop(); this._bgmSourceNode.disconnect(); } catch(e) {}
             this._bgmSourceNode = null;
         }
-        // 停止程序化 BGM
         if (this._bgmNodes.length > 0) {
             for (const n of this._bgmNodes) {
                 try { n.stop(); n.disconnect(); } catch(e) {}
@@ -890,21 +958,43 @@ const AudioSystem = {
             clearTimeout(this._bgmTimer);
             this._bgmTimer = null;
         }
-        // 标记为暂停状态（保留 _bgmPlaying = true 表示仍应播放）
         this._bgmPaused = true;
+        this._bgmPlaying = false;
     },
 
     /**
-     * 恢复 BGM（从暂停处重新开始当前曲目）
+     * 恢复 BGM（从暂停/duck 状态恢复）
+     * - 暂停过：重新启动当前曲目
+     * - 仅 duck：恢复音量，不重启（保持当前播放位置）
      */
     resumeBGM() {
+        if (this._bgmDucked) this.unduckBGM();
         if (!this._bgmPaused) return;
         this._bgmPaused = false;
-        if (this._bgmPlaying) {
-            // 重新从当前曲目头部开始
-            this._bgmPlaying = false; // 重置以允许 startBGM 通过
-            this.startBGM(this._currentTrackId);
+        // 重新播放当前曲目
+        this.startBGM(this._currentTrackId);
+    },
+
+    /** 播放下一个曲目（手动切歌） */
+    nextBGM() {
+        if (BGM_TRACKS.length <= 1) return;
+        const nextIdx = (this._bgmPlaylistIndex + 1) % BGM_TRACKS.length;
+        this._switchToTrack(nextIdx);
+    },
+
+    /** 内部：切到指定曲目（停止当前，启动下一首） */
+    _switchToTrack(idx) {
+        if (idx < 0 || idx >= BGM_TRACKS.length) return;
+        this._bgmPlaylistIndex = idx;
+        const track = BGM_TRACKS[idx];
+        this._currentTrackId = track.id;
+        // 停当前节点（保留 _bgmPlaying = true 让 _playFileBGM 能继续）
+        if (this._bgmSourceNode) {
+            try { this._bgmSourceNode.onended = null; this._bgmSourceNode.stop(); this._bgmSourceNode.disconnect(); } catch(e) {}
+            this._bgmSourceNode = null;
         }
+        this._bgmBuffer = null;
+        this._playFileBGM(track);
     },
 
     /** 尝试播放文件 BGM（使用 fetch + decodeAudioData） */
@@ -916,12 +1006,18 @@ const AudioSystem = {
             if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             const arrayBuffer = await response.arrayBuffer();
 
-            this._bgmBuffer = await this._ctx.decodeAudioData(arrayBuffer);
-            console.log('[AudioSystem] BGM 解码成功:', track.file, `(${this._bgmBuffer.duration.toFixed(1)}s)`);
+            const buffer = await this._ctx.decodeAudioData(arrayBuffer);
+            console.log('[AudioSystem] BGM 解码成功:', track.file, `(${buffer.duration.toFixed(1)}s)`);
 
-            if (this._bgmPlaying) {
-                this._scheduleFileBGMLoop();
+            // 异步完成期间用户可能已经切歌或停止，检查当前索引
+            // 注:比较 id 而非对象引用 — _loadAudioConfig 异步完成时会重建 BGM_TRACKS(对象引用变化)
+            const currentTrack = BGM_TRACKS[this._bgmPlaylistIndex];
+            if (!this._bgmPlaying || !currentTrack || currentTrack.id !== track.id) {
+                console.log('[AudioSystem] 解码完成时曲目已变更/已停止，丢弃');
+                return;
             }
+            this._bgmBuffer = buffer;
+            this._scheduleFileBGM();
         } catch (e) {
             if (!this._bgmPlaying) return;
             console.warn('[AudioSystem] BGM 文件加载/解码失败:', e.message);
@@ -930,18 +1026,43 @@ const AudioSystem = {
         }
     },
 
-    /** 调度文件 BGM 循环播放 */
-    _scheduleFileBGMLoop() {
+    /**
+     * 调度文件 BGM 播放
+     * - 单首时：source.loop = true 无限循环
+     * - 多首时：单次播放 + 监听 ended 自动切下一首
+     */
+    _scheduleFileBGM() {
         if (!this._bgmPlaying || !this._ctx || !this._bgmBuffer) return;
 
         const source = this._ctx.createBufferSource();
         source.buffer = this._bgmBuffer;
-        source.loop = true;
+
+        if (BGM_TRACKS.length > 1) {
+            // 列表循环：单次播放，播完切下一首
+            source.loop = false;
+            const myIdx = this._bgmPlaylistIndex;
+            source.onended = () => {
+                // 保险：检查是否还是当前曲目、是否还在播放
+                if (!this._bgmPlaying) return;
+                if (this._bgmPlaylistIndex !== myIdx) return;  // 已被切换
+                if (this._bgmPaused) return;
+                if (this._bgmSourceNode !== source) return;     // 已被替换
+                const nextIdx = (myIdx + 1) % BGM_TRACKS.length;
+                console.log('[AudioSystem] 曲目结束，切换到下一首:', BGM_TRACKS[nextIdx].id);
+                this._switchToTrack(nextIdx);
+            };
+        } else {
+            // 单曲循环
+            source.loop = true;
+        }
+
+        // 应用当前 duck 状态
+        this._applyBGMVolume();
+
         source.connect(this._bgmGain);
         source.start(0);
-
         this._bgmSourceNode = source;
-        console.log('[AudioSystem] ▶ 文件 BGM 开始播放');
+        console.log('[AudioSystem] ▶ 文件 BGM 开始播放:', BGM_TRACKS[this._bgmPlaylistIndex].id);
     },
 
     /** 回退到程序化生成的 BGM */

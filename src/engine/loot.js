@@ -27,6 +27,7 @@
 // 宝箱中文名（从 JSON 加载，运行时覆盖; fallback 硬编码）
 const _LOOT_STR = {
     chest_normal: '普通宝箱', chest_elite: '精英宝箱', chest_legendary: '传奇宝箱',
+    chest_advanced: '高级宝箱',
     gold_name: '{0} 金币', gold_desc: '获得 {0} 金币',
 };
 if (typeof DataLoader !== 'undefined') {
@@ -55,6 +56,19 @@ const CHEST_TYPES = {
         itemCount: 3,
         goldRange: [50, 100],
     },
+    /**
+     * 高级宝箱（无尽模式终极关 / 20 关 boss 掉落）
+     *  - 稀有度权重向 legendary 倾斜(70%)+ 必出史诗以上
+     *  - 4 选项, 金币区间更高
+     *  - 品质 T4 (高于传奇 T3)
+     */
+    advanced: {
+        name: _LOOT_STR.chest_advanced,
+        color: '#ff00ff',  // 运行时从 RarityColorSystem 覆盖 (magenta 标识)
+        rarityWeights: { common: 0, rare: 5, epic: 25, legendary: 70 },
+        itemCount: 4,
+        goldRange: [100, 250],
+    },
 };
 
 /** 宝箱类型 → 稀有度 key 映射（用于 RarityColorSystem 取色） */
@@ -62,6 +76,7 @@ const CHEST_RARITY_KEY = {
     normal: 'common',
     elite: 'rare',
     legendary: 'legendary',
+    advanced: 'legendary',  // 高级宝箱取传奇色 (最高级)
 };
 
 /**
@@ -86,6 +101,7 @@ const CHEST_QUALITY_MAP = {
     normal: 'T1',
     elite: 'T2',
     legendary: 'T3',
+    advanced: 'T4',  // 高级宝箱 → 顶级品质
 };
 
 const LootSystem = {
@@ -120,7 +136,7 @@ const LootSystem = {
      * 生成宝箱（敌人死亡时调用）
      * @param {number} x - 掉落 X 坐标
      * @param {number} y - 掉落 Y 坐标
-     * @param {string} type - 'normal'|'elite'|'legendary'
+     * @param {string} type - 'normal'|'elite'|'legendary'|'advanced'
      *
      * 算法:
      * 1. 创建宝箱对象 { x, y, type, alive: true }
@@ -159,7 +175,7 @@ const LootSystem = {
 
     /**
      * 生成宝箱奖励选项
-     * @param {string} chestType - 'normal'|'elite'|'legendary'
+     * @param {string} chestType - 'normal'|'elite'|'legendary'|'advanced'
      * @param {Object} player
      * @returns {Object[]} 奖励选项数组
      *
@@ -426,6 +442,16 @@ const LootSystem = {
 
         // 清空当前奖励
         this.currentRewards = [];
+
+        // 还有 pending chest → 自动显示下一个宝箱奖励
+        if (this.pendingChests.some(c => c.alive)) {
+            if (typeof UISystem !== 'undefined' && typeof UISystem.showChestReward === 'function') {
+                UISystem.showChestReward();
+            }
+        } else if (typeof this.onAllChestsOpened === 'function') {
+            // 全部宝箱开完 → 流转到升级/商店
+            this.onAllChestsOpened();
+        }
 
         return result;
     },

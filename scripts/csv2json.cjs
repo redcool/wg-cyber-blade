@@ -98,31 +98,62 @@ const CSV2JSON = {
     parse(text, schema) {
         const lines = text.split(/\r?\n/);
         const result = [];
-        const columnNames = Object.keys(schema);
+        const schemaKeys = Object.keys(schema);
 
-        // 跳过首行（列名行）
-        let firstNonCommentSkipped = false;
-
+        // 收集所有非空非注释行
+        const dataLines = [];
         for (const rawLine of lines) {
             const trimmed = rawLine.trim();
-            // 跳过空行和注释行
             if (trimmed === '' || trimmed.startsWith('#')) continue;
+            dataLines.push(trimmed);
+        }
+        if (dataLines.length === 0) return result;
 
-            const fields = this._splitLine(trimmed);
+        // 检查首行是否为 header(以 schema 第一个列名开头, 而非数据)
+        const firstFields = this._splitLine(dataLines[0]);
+        const isHeaderRow = firstFields[0] === schemaKeys[0];
+
+        // 决定 header 索引映射: header 行 → 列名
+        // 如果首行就是 header, 使用它; 否则回退到 schema 顺序(positional)
+        let headerIndex = null;
+        let dataStart = 0;
+        if (isHeaderRow) {
+            headerIndex = {};
+            firstFields.forEach((name, i) => {
+                headerIndex[name.trim()] = i;
+            });
+            dataStart = 1;
+        }
+
+        for (let li = dataStart; li < dataLines.length; li++) {
+            const fields = this._splitLine(dataLines[li]);
             if (fields.length < 2) continue; // 至少要有 id + 一个字段
 
-            // 跳过列名行（第一个字段等于 schema 的第一个列名）
-            if (!firstNonCommentSkipped && fields[0] === columnNames[0]) {
-                firstNonCommentSkipped = true;
-                continue;
+            // 防御: 跳过 id 为空的行(常见于 CSV 编辑时空行未被察觉)
+            //   例: ",,,,,," 会被解析成 31 个空字段, 触发"角色未解锁"兜底卡
+            // 仅对 schema 含 'id' 列的表生效 (characterLevel 等表无 id 字段)
+            if (schemaKeys.includes('id')) {
+                const idIdx = headerIndex ? headerIndex['id'] : schemaKeys.indexOf('id');
+                if (idIdx === undefined || idIdx < 0 || !fields[idIdx] || !fields[idIdx].trim()) {
+                    console.warn(`[csv2json] 跳过空 id 行 (行 ${li + 1}): "${dataLines[li].substring(0, 50)}..."`);
+                    continue;
+                }
             }
-            firstNonCommentSkipped = true;
 
             const obj = {};
-            for (let i = 0; i < columnNames.length; i++) {
-                const colName = columnNames[i];
+            for (const colName of schemaKeys) {
                 const colType = schema[colName];
-                const rawVal = i < fields.length ? fields[i] : '';
+                let rawVal = '';
+                if (headerIndex) {
+                    // header-based: 按列名找索引, 找不到 → 空
+                    const idx = headerIndex[colName];
+                    rawVal = (idx !== undefined && idx < fields.length) ? fields[idx] : '';
+                } else {
+                    // positional fallback: 旧 CSV 无 header, 按 schema 顺序
+                    // 此分支不再使用, 但保留以防万一
+                    const i = schemaKeys.indexOf(colName);
+                    rawVal = i < fields.length ? fields[i] : '';
+                }
                 obj[colName] = this._castValue(rawVal, colType);
             }
             result.push(obj);
@@ -178,6 +209,8 @@ const CSV2JSON = {
             { name: 'rarityColors',csv: 'csv/rarityColors.csv',json: 'src/data/rarityColors.json',schema: rarityColorsSchema },
             { name: 'audio',csv: 'csv/audio.csv',json: 'src/data/audio.json',schema: audioSchema },
             { name: 'classes',csv: 'csv/classes.csv',json: 'src/data/classes.json',schema: classSchema },
+            { name: 'level_duration',csv: 'csv/level_duration.csv',json: 'src/data/level_duration.json',schema: levelDurationSchema },
+            { name: 'system',csv: 'csv/system.csv',json: 'src/data/system.json',schema: systemSchema },
         ];
 
         let success = 0;
@@ -205,10 +238,13 @@ const CSV2JSON = {
 
 /**
  * characters.csv Schema
- * 列: id,name,desc,icon,unlocked,weaponSlots,maxHp,hpRegen,speed,
+ * 列: id,name,desc,icon,unlocked,maxWeapons,maxHp,hpRegen,speed,
  *     damagePercent,attackSpeed,attackRange,armor,dodge,critChance,critDamage,
  *     lifeSteal,harvesting,luck,xpGain,meleeDamage,rangedDamage,
- *     elementalDamage,engineering,tags,unlockType,unlockValue,passives
+ *     elementalDamage,engineering,tags,unlockType,unlockValue,passives,
+ *     preferredClasses,preferredClasses_2
+ * 注: v1.1 武器槽位=1, weaponSlots 改 maxWeapons (角色可装备武器总数 4-6)
+ *     preferredClasses = 1级分类偏好, preferredClasses_2 = 2级细分类偏好
  */
 const characterSchema = {
     id: 'string',
@@ -216,7 +252,7 @@ const characterSchema = {
     desc: 'string',
     icon: 'string',
     unlocked: 'boolean',
-    weaponSlots: 'number',
+    maxWeapons: 'number',
     maxHp: 'number',
     hpRegen: 'number',
     speed: 'number',
@@ -240,6 +276,8 @@ const characterSchema = {
     unlockType: 'string',
     unlockValue: 'number',
     passives: 'array',
+    preferredClasses: 'array',
+    preferredClasses_2: 'array',
 };
 
 /**
@@ -255,22 +293,25 @@ const characterLevelSchema = {
 
 /**
  * weapons.csv Schema
- * 列: id,name,desc,icon,slots,cost,tag,minLevel,
+ * 列: id,name,desc,icon,cost,tag,minLevel,
  *     damage_lv1,damage_lv2,damage_lv3,damage_lv4,
  *     cooldown_lv1,cooldown_lv2,cooldown_lv3,cooldown_lv4,
- *     attackRangeMult,speedMult,
+ *     speedMult,
  *     critChanceAdd,critDamageAdd,armorAdd,hpRegenAdd,maxHpAdd,lifeStealAdd,
  *     bulletCount,bulletSpeed,bulletMaxRange,attackRange,spread,pierce,
  *     burnDps,burnMaxStacks,chainCount,splashRadius,homingStrength,
- *     slowAmount,slowDuration,healOnHit,auraHeal,auraRadius,sprayCone,
- *     behavior,class,knockback,magSize,reloadTime
+ *     slowAmount,slowDuration,healOnHit,auraHeal,auraRadius,
+ *     sprayCone,
+ *     behavior,class,class_2,knockback,magSize,reloadTime
+ * 注: v1.1 移除 slots 字段 (武器槽位=1), 新增 class_2 二级分类 (在 class 后面)
+ *     damageReductionAura / killHeal 尚未在 CSV 中, 解析时默认填 0
+ * v1.3 移除 attackRangeMult 字段 (死字段, 引擎不用, 角色 attackRange 已归 0)
  */
 const weaponSchema = {
     id: 'string',
     name: 'string',
     desc: 'string',
     icon: 'string',
-    slots: 'number',
     cost: 'number',
     tag: 'string',
     minLevel: 'number',
@@ -282,7 +323,6 @@ const weaponSchema = {
     cooldown_lv2: 'number',
     cooldown_lv3: 'number',
     cooldown_lv4: 'number',
-    attackRangeMult: 'number',
     speedMult: 'number',
     critChanceAdd: 'number',
     critDamageAdd: 'number',
@@ -309,9 +349,12 @@ const weaponSchema = {
     sprayCone: 'number',
     behavior: 'string',
     class: 'string',
+    class_2: 'string',
     knockback: 'number',
     magSize: 'number',
     reloadTime: 'number',
+    damageReductionAura: 'number',
+    killHeal: 'number',
 };
 
 /**
@@ -512,6 +555,34 @@ const classSchema = {
     '描述': 'string',
 };
 
+/**
+ * level_duration.csv Schema
+ * 列: level,duration
+ *  - level: 关卡(整数) 或 "default"
+ *  - duration: 该关卡波次持续时间(秒)
+ */
+const levelDurationSchema = {
+    level: 'string',  // 接受 "default" / "1" / "2" 等
+    duration: 'number',
+};
+
+/**
+ * system.csv Schema
+ * 列: key,value,valueType,desc,group
+ *  - key: 参数唯一标识 (英文)
+ *  - value: 数值或字符串值
+ *  - valueType: number|string|boolean
+ *  - desc: 中文说明
+ *  - group: orbit|combat|render|debug
+ */
+const systemSchema = {
+    key: 'string',
+    value: 'string',  // CSV 全是字符串,运行时再 cast
+    valueType: 'string',
+    desc: 'string',
+    group: 'string',
+};
+
 // ============================================================
 // 入口
 // ============================================================
@@ -520,4 +591,11 @@ if (require.main === module) {
     process.exit(ok ? 0 : 1);
 }
 
-module.exports = { CSV2JSON, characterSchema, characterLevelSchema, weaponSchema, itemSchema, enemySchema, bossSchema, waveSchema, weaponStatSchema, charStatSchema, difficultySchema, debugSchema, levelUpCardsSchema, rarityColorsSchema, audioSchema, classSchema };
+module.exports = { CSV2JSON, characterSchema, characterLevelSchema, weaponSchema, itemSchema, enemySchema, bossSchema, waveSchema, weaponStatSchema, charStatSchema, difficultySchema, debugSchema, levelUpCardsSchema, rarityColorsSchema, audioSchema, classSchema, levelDurationSchema };
+
+/**
+ * level_duration.csv Schema
+ * 列: level,duration
+ *  - level: 关卡(整数) 或 "default"
+ *  - duration: 该关卡波次持续时间(秒)
+ */

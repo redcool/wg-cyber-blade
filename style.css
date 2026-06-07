@@ -401,6 +401,68 @@ body {
     color: rgba(255, 255, 255, 0.4);
     margin-bottom: 4px;
 }
+
+/* Bug2 修复: 武器不适配角色偏好时的警告徽章 */
+.weapon-detail-tag .warn-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: linear-gradient(90deg, #ff8a3d, #ffb84d);
+    color: #1a1a1a;
+    font-size: 0.92em;
+    font-weight: 700;
+    border-radius: 6px;
+    text-shadow: none;
+    box-shadow: 0 0 6px rgba(255, 138, 61, 0.6);
+}
+
+/* Report 3: 武器适配度进度条 (从红到绿 3 档)
+   0%  = 0/2 命中 (红)
+   50% = 1/2 命中 (黄)
+   100% = 2/2 命中 (绿)
+   进度条作为 .stat-item 内第一个元素的背景, 宽度按 fit 比例 */
+.weapon-detail-stats .stat-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.04);
+}
+.weapon-detail-stats .stat-item.fit-0::before,
+.weapon-detail-stats .stat-item.fit-50::before,
+.weapon-detail-stats .stat-item.fit-100::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 0;
+    border-radius: 4px 0 0 4px;
+    opacity: 0.55;
+}
+.weapon-detail-stats .stat-item.fit-0::before {
+    width: 18%;
+    background: linear-gradient(90deg, #ff3030 0%, #ff5040 100%);
+}
+.weapon-detail-stats .stat-item.fit-50::before {
+    width: 50%;
+    background: linear-gradient(90deg, #ffea00 0%, #ffae00 50%, #c0c000 100%);
+}
+.weapon-detail-stats .stat-item.fit-100::before {
+    width: 100%;
+    background: linear-gradient(90deg, #4dff4d 0%, #1ec81e 50%, #00a000 100%);
+}
+.weapon-detail-stats .stat-item > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* 适配度专用 stat-item 头部标签 (伤害项加 💚/💛/❤️ hint) */
+.weapon-detail-stats .stat-item .fit-hint {
+    margin-left: 4px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
 .weapon-detail-desc {
     font-size: 0.72em;
     color: rgba(255, 255, 255, 0.5);
@@ -655,6 +717,53 @@ body {
     color: #ff0044;
     text-shadow: 0 0 40px rgba(255, 0, 68, 0.5);
     margin-bottom: 6px;
+}
+
+/* === Victory / 通关结算 (复用 gameover 布局 + 绿色胜利色) === */
+.victory-content {
+    max-height: 92vh;
+    overflow-y: auto;
+}
+.victory-scroll {
+    max-height: 55vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.victory-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.2em;
+    color: #00ff88;
+    text-shadow: 0 0 40px rgba(0, 255, 136, 0.6);
+    margin-bottom: 6px;
+}
+.victory-info {
+    font-size: 1.15em;
+    color: rgba(0, 255, 136, 0.9);
+    margin-bottom: 16px;
+}
+.victory-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+/* === Shop continue row (第 19 关显示无尽按钮) === */
+.shop-continue-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+}
+.shop-endless-btn {
+    background: linear-gradient(135deg, #ff00ff 0%, #aa00ff 100%);
+    border-color: #ff00ff;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
+}
+.shop-endless-btn:hover {
+    background: linear-gradient(135deg, #ff44ff 0%, #cc44ff 100%);
 }
 
 .wave-reached {
@@ -1155,6 +1264,82 @@ body {
     color: #ff4444;
     background: rgba(255,68,68,0.25);
     box-shadow: 0 0 8px rgba(255,68,68,0.4);
+}
+
+/* 武器卡操作下拉（卖出/合并） */
+.equipped-weapon-slot .slot-actions {
+    position: absolute;
+    top: -4px;
+    right: -5px;
+    z-index: 3;
+}
+.equipped-weapon-slot .slot-dropdown-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 0.55em;
+    color: rgba(255,204,0,0.7);
+    background: rgba(0,0,0,0.7);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+.equipped-weapon-slot .slot-dropdown-btn:hover {
+    color: #ffcc00;
+    background: rgba(255,204,0,0.25);
+    box-shadow: 0 0 8px rgba(255,204,0,0.4);
+}
+.equipped-weapon-slot .slot-dropdown-menu {
+    position: absolute;
+    top: 20px;
+    right: -4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(20,20,30,0.96);
+    border: 1px solid rgba(255,204,0,0.3);
+    border-radius: 4px;
+    padding: 4px;
+    min-width: 80px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    pointer-events: all;
+}
+.equipped-weapon-slot .slot-dropdown-menu.hidden {
+    display: none;
+}
+.equipped-weapon-slot .slot-dropdown-menu button {
+    font-family: 'Rajdhani', 'Microsoft YaHei', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+.equipped-weapon-slot .slot-dropdown-menu button:hover:not(:disabled) {
+    background: rgba(255,204,0,0.18);
+    border-color: rgba(255,204,0,0.5);
+}
+.equipped-weapon-slot .slot-dropdown-menu button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.equipped-weapon-slot .slot-dropdown-menu .slot-action-sell {
+    color: #ff8866;
+}
+.equipped-weapon-slot .slot-dropdown-menu .slot-action-merge {
+    color: #88ff88;
 }
 .equipped-weapon-slot .slot-reroll {
     position: absolute;
@@ -1882,6 +2067,171 @@ body {
     color: rgba(255, 255, 255, 0.6);
 }
 
+/* === 武器详情 Modal === */
+.weapon-detail-content {
+    max-width: 460px;
+    width: 92%;
+    padding: 20px 24px 22px;
+    border: 2px solid rgba(120, 200, 255, 0.35);
+    background: rgba(10, 16, 30, 0.96);
+    border-radius: 14px;
+    box-shadow: 0 0 40px rgba(120, 200, 255, 0.12), inset 0 0 30px rgba(120, 200, 255, 0.04);
+    animation: wdIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #e0e8f0;
+}
+@keyframes wdIn {
+    from { opacity: 0; transform: scale(0.85) translateY(-12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.wd-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(120, 200, 255, 0.18);
+    margin-bottom: 14px;
+}
+.wd-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    border: 1px solid rgba(120, 200, 255, 0.25);
+    flex-shrink: 0;
+}
+.wd-icon img {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+}
+.wd-header-text { flex: 1; min-width: 0; }
+.wd-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.35em;
+    color: #e8f4ff;
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 12px rgba(120, 200, 255, 0.3);
+}
+.wd-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 0.85em;
+    align-items: center;
+}
+.wd-quality {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.wd-level {
+    color: #ffd54f;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+}
+.wd-close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ccc;
+    font-size: 1.4em;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.15s;
+}
+.wd-close:hover {
+    background: rgba(255, 80, 80, 0.15);
+    border-color: rgba(255, 80, 80, 0.5);
+    color: #ff8888;
+}
+.wd-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+    padding: 8px 0 12px;
+    font-size: 0.9em;
+}
+.wd-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(120, 200, 255, 0.1);
+}
+.wd-stat-label { color: rgba(255, 255, 255, 0.6); }
+.wd-stat-value { color: #e8f4ff; font-weight: 600; font-family: 'Orbitron', monospace; }
+.wd-stat-value.dmg  { color: #ff7a7a; }
+.wd-stat-value.cd   { color: #8ed8ff; }
+.wd-stat-value.rng  { color: #b8ff9a; }
+.wd-stat-value.spd  { color: #ffd54f; }
+.wd-stat-value.tag  { color: #d4a5ff; }
+.wd-special {
+    background: rgba(120, 200, 255, 0.06);
+    border-left: 3px solid rgba(120, 200, 255, 0.4);
+    padding: 8px 12px;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    min-height: 32px;
+}
+.wd-special:empty { display: none; }
+.wd-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(120, 200, 255, 0.15);
+}
+.wd-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    color: #fff;
+}
+.wd-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.wd-btn-sell {
+    background: rgba(255, 180, 60, 0.15);
+    border-color: rgba(255, 180, 60, 0.5);
+    color: #ffc266;
+}
+.wd-btn-sell:not(:disabled):hover {
+    background: rgba(255, 180, 60, 0.3);
+    border-color: #ffc266;
+    transform: translateY(-1px);
+}
+.wd-btn-merge {
+    background: rgba(100, 200, 255, 0.15);
+    border-color: rgba(100, 200, 255, 0.5);
+    color: #8ed8ff;
+}
+.wd-btn-merge:not(:disabled):hover {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: #8ed8ff;
+    transform: translateY(-1px);
+}
+.wd-btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ccc;
+}
+.wd-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
 /* HUD宝箱计数 */
 .hud-chests {
     font-family: 'Orbitron', monospace;
@@ -2242,4 +2592,44 @@ body {
     .hud-timer { font-size: 1em; padding: 2px 10px; }
     .hud-top-left { font-size: 0.85em; gap: 2px; padding: 4px 7px; max-width: 65%; }
     .shop-bar { font-size: 0.75em; flex-wrap: wrap; gap: 4px; }
+}
+
+/* === 中止界面 (ESC 暂停) === */
+.pause-content {
+    text-align: center;
+    padding: 32px 40px;
+    border: 2px solid rgba(255, 200, 80, 0.4);
+    background: rgba(10, 16, 30, 0.96);
+    border-radius: 14px;
+    box-shadow: 0 0 40px rgba(255, 200, 80, 0.12), inset 0 0 30px rgba(255, 200, 80, 0.04);
+    max-width: 360px;
+    width: 90%;
+}
+.pause-title {
+    font-family: 'Orbitron', monospace;
+    color: #ffd54f;
+    font-size: 1.8em;
+    margin: 0 0 8px;
+    text-shadow: 0 0 16px rgba(255, 200, 80, 0.5);
+}
+.pause-info {
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0 0 24px;
+    font-size: 0.95em;
+}
+.pause-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.pause-actions .cyber-btn {
+    width: 100%;
+    font-size: 1em;
+    padding: 10px 16px;
+}
+.pause-hint {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8em;
+    margin: 0;
 }

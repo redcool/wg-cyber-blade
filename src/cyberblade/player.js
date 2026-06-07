@@ -335,17 +335,20 @@ const PlayerSystem = {
      */
     _findNearestTarget(p, weaponPos, range, params) {
         const isMelee = params.behavior === 'melee' || params.behavior === 'melee_sweep' || params.behavior === 'melee_thrust';
+        // Brotato 规则: 搜索中心 = 角色 (与 _tickMeleeHitDetection 一致)
+        // 之前用 weaponPos (头顶 128px 轨道) 导致 1 把剑的剑客搜不到下方怪
+        const searchCenter = p;
         let nearest = null, nearDist = Infinity;
         for (const e of (EnemySystem.enemies || [])) {
             if (!e.alive) continue;
-            const d = this._dist2(e, weaponPos);
+            const d = this._dist2(e, searchCenter);
             if (d < range && d < nearDist) { nearDist = d; nearest = e; }
         }
         if (!nearest && typeof MedkitSystem !== 'undefined' && MedkitSystem.crates.length > 0) {
             const crateRange = isMelee ? range + 18 : range;
             for (const c of MedkitSystem.crates) {
                 if (!c.alive) continue;
-                const d = this._dist2(c, weaponPos);
+                const d = this._dist2(c, searchCenter);
                 if (d < crateRange && d < nearDist) { nearDist = d; nearest = c; }
             }
         }
@@ -515,8 +518,11 @@ const PlayerSystem = {
             // Brotato 加法: 武器 + 角色
             const weaponRange = (wp.attackRange || 60) + (p.attackRange || 0);
             const aa = wp._attackAngle;
-            // 锥形: thrust 60° / sweep 180° (朝 attackAngle 方向)
-            const cone = (wp._attackBehavior === 'melee_sweep') ? Math.PI / 2 : Math.PI / 3;
+            // 锥形: Brotato 风格 (总角 = 2 * 半角)
+            //   thrust 总角 5°  → 半角 2.5° = π/72
+            //   sweep  总角 180° → 半角 90°  = π/2
+            // 角度固定, 弧长随射程自动放大, 不需要公式
+            const cone = (wp._attackBehavior === 'melee_sweep') ? Math.PI / 2 : Math.PI / 72;
 
             // 武器 sprite 当前帧中心 (用于击退方向, 不参与判定)
             const sprite = this._getWeaponSpritePos(p, wp, i, count);

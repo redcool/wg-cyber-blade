@@ -243,22 +243,45 @@ const ShopSystem = {
     // -------------------------------------------------------
 
     /**
+     * 按波次决定单槽 weapon / item 概率（Brotato 风格）
+     * @param {number} currentWave
+     * @returns {number} 武器概率（0~1），道具概率 = 1 - 该值
+     *
+     * 公式: p_weapon = max(0.35, 0.85 - wave * 0.04)
+     *   wave  1 → 0.81  (81% 武器 / 19% 道具)
+     *   wave  3 → 0.73
+     *   wave  5 → 0.65
+     *   wave  8 → 0.53
+     *   wave 10 → 0.45
+     *   wave 13 → 0.37
+     *   wave 15+→ 0.35  (35% 武器 / 65% 道具)
+     */
+    pickSlotType(currentWave) {
+        const wave = currentWave || 1;
+        const pWeapon = Math.max(0.35, 0.85 - wave * 0.04);
+        return Math.random() < pWeapon ? 'weapon' : 'item';
+    },
+
+    /**
      * 生成一轮商店商品
      * @param {Object} player - 玩家对象（含 weapons/items）
      * @param {number} currentWave - 当前波次
+     * @param {number} [availableSlots] - 限额（默认 4）。刷新/换波时由调用方传
+     *   `(4 - lockedCount)`，确保总商品数（包含 locked）不超过 4。
      *
-     * 算法:
-     * 1. 获取玩家 Build 标签计数 + 偏向权重
+     * 算法（Brotato 风格 — 每槽独立 roll）:
+     * 1. 获取玩家 Build 标签计数 + 流派偏向权重
      * 2. 清空商品列表
-     * 3. 从武器池生成 3~5 件武器:
-     *    a. biasedSelect 加权选取 → 排除重复
-     *    b. rollRarity 投掷稀有度
-     *    c. applyPity 检查保底
-     *    d. rollQuality 投掷内部品质 (T1-T4)
-     * 4. 从道具池生成 3~5 件道具:
-     *    a. 已购 unique 排除
-     *    b. biasedSelect 加权选取
-     *    c. 稀有度和保底同理
+     * 3. 武器池：流派过滤（持有≥2 同 tag 武器后只刷对应 tag）
+     * 4. 道具池：排除已购 unique
+     * 5. 循环 maxSlots 次, 每槽:
+     *    a. pickSlotType(wave) 决定本槽 weapon / item
+     *       - pWeapon = max(0.35, 0.85 - wave * 0.04)
+     *       - wave 1 → 81% 武器, wave 10 → 45% 武器, wave 15+ → 35% 武器
+     *    b. 至少 1 件道具约束: 若 4 槽全 roll 武器, 把最后一槽改为 item
+     *    c. 从对应池子 biasedSelect → 去重
+     *    d. rollRarity + applyPity → 单独累加 weapons / items 保底计数
+     *    e. 某个池子空了则该轮不填, 不补另一类 (避免 weapon/item 配比失衡)
      */
     generateItems(player, currentWave, availableSlots) {
         // 1. 流派偏向权重
@@ -300,8 +323,35 @@ const ShopSystem = {
             if (filtered.length > 0) weaponPool = filtered;
         }
 
-        const weaponCount = Math.min(Math.min(2 + Math.floor(Math.random() * 2), 3), maxSlots); // 2~3，不超过上限
-        for (let i = 0; i < weaponCount && weaponPool.length > 0; i++) {
+        // 5. 道具池（排除已购 unique）
+        const allItems = (typeof ItemSystem !== 'undefined' && ItemSystem.allItems)
+            ? ItemSystem.allItems
+            : [];
+
+        const itemPool = allItems.filter(item => {
+            if (item.unique && this._boughtUniqueItems.includes(item.id)) return false;
+            return true;
+        });
+
+        // 6. 4 槽独立 roll (Brotato 风格, 按波次概率决定 weapon/item)
+        let weaponRolls = 0;
+        let itemRolls = 0;
+        for (let i = 0; i < maxSlots; i++) {
+            if (this.pickSlotType(currentWave) === 'weapon') {
+                weaponRolls++;
+            } else {
+                itemRolls++;
+            }
+        }
+        // 至少 1 件道具约束: 4 槽全 roll 武器时, 把最后一槽改为 item
+        // 防止早期运气差时完全没有道具可选 (玩家无从补 buff)
+        if (itemRolls === 0 && maxSlots > 0) {
+            weaponRolls = Math.max(0, weaponRolls - 1);
+            itemRolls = 1;
+        }
+
+        // 7. 生成武器
+        for (let i = 0; i < weaponRolls && weaponPool.length > 0; i++) {
             const selected = this.biasedSelect(weaponPool, biasWeights);
             if (!selected) continue;
 
@@ -323,7 +373,7 @@ const ShopSystem = {
                 type: 'weapon',
                 rarity,
                 rarityColor: rDef.color,
-                quality: 'T1', // 品质系统已移除，始终 T1
+                quality: 'T1',
                 level: 1,
                 cost,
                 isPity: wasPity,
@@ -331,18 +381,8 @@ const ShopSystem = {
             });
         }
 
-        // 5. 道具池（排除已购 unique）
-        const allItems = (typeof ItemSystem !== 'undefined' && ItemSystem.allItems)
-            ? ItemSystem.allItems
-            : [];
-
-        const itemPool = allItems.filter(item => {
-            if (item.unique && this._boughtUniqueItems.includes(item.id)) return false;
-            return true;
-        });
-
-        const itemCount = Math.min(1, maxSlots - this.items.length); // 不超过上限
-        for (let i = 0; i < itemCount && itemPool.length > 0; i++) {
+        // 8. 生成道具
+        for (let i = 0; i < itemRolls && itemPool.length > 0; i++) {
             const selected = this.biasedSelect(itemPool, biasWeights);
             if (!selected) continue;
 
@@ -371,49 +411,31 @@ const ShopSystem = {
                 owned: !!(selected.unique && typeof ItemSystem !== 'undefined' && ItemSystem.hasItem(selected.id)),
             });
         }
-
-        // 6. 补位：如果还没满 maxSlots，继续补武器直到满一行
-        while (this.items.length < maxSlots && weaponPool.length > 0) {
-            const selected = this.biasedSelect(weaponPool, biasWeights);
-            if (!selected) break;
-
-            const selIdx = weaponPool.indexOf(selected);
-            if (selIdx !== -1) weaponPool.splice(selIdx, 1);
-
-            const baseRarity = this.rollRarity(currentWave || 1);
-            const { rarity, wasPity } = this.applyPity(baseRarity, this._pity.weapons);
-            const rDef = this.RARITY[rarity];
-
-            const quality = 'T1'; // 品质系统已移除，始终 T1
-            const baseCost = selected.cost || 10;
-            const cost = Math.max(1, Math.round(baseCost * rDef.costMult));
-
-            this.items.push({
-                ...selected,
-                type: 'weapon',
-                rarity,
-                rarityColor: rDef.color,
-                quality,
-                level: 1,
-                cost,
-                isPity: wasPity,
-                tags: typeof TagSystem !== 'undefined' ? TagSystem.getTags(selected) : [],
-            });
-        }
     },
 
     /**
-     * 刷新商店（扣金币，重新生成）
+     * 刷新商店（扣金币，重新生成 + 价格递增）
      * @param {Object} player
      * @param {number} currentWave
      * @returns {boolean} 是否成功
+     *
+     * Brotato 风格: 每次刷新后 refreshCost +1, 限制无限刷新。
+     * 与 refresh() 行为一致。
      */
     reroll(player, currentWave) {
         if (!player) return false;
         if ((player.materials || 0) < this.refreshCost) return false;
 
         player.materials -= this.refreshCost;
-        this.generateItems(player, currentWave || 1);
+        this.refreshCost += 1;  // 每次刷新价格递增 (Brotato 风格)
+        const lockedCount = (this.lockedItems || []).length;
+        this.generateItems(player, currentWave || 1, Math.max(0, 4 - lockedCount));
+        // 重新加回锁定商品
+        for (const li of (this.lockedItems || [])) {
+            if (!this.items.some(it => it.id === li.id && it.type === li.type)) {
+                this.items.push({ ...li, locked: true });
+            }
+        }
         return true;
     },
 
@@ -514,27 +536,13 @@ const ShopSystem = {
         if (shopItem.type === 'weapon') {
             // ---- 武器购买 ----
             if (!player.weapons) player.weapons = [];
+            if (!player.weaponSlots) player.weaponSlots = 4;
+            const usedSlots = player.weapons.length; // 简单处理: 每个武器占 1
 
-            // 查找是否已有同 ID 武器（合并）
-            const existingIdx = player.weapons.findIndex(w => w.id === shopItem.id);
-            if (existingIdx !== -1) {
-                // 合并升级
-                const existing = player.weapons[existingIdx];
-                existing.level = (existing.level || 1) + 1;
-                this._updateWeaponParams(player, shopItem.id);
-
-                result = { item: shopItem, cost: shopItem.cost, action: 'merged', weaponId: shopItem.id };
-            } else {
-                // 检查槽位
-                if (!player.weaponSlots) player.weaponSlots = 4;
-                // 计算已使用槽位
-                const usedSlots = player.weapons.length; // 简单处理: 每个武器占1槽
-                if (usedSlots >= player.weaponSlots) {
-                    this._lastBuyError = _ESHOP_STR.error_slot_full;
-                    return null;
-                }
-
-                // 添加新武器
+            // 设计: 槽位未满 → 加新槽位 (不自动升级)
+            //      槽位已满 → 找同 id 升级 (action='merged'), 否则失败
+            if (usedSlots < player.weaponSlots) {
+                // 1) 槽位未满, 总是加新武器 (即使有同 id 也不合并)
                 const newWeapon = {
                     id: shopItem.id,
                     level: 1,
@@ -542,8 +550,19 @@ const ShopSystem = {
                 };
                 player.weapons.push(newWeapon);
                 this._updateWeaponParams(player, shopItem.id);
-
                 result = { item: shopItem, cost: shopItem.cost, action: 'bought', weaponId: shopItem.id };
+            } else {
+                // 2) 槽位已满, 找同 id 升级; 没同 id 失败
+                const existingIdx = player.weapons.findIndex(w => w.id === shopItem.id);
+                if (existingIdx !== -1) {
+                    const existing = player.weapons[existingIdx];
+                    existing.level = (existing.level || 1) + 1;
+                    this._updateWeaponParams(player, shopItem.id);
+                    result = { item: shopItem, cost: shopItem.cost, action: 'merged', weaponId: shopItem.id };
+                } else {
+                    this._lastBuyError = _ESHOP_STR.error_slot_full;
+                    return null;
+                }
             }
         } else {
             // ---- 道具购买 ----
@@ -641,17 +660,91 @@ const ShopSystem = {
         if (actualSrcIdx !== -1) player.weapons.splice(actualSrcIdx, 1);
 
         this._updateWeaponParams(player, target.id);
+        // 合并会改变武器组成，刷新协同
+        if (typeof PlayerSystem !== 'undefined' && PlayerSystem._updateSynergies) {
+            PlayerSystem._updateSynergies();
+        }
+        // 合并后被消掉的两把同级武器的 locked 引用都已失效，清掉
+        this.lockedItems = (this.lockedItems || []).filter(li => li.id !== target.id);
         return true;
+    },
+
+    /**
+     * 一键合并：给定一把武器的 idx，自动找一把 同 id + 同 level 的伙伴，
+     * 合并后保留 target（等级 +1），删除 source。（Brotato 风格快捷合并）
+     * @param {number} idx
+     * @param {Object} player
+     * @returns {boolean} 成功合并返回 true，无伙伴返回 false
+     */
+    mergeWeaponWithAny(idx, player) {
+        if (!player || !player.weapons) return false;
+        const w = player.weapons[idx];
+        if (!w) return false;
+        const myLevel = w.level || 1;
+        const myId = w.id;
+
+        // 找一把 同 id + 同 level 且 idx !== idx 的伙伴
+        let partnerIdx = -1;
+        for (let i = 0; i < player.weapons.length; i++) {
+            if (i === idx) continue;
+            const o = player.weapons[i];
+            if (o.id === myId && (o.level || 1) === myLevel) {
+                partnerIdx = i;
+                break;
+            }
+        }
+        if (partnerIdx === -1) return false;
+
+        // 用 mergeWeapons：idx 当 target, partner 当 source
+        return this.mergeWeapons(idx, partnerIdx, player);
     },
 
     /**
      * 出售武器
      * @param {number} slotIdx
-     * @returns {boolean}
+     * @returns {boolean} 成功返回 true
      */
     sellWeapon(slotIdx) {
-        // 简化版：由游戏层实现具体出售逻辑
-        return false;
+        const player = (typeof PlayerSystem !== 'undefined') ? PlayerSystem.player : null;
+        if (!player || !player.weapons || slotIdx < 0 || slotIdx >= player.weapons.length) return false;
+        // 安全检查: 至少保留 1 把武器（防止空武器状态）
+        if (player.weapons.length <= 1) return false;
+        const weapon = player.weapons[slotIdx];
+        if (!weapon) return false;
+        const def = this.getWeaponDef(weapon.id);
+        if (!def) return false;
+
+        // 半价退款 + 1（与旧实现保持一致）
+        const refund = Math.floor((def.cost || 0) / 2) + 1;
+        player.materials = (player.materials || 0) + refund;
+
+        // 移除武器并清理参数
+        player.weapons.splice(slotIdx, 1);
+        const remaining = player.weapons.filter(w => w.id === weapon.id);
+        if (remaining.length === 0) {
+            delete player.weaponParams[weapon.id];
+        } else {
+            this._updateWeaponParams(player, weapon.id);
+        }
+
+        // 关键：把 lockedItems 里对这把武器的引用也清掉
+        //  否则下次刷新会把已经卖掉的武器以"locked"形式塞回商店
+        this.lockedItems = (this.lockedItems || []).filter(
+            li => !(li.id === weapon.id && li.type === 'weapon')
+        );
+
+        // 刷新所有剩余武器的 params（保证 quality/level 重新计算）+ 同步协同
+        for (const w of player.weapons) {
+            if (player.weaponParams[w.id]) this._updateWeaponParams(player, w.id);
+        }
+        if (typeof PlayerSystem !== 'undefined' && PlayerSystem._updateSynergies) {
+            PlayerSystem._updateSynergies();
+        }
+        if (typeof StatsSystem !== 'undefined' && StatsSystem.clampPlayer) {
+            StatsSystem.clampPlayer(player);
+        }
+
+        return true;
     },
 
     _updateWeaponParams(player, weaponId) {
@@ -683,11 +776,17 @@ const ShopSystem = {
             homingStrength: def.homingStrength || 0,
             level: maxLevel,
             healOnHit: def.healOnHit || 0,
+            killHeal: def.killHeal || 0,
             auraHeal: def.auraHeal || 0,
             auraRadius: def.auraRadius || 0,
+            damageReductionAura: def.damageReductionAura || 0,
             burnDps: def.burnDps || 0,
             burnMaxStacks: def.burnMaxStacks || 0,
             sprayCone: def.sprayCone || 0,
+            attackRange: def.attackRange || 0,
+            bulletMaxRange: def.bulletMaxRange || 0,
+            iceExplosionRadius: def.iceExplosionRadius || 0,
+            critBounce: def.critBounce || 0,
             // 新字段: 暴击独立面板
             critChanceAdd: def.critChanceAdd || 0,
             critDamageAdd: def.critDamageAdd || 0,

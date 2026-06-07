@@ -66,13 +66,13 @@ const StatsSystem = {
         rangedDamage:   { category: 'offense', label: _STAT_STR.label_rangedDamage, icon: '🏹', min: 0,    max: null, fmt: 'int',     desc: (v) => _STAT_STR.desc_rangedDamage.replace('{0}', v) },
         elementalDamage:{ category: 'offense', label: _STAT_STR.label_elementalDamage, icon: '🔮', min: 0,    max: null, fmt: 'int',     desc: (v) => _STAT_STR.desc_elementalDamage.replace('{0}', v) },
         attackSpeed:    { category: 'offense', label: _STAT_STR.label_attackSpeed, icon: '⚡', min: 0.2,  max: 5.0,  fmt: 'float2', desc: (v) => _STAT_STR.desc_attackSpeed.replace('{0}', Math.round(v * 100)) },
-        attackRange:    { category: 'offense', label: _STAT_STR.label_attackRange, icon: '🎯', min: 20,   max: 800,  fmt: 'int',     desc: (v) => _STAT_STR.desc_attackRange.replace('{0}', Math.round(v * 100)) },
+        attackRange:    { category: 'offense', label: _STAT_STR.label_attackRange, icon: '🎯', min: 0,    max: 500,  fmt: 'int',     desc: (v) => _STAT_STR.desc_attackRange.replace('{0}', v) },
         critChance:     { category: 'offense', label: _STAT_STR.label_critChance, icon: '💥', min: 0,    max: 0.8,  fmt: 'percent', desc: (v) => _STAT_STR.desc_critChance.replace('{0}', Math.round(v * 100)) },
         critDamage:     { category: 'offense', label: _STAT_STR.label_critDamage, icon: '🔥', min: 1.0,  max: null, fmt: 'float1', desc: (v) => _STAT_STR.desc_critDamage.replace('{0}', v.toFixed(1)) },
         engineering:    { category: 'offense', label: _STAT_STR.label_engineering, icon: '🤖', min: 0,    max: null, fmt: 'int',     desc: (v) => _STAT_STR.desc_engineering.replace('{0}', v) },
 
         // --- 机动 (Mobility) ---
-        speed:          { category: 'mobility', label: _STAT_STR.label_speed, icon: '⚡', min: 50,  max: 400, fmt: 'int',     desc: (v) => _STAT_STR.desc_speed.replace('{0}', Math.round(v * 100)) },
+        speed:          { category: 'mobility', label: _STAT_STR.label_speed, icon: '⚡', min: 50,  max: 800, fmt: 'int',     desc: (v) => _STAT_STR.desc_speed.replace('{0}', Math.round(v * 100)) },
         knockback:      { category: 'mobility', label: _STAT_STR.label_knockback, icon: '💨', min: 0,   max: null, fmt: 'int',     desc: (v) => _STAT_STR.desc_knockback.replace('{0}', v) },
 
         // --- 经济 (Economy) ---
@@ -368,7 +368,7 @@ const StatsSystem = {
         { id: 'attackSpeed',   name: _STAT_STR.lvl_attackSpeed_name, desc: _STAT_STR.lvl_attackSpeed_desc, icon: '⚡',
           apply: (p) => { p.attackSpeed = Math.min(5.0, p.attackSpeed * 1.18); } },
         { id: 'attackRange',   name: _STAT_STR.lvl_attackRange_name, desc: _STAT_STR.lvl_attackRange_desc, icon: '🎯',
-          apply: (p) => { p.attackRange = Math.min(800, p.attackRange * 1.15); } },
+          apply: (p) => { p.attackRange = Math.min(500, p.attackRange + 15); } },  // Brotato 加法: +15 像素/级
         { id: 'armor',         name: _STAT_STR.lvl_armor_name, desc: _STAT_STR.lvl_armor_desc, icon: '🛡️',
           apply: (p) => { p.armor = Math.min(100, p.armor + 3); } },
         { id: 'dodge',         name: _STAT_STR.lvl_dodge_name, desc: _STAT_STR.lvl_dodge_desc, icon: '💨',
@@ -378,7 +378,7 @@ const StatsSystem = {
         { id: 'critMultiplier',name: _STAT_STR.lvl_critMultiplier_name, desc: _STAT_STR.lvl_critMultiplier_desc, icon: '🔥',
           apply: (p) => { p.critMultiplier = Math.min(6.0, p.critMultiplier + 0.5); p.critDamage = p.critMultiplier; } },
         { id: 'speed',         name: _STAT_STR.lvl_speed_name, desc: _STAT_STR.lvl_speed_desc, icon: '⚡',
-          apply: (p) => { p.speed = Math.min(400, p.speed * 1.10); } },
+          apply: (p) => { p.speed = Math.min(800, p.speed * 1.10); } },
         { id: 'bulletCount',   name: _STAT_STR.lvl_bulletCount_name, desc: _STAT_STR.lvl_bulletCount_desc, icon: '🔫',
           apply: (p) => { p.bulletCount = Math.min(20, p.bulletCount + 1); } },
         { id: 'bulletPierce',  name: _STAT_STR.lvl_bulletPierce_name, desc: _STAT_STR.lvl_bulletPierce_desc, icon: '➡️',

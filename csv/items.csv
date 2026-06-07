@@ -51,7 +51,7 @@ shadow_blade,暗影之刃,+8%暴击 -2生命回复,55,🗡️,,,rare,,,"{""critC
 energy_shield,能量护盾,受到伤害回蓝 30%,50,🛡️,,,rare,onHit,"[{""type"":""restoreMana"",""chance"":0.3,""value"":5}]",{}
 replicator,复制器,20%概率双倍子弹,60,🔄,gun|bow,,rare,onFire,"[{""type"":""duplicateBullet"",""chance"":0.2}]",{}
 magnet_item,超强磁铁,拾取范围×2,40,🧲,,,rare,,,{"pickupRange":250}
-coupon_item,打折券,商店8折,30,🎫,,,rare,shopDiscount,,{}
+coupon_item,打折券,商店8折,30,🎫,,,rare,shopDiscount,,{"shopDiscount":0.8}
 explosive_rounds,爆破弹,"击中爆炸(120范围,50%伤害)",60,💥,gun|bow,,rare,onHit,"[{""type"":""explosion"",""radius"":120,""damagePercent"":0.5}]",{}
 scroll_knowledge,知识卷轴,+25%经验 +5%伤害,45,📜,,,rare,,,"{""xpGain"":0.25,""damagePercent"":0.05}"
 tardigrade,水熊虫基因,致命伤免死一次,80,🧬,,,legendary,revive,"[{""type"":""revive"",""value"":1}]",{"maxHp":8}

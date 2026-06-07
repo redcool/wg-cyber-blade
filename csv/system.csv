@@ -1,0 +1,18 @@
+# ====== 系统级参数配置 ======
+# 格式: CSV (逗号分隔) + header 行
+# 用于: 渲染参数 / 战斗公式微调 / 调试开关
+# 修改后: node scripts/csv2json.cjs 重新生成 src/data/system.json
+#         index.html 调整 data.js _dataVersion
+#
+# ====== 列说明 ======
+# key:    参数唯一标识 (英文," 程序内部用)"
+# value:  数值或字符串值 (运行时按 valueType 解析)
+# valueType: number | string | boolean
+# desc:   中文说明
+# group:  分组 (orbit | combat | render | debug)
+#
+# ====== 武器轨道参数 ======
+# weaponOrbitDistance: 武器图标中心到角色中心的像素距离(默认 128)
+# weaponOrbitExtraPerSlot: 每多 1 个 slot 额外外推的像素(默认 6)
+weaponOrbitDistance,64,number,武器图标中心到角色中心的像素距离,orbit
+weaponOrbitExtraPerSlot,6,number,每多 1 个 slot 武器额外外推的像素,orbit

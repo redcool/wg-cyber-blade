@@ -170,9 +170,9 @@ describe('EnemySystem - 行为', () => {
     it('E12: runner 半血以上追击，半血以下逃离', () => {
         const e = EnemySystem.create('runner', 100, 100, 1);
         const player = { x: 200, y: 200, hp: 100, maxHp: 100, radius: 10 };
-        // 满血：追击
+        // 满血：追击 (用 dt=0.1 避免 speed×2 后 1s 跑过 player)
         const oldDist = Math.sqrt((200 - e.x) ** 2 + (200 - e.y) ** 2);
-        EnemySystem.update(1.0, player);
+        EnemySystem.update(0.1, player);
         const afterChase = Math.sqrt((200 - e.x) ** 2 + (200 - e.y) ** 2);
         expect(afterChase).toBeLessThan(oldDist);
 
@@ -180,7 +180,7 @@ describe('EnemySystem - 行为', () => {
         e.hp = 5;
         e.maxHp = 20;
         const distBeforeFlee = Math.sqrt((200 - e.x) ** 2 + (200 - e.y) ** 2);
-        EnemySystem.update(1.0, player);
+        EnemySystem.update(0.1, player);
         const afterFlee = Math.sqrt((200 - e.x) ** 2 + (200 - e.y) ** 2);
         expect(afterFlee).toBeGreaterThan(distBeforeFlee);
     });
@@ -389,8 +389,8 @@ describe('EnemySystem - scaleByWave', () => {
         expect(result.hp).toBe(34);
         // dmgMult = 1 + 1*0.15 = 1.15; damage = 8 * 1.15 = 9.2 → 9
         expect(result.damage).toBe(9);
-        // spdMult = 1 + 1*0.05 = 1.05; speed = 80 * 1.05 = 84
-        expect(result.speed).toBe(84);
+        // spdMult = (1 + 1*0.05) * 2 = 2.1; speed = 80 * 2.1 = 168 (用户要求速度翻倍)
+        expect(result.speed).toBe(168);
     });
 
     it('E34: wave=10 精英额外缩放', () => {

@@ -263,6 +263,17 @@ const Renderer = {
             ctx.globalAlpha = 0.5 + Math.sin(enemy.flashTimer * 100) * 0.5;
         }
 
+        // 动画 (通过 Animator 类统一管理: idle 呼吸 / attack 震动 / death 渐缩)
+        const _Animator = (typeof globalThis !== 'undefined' && globalThis.Animator) || null;
+        if (_Animator && enemy.animator) {
+            const t = _Animator.getTransform(enemy.animator);
+            breath = t.scale;
+        } else {
+            // 兜底: 错相位呼吸
+            const breathPhase = (enemy._uid || (enemy.x * 0.1 + enemy.y * 0.13)) * 0.7;
+            breath = 1 + 0.04 * Math.sin(Date.now() / 500 + breathPhase);
+        }
+
         // 获取敌人图标
         const iconImg = typeof AssetSystem !== 'undefined' ? AssetSystem.enemyIcons[enemy.typeId] : null;
         if (iconImg && iconImg.complete && iconImg.naturalWidth > 0) {
@@ -275,7 +286,11 @@ const Renderer = {
                 w = Math.round(w * scale);
                 h = Math.round(h * scale);
             }
-            ctx.drawImage(iconImg, enemy.x - w / 2, enemy.y - h / 2, w, h);
+            ctx.save();
+            ctx.translate(enemy.x, enemy.y);
+            ctx.scale(breath, breath);
+            ctx.drawImage(iconImg, -w / 2, -h / 2, w, h);
+            ctx.restore();
         } else {
             // 回退：圆形绘制
             let color = enemy.color;
@@ -285,7 +300,7 @@ const Renderer = {
             ctx.shadowColor = enemy.glowColor || color;
             ctx.shadowBlur = enemy.isBoss ? 25 : (enemy.isElite ? 18 : 12);
             ctx.beginPath();
-            ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+            ctx.arc(enemy.x, enemy.y, enemy.radius * breath, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
         }
@@ -333,6 +348,25 @@ const Renderer = {
             ctx.scale(-1, 1);
         }
 
+        // 动画 (Animator 统一管理: idle 呼吸 / death 渐缩)
+        const _Animator2 = (typeof globalThis !== 'undefined' && globalThis.Animator) || null;
+        if (_Animator2 && player.animator) {
+            const t = _Animator2.getTransform(player.animator);
+            breath = t.scale;
+            // 走路时减弱 (但 death 不减弱, 仍渐缩)
+            if (player.animator.current === 'idle') {
+                const movingSpeed = Math.hypot(player.vx || 0, player.vy || 0);
+                const idleAmt = movingSpeed < 30 ? 1.0 : 0.4;
+                // 用 Animator 缩放为基准, 走路时减弱振幅
+                breath = 1 + (breath - 1) * idleAmt;
+            }
+        } else {
+            // 兜底: 错相位呼吸
+            const movingSpeed = Math.hypot(player.vx || 0, player.vy || 0);
+            const idleAmt = movingSpeed < 30 ? 1.0 : 0.4;
+            breath = 1 + 0.045 * idleAmt * Math.sin(Date.now() / 480);
+        }
+
         // 核心身体 - 使用角色图标
         const charImg = player.characterId && typeof AssetSystem !== 'undefined'
             ? AssetSystem.characterIcons[player.characterId] : null;
@@ -346,13 +380,16 @@ const Renderer = {
                 w = Math.round(w * scale);
                 h = Math.round(h * scale);
             }
+            ctx.save();
+            ctx.scale(breath, breath);
             ctx.drawImage(charImg, -w / 2, -h / 2, w, h);
+            ctx.restore();
         } else {
             ctx.fillStyle = '#00ffff';
             ctx.shadowColor = '#00ffff';
             ctx.shadowBlur = 20;
             ctx.beginPath();
-            ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+            ctx.arc(0, 0, player.radius * breath, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
         }
@@ -379,22 +416,33 @@ const Renderer = {
                 const wp = player.weaponParams[w.id];
                 if (!wp) continue;
 
-                const dist = player.radius + 16 + (wp.slots || 1) * 5;
+                const dist = (typeof SystemConfig !== 'undefined' ? SystemConfig.get('weaponOrbitDistance', 128) : 128)
+                          + Math.max(0, (wp.slots || 1) - 1)
+                          * (typeof SystemConfig !== 'undefined' ? SystemConfig.get('weaponOrbitExtraPerSlot', 6) : 6);
                 let angle, drawDist = dist, drawRotation;
 
                 if (wp._attackAnimTimer && wp._attackAnimTimer > 0 && wp._attackAnimDuration > 0) {
                     const progress = 1 - (wp._attackAnimTimer / wp._attackAnimDuration);
                     const aa = wp._attackAngle;
+                    // 攻击时距离: 数据驱动 attackRange (不再用 dist + range*0.7)
+                    // Brotato 加法: 武器 + 角色 (无乘数)
+                    const weaponRange = (wp.attackRange || 60) + (player.attackRange || 0);
 
                     if (wp._attackBehavior === 'melee_thrust') {
-                        const maxDist = dist + (wp.attackRange || 60) * 0.7;
-                        drawDist = dist + (maxDist - dist) * Math.sin(progress * Math.PI);
+                        // 刺击: sprite 从 player 沿 aa 刺出到 attackRange 距离
+                        drawDist = weaponRange * Math.sin(progress * Math.PI);
                         angle = aa;
                         drawRotation = aa;
                     } else if (wp._attackBehavior === 'melee_sweep') {
+                        // 挥动: sprite 在 attackRange 距离上做 180° 弧线扫掠
+                        drawDist = weaponRange;
                         angle = aa - Math.PI / 2 + progress * Math.PI;
                         drawRotation = aa;
                     } else {
+                        // 远程 (ranged): sprite 在原 orbit 距离上, 只旋转到目标方向
+                        // - 距离保持 dist (不冲到 attackRange, 区别于近战)
+                        // - 角度 = 朝目标 (武器像杆子指过去)
+                        drawDist = dist;
                         angle = aa;
                         drawRotation = aa;
                     }
@@ -454,13 +502,44 @@ const Renderer = {
         const ctx = this.ctx;
         ctx.save();
 
-        // 子弹颜色
-        let color = bullet.color || '#ffff44';
-        if (bullet.isMortar) color = '#aa44ff';
-        else if (bullet.chainCount > 0) color = '#4488ff';
-        else if (bullet.slowAmount > 0) color = '#44ccff';
-        else if (bullet.burnDps > 0) color = '#ff6600';
-        else if (bullet.healOnHit > 0) color = '#00ff88';
+        // 子弹颜色(优先级:外部传入 > 元素效果 > 武器类型)
+        // 元素效果(冰/火/闪电/治疗)优先于武器类型默认色
+        // 武器类型:枪械(gun/bow)白;魔法(magic)淡黄;近战(melee/lance)黄;其他默认青
+        // 怪子弹(isPlayer=false): 大红色, 与玩家子弹明显区分
+        let color = bullet.color || null;
+        if (!color) {
+            if (!bullet.isPlayer) {
+                color = '#ff0000';
+            } else if (bullet.isMortar) {
+                color = '#aa44ff';
+            } else if (bullet.burnDps > 0) {
+                // 火:红
+                color = '#ff4444';
+            } else if (bullet.slowAmount > 0) {
+                // 冰:冰蓝
+                color = '#88ddff';
+            } else if (bullet.chainCount > 0) {
+                // 闪电:橙黄
+                color = '#ffaa44';
+            } else if (bullet.healOnHit > 0) {
+                // 治疗:绿
+                color = '#00ff88';
+            } else if (bullet.weaponTag === 'gun' || bullet.weaponTag === 'bow') {
+                // 枪械/弓:白
+                color = '#ffffff';
+            } else if (bullet.weaponTag === 'magic') {
+                // 魔法默认:淡黄
+                color = '#ffffaa';
+            } else if (bullet.weaponTag === 'melee' || bullet.weaponTag === 'lance') {
+                // 近战:金黄
+                color = '#ffdd44';
+            } else if (bullet.weaponTag === 'medic') {
+                // 治疗系:浅绿
+                color = '#aaffaa';
+            } else {
+                color = '#ffff44';
+            }
+        }
 
         ctx.fillStyle = color;
         ctx.shadowColor = color;
@@ -468,7 +547,14 @@ const Renderer = {
         ctx.beginPath();
         ctx.arc(bullet.x, bullet.y, bullet.radius || 4, 0, Math.PI * 2);
         ctx.fill();
+        // 白色/浅色子弹加深色描边,让白在深背景上明显
+        const r = bullet.radius || 4;
         ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, r, 0, Math.PI * 2);
+        ctx.stroke();
 
         // 拖尾
         if (bullet.vx || bullet.vy) {

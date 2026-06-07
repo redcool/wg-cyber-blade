@@ -1,0 +1,9 @@
+1) 打开主页
+2) 进入游戏
+3) 注入测试玩家 + 2 把同 id 同级武器
+4) 已装备武器卡数量 = 3（预期 3）
+5) 下拉按钮数量 = 3（预期 3）
+6) 合并按钮状态 [pistol, pistol, sword] = []（预期 [false, false, true]）
+❌ FAIL: merge button states wrong
+
+ERRORS:

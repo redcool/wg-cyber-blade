@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>CYBER BLADE - 赛博土豆</title>
     <!-- 缓存破坏: 修改任意 JS/CSS 后, 必须把 ?v= 后面的版本号递增 (yyyyMMddHHmm) 强制浏览器重新拉取 -->
-    <link rel="stylesheet" href="style.css?v=2026060622">
+    <link rel="stylesheet" href="style.css?v=2026060705">
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
@@ -94,6 +94,31 @@
         </div>
     </div>
 
+    <!-- 通关结算 (第 20 关 boss 死亡 + 非无尽模式) -->
+    <div id="victoryOverlay" class="overlay hidden">
+        <div class="menu-content victory-content">
+            <h1 class="victory-title">🏆 系统通关!</h1>
+            <p class="victory-info">击败第 <span id="victoryLevel">20</span> 关 Boss · 角色完成通关</p>
+            <div class="final-stats victory-scroll">
+                <p>角色: <span id="victoryChar">赛博游侠</span></p>
+                <p>击杀数: <span id="victoryKills">0</span></p>
+                <p>收集材料: <span id="victoryMaterials">0</span></p>
+                <div class="final-weapons-section">
+                    <p class="section-label">本局武器</p>
+                    <div id="victoryWeapons" class="final-weapons"></div>
+                </div>
+                <div id="victoryUnlockSection" class="new-unlock-section hidden">
+                    <p class="section-label">🔓 新解锁!</p>
+                    <div id="victoryUnlocks" class="new-unlocks"></div>
+                </div>
+            </div>
+            <div class="victory-actions">
+                <button id="victoryRestartBtn" class="cyber-btn">🔄 再来一局</button>
+                <button id="victoryMenuBtn" class="cyber-btn">🏠 返回主菜单</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== 商店（Brotato 风格布局） ==================== -->
     <div id="shopOverlay" class="overlay hidden">
         <div class="shop-content">
@@ -139,8 +164,11 @@
             <!-- 羁绊展示 -->
             <div id="synergyDisplay" class="shop-synergy-row"></div>
 
-            <!-- 继续按钮 -->
-            <button id="shopContinueBtn" class="cyber-btn">进入下一关</button>
+            <!-- 继续按钮 (第 19 关出现"无尽模式"按钮) -->
+            <div class="shop-continue-row">
+                <button id="shopEndlessBtn" class="cyber-btn shop-endless-btn hidden">♾️ 无尽模式</button>
+                <button id="shopContinueBtn" class="cyber-btn">进入下一关</button>
+            </div>
         </div>
     </div>
 
@@ -280,7 +308,7 @@
     <script src="src/engine/save.js?v=2026060622"></script>
     <script src="src/engine/time.js?v=2026060622"></script>
     <script src="src/engine/input.js?v=2026060622"></script>
-    <script src="src/data/data-bundle.js?v=2026060622"></script>
+    <script src="src/data/data-bundle.js?v=2026060708"></script>
     <script src="src/engine/math/vec2.js?v=2026060622"></script>
     <script src="src/engine/math/angle.js?v=2026060622"></script>
     <script src="src/engine/math/collision.js?v=2026060622"></script>
@@ -297,19 +325,19 @@
     <script src="src/engine/animator.js?v=2026060622"></script>
     <script src="src/engine/character.js?v=2026060622"></script>
     <script src="src/engine/item.js?v=2026060622"></script>
-    <script src="src/engine/engine-shop.js?v=2026060622"></script>
+    <script src="src/engine/engine-shop.js?v=2026060702"></script>
     <script src="src/engine/rarityColors.js?v=2026060622"></script>
     <script src="src/engine/levelup.js?v=2026060622"></script>
-    <script src="src/engine/loot.js?v=2026060622"></script>
+    <script src="src/engine/loot.js?v=2026060702"></script>
     <script src="src/engine/enemy.js?v=2026060622"></script>
-    <script src="src/engine/wave.js?v=2026060622"></script>
-    <script src="src/engine/boss.js?v=2026060622"></script>
+    <script src="src/engine/wave.js?v=2026060702"></script>
+    <script src="src/engine/boss.js?v=2026060702"></script>
 
     <!-- ===== 引擎层 - 渲染层 ===== -->
-    <script src="src/engine/assets.js?v=2026060622"></script>
+    <script src="src/engine/assets.js?v=2026060703"></script>
     <script src="src/engine/audio.js?v=2026060622"></script>
     <script src="src/engine/particle.js?v=2026060622"></script>
-    <script src="src/engine/bullet.js?v=2026060622"></script>
+    <script src="src/engine/bullet.js?v=2026060706"></script>
     <script src="src/engine/combatlog.js?v=2026060622"></script>
     <script src="src/engine/renderer.js?v=2026060622"></script>
     <script src="src/engine/engine.js?v=2026060622"></script>
@@ -322,7 +350,8 @@
     <!-- <script src="src/cyberblade/enemy.js"></script> -->
     <!-- <script src="src/cyberblade/wave.js"></script> -->
     <!-- <script src="src/cyberblade/shop.js"></script> -->
-    <script src="src/cyberblade/ui.js?v=2026060622"></script>
-    <script src="src/cyberblade/main.js?v=2026060622"></script>
+    <script src="src/cyberblade/weaponDisplay.js?v=2026060705"></script>
+    <script src="src/cyberblade/ui.js?v=2026060705"></script>
+    <script src="src/cyberblade/main.js?v=2026060702"></script>
 </body>
 </html>

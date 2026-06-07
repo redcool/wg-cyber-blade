@@ -7,8 +7,12 @@ const DataLoader = {
     /** 内部缓存，避免重复 fetch */
     _cache: {},
 
-    /** 数据文件基路径 */
+    /** 数据文件基路径 (CSV 生成的 JSON) */
     _basePath: 'src/data/',
+    /** UI 字符表路径 (i18n 字符串,非 CSV 生成) */
+    _charsDataPath: 'src/charsData/',
+    /** 数据版本（改数据时 +1 强制刷新） */
+    _dataVersion: '7.10',
 
     /**
      * 加载 JSON 数据文件
@@ -21,18 +25,21 @@ const DataLoader = {
             return this._cache[name];
         }
 
-        // 2. fetch 数据文件
+        // 2. 选择路径：charsData 文件 vs 普通数据
+        const base = name.endsWith('_charsData') ? this._charsDataPath : this._basePath;
+
+        // 3. fetch 数据文件（带版本号强制刷新）
         try {
-            const resp = await fetch(this._basePath + name + '.json');
+            const resp = await fetch(base + name + '.json?v=' + this._dataVersion);
             if (!resp.ok) {
                 throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
             }
             const data = await resp.json();
 
-            // 3. 存入 _cache
+            // 4. 存入 _cache
             this._cache[name] = data;
 
-            // 4. 返回
+            // 5. 返回
             return data;
         } catch (e) {
             console.warn(`[DataLoader] fetch 失败 "${name}", 尝试内联数据...`);
@@ -54,8 +61,9 @@ const DataLoader = {
      * @returns {Promise<void>}
      */
     async preloadAll() {
-        const names = ['characters', 'characterLevel', 'weapons', 'items', 'enemies', 'bosses', 'waves', 'level_duration', 'weaponStats', 'charStats', 'difficulty', 'debug', 'levelUpCards', 'rarityColors', 'audio', 'classes'];
+        const names = ['characters', 'characterLevel', 'weapons', 'items', 'enemies', 'bosses', 'waves', 'level_duration', 'weaponStats', 'charStats', 'difficulty', 'debug', 'levelUpCards', 'rarityColors', 'audio', 'classes', 'system'];
         await Promise.all(names.map(n => this.load(n)));
+        if (typeof SystemConfig !== 'undefined') await SystemConfig.load();
         console.log('[DataLoader] 全部数据预加载完成');
     },
 

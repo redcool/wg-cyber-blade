@@ -11,7 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'src', 'data');
 const FILES = [
     'characters', 'characterLevel', 'weapons', 'items', 'enemies',
-    'bosses', 'waves', 'passives', 'levelUpCards', 'weaponStats', 'charStats', 'difficulty', 'debug', 'rarityColors', 'audio',
+    'bosses', 'waves', 'passives', 'levelUpCards', 'weaponStats', 'charStats', 'difficulty', 'debug', 'rarityColors', 'audio', 'classes', 'level_duration', 'system',
 ];
 const OUTPUT = join(DATA_DIR, 'data-bundle.js');
 

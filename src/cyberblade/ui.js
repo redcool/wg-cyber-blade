@@ -3,6 +3,9 @@
 // ============================================================
 // UI中文显示字符串（从 ui_charsData.json 加载，运行时覆盖）
 const _UI_STR = {
+    // 右侧属性面板前两行专用 label（必须有 fallback，否则 file:// 协议下 JSON 加载失败时显示 undefined）
+    stat_label_level: '等级',
+    stat_label_hp: '生命',
     toast_save_ok:'💾 存档保存成功', toast_save_fail:'❌ 保存失败',
     toast_load_ok:'📂 存档加载成功', toast_load_none:'📂 没有找到存档',
     toast_export_ok:'📤 存档已导出',
@@ -20,6 +23,7 @@ const _UI_STR = {
 
     shop_no_gold:'🪙 金币不足，需要 {0}',
     shop_sold:'🗑️ 已卖出 {0}，退款 {1} 🪙',
+    shop_no_merge_partner:'无同 id 同级武器可合并',
     reroll_btn:'🔄 重掷',
     levelup_reroll_cost:'（{0} 材料）', levelup_reroll_free:'（免费）',
     mod_damage:'{0}%伤害', mod_attackSpeed:'{0}%攻速',
@@ -96,7 +100,48 @@ const UISystem = {
             SaveSystem.load();
         }
         document.getElementById('shopContinueBtn').addEventListener('click', () => {
-            GameEngine.closeShop();
+            GameEngine.closeShop(false);
+        });
+        // 无尽模式按钮 (仅第 19 关商店可见)
+        const shopEndlessBtn = document.getElementById('shopEndlessBtn');
+        if (shopEndlessBtn) {
+            shopEndlessBtn.addEventListener('click', () => {
+                GameEngine.closeShop(true);  // 标志: 进入无尽模式
+            });
+        }
+
+        // ESC 暂停 / 继续
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (typeof GameEngine !== 'undefined' && GameEngine.togglePause) {
+                    GameEngine.togglePause();
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // 中止界面按钮
+        document.getElementById('pauseResumeBtn').addEventListener('click', () => {
+            if (typeof GameEngine !== 'undefined') GameEngine.resumeGame();
+        });
+        document.getElementById('pauseNewGameBtn').addEventListener('click', () => {
+            if (typeof GameEngine !== 'undefined') GameEngine.newGameFromPause();
+        });
+        document.getElementById('pauseExitBtn').addEventListener('click', () => {
+            if (typeof GameEngine !== 'undefined') GameEngine.exitGame();
+        });
+
+        // 通关结算按钮
+        document.getElementById('victoryRestartBtn').addEventListener('click', () => {
+            // 再来一局 → 复用"新开游戏"路径 (回到角色/武器选择)
+            if (typeof GameEngine !== 'undefined' && GameEngine.newGameFromPause) {
+                GameEngine.newGameFromPause();
+            } else {
+                this.showMenu();
+            }
+        });
+        document.getElementById('victoryMenuBtn').addEventListener('click', () => {
+            this.showMenu();
         });
 
         document.getElementById('charGrid').addEventListener('click', (e) => {
@@ -206,6 +251,19 @@ const UISystem = {
         }
     },
 
+    /**
+     * 武器属性的 tier 解析 (代理 WeaponDisplay.getWeaponTierValue)
+     * 保留为 UISystem 方法以便旧代码可继续调用
+     */
+    _getWeaponTierValue(weapon, key) {
+        return WeaponDisplay.getWeaponTierValue(weapon, key);
+    },
+
+    /** 适配判定 (代理 WeaponDisplay.isWeaponNotPreferred) */
+    _isWeaponNotPreferred(weapon, ch) {
+        return WeaponDisplay.isWeaponNotPreferred(weapon, ch);
+    },
+
     _showWeaponDetail(weaponId) {
         const weapon = ShopSystem.allWeapons.find(w => w.id === weaponId);
         const detail = document.getElementById('weaponDetail');
@@ -221,22 +279,42 @@ const UISystem = {
         const weaponClass = classDefs.find(c => c.id === weapon.class);
         const classStr = weaponClass ? `⚜ ${weaponClass['中文名']}` : weapon.class || '';
 
+        // Bug2: 适配警告 — 刺客(偏好 Blade/Precise) + 长枪(Heavy/pike) 之类
+        const charId = CharacterSystem.selectedCharacterId;
+        const ch = CharacterSystem.allCharacters.find(c => c.id === charId);
+        const notPreferred = ch ? WeaponDisplay.isWeaponNotPreferred(weapon, ch) : false;
+        const fitScore = ch ? WeaponDisplay.getWeaponFitScore(weapon, ch) : 0.5;
+        // fit-0/50/100 → CSS 类
+        const fitCls = `fit-${fitScore === 1 ? '100' : (fitScore === 0.5 ? '50' : '0')}`;
+        const warnBadge = notPreferred
+            ? `<span class="warn-badge" title="${_UI_STR.weapon_not_preferred || '非偏好武器'}">⚠ ${_UI_STR.weapon_not_preferred || '非偏好武器'}</span>`
+            : '';
+
         // 构建属性列表（数据驱动，非0即显示，2列）
+        // Report 3: 伤害项加 fit 进度条 (从红到绿, 反映角色×武器适配度)
         const statLines = [];
         for (const def of this._weaponStatDefs) {
-            const val = weapon[def.key];
+            // Bug1 修复: damage_lv1 / cooldown_lv1 用 tier-aware 解析
+            const val = (def.key === 'damage_lv1' || def.key === 'cooldown_lv1')
+                ? WeaponDisplay.getWeaponTierValue(weapon, def.key)
+                : weapon[def.key];
             const cond = _WPN_COND[def.key];
             const shouldShow = cond ? cond(val) : (val !== undefined && val !== 0 && val !== null && val !== '');
             if (!shouldShow) continue;
             const fmt = _WPN_FMT[def.key] || (v => v);
-            statLines.push(`<span class="stat-item"><b>${def['中文名']}</b> ${fmt(val)}</span>`);
+            // 关键属性 (伤害 / 冷却) 加 fit 进度条背景
+            const isKey = (def.key === 'damage_lv1' || def.key === 'cooldown_lv1');
+            const fitHint = isKey
+                ? `<span class="fit-hint" title="适配度 ${Math.round(fitScore * 100)}%">${fitScore === 1 ? '💚' : (fitScore === 0.5 ? '💛' : '❤️')}</span>`
+                : '';
+            statLines.push(`<span class="stat-item ${isKey ? fitCls : ''}"><b>${def['中文名']}</b> ${fmt(val)}${fitHint}</span>`);
         }
 
         detail.innerHTML = `
             <div class="weapon-detail-avatar">${AssetSystem.weaponIconHTML(weapon.id, 72)}</div>
             <div class="weapon-detail-info">
                 <div class="weapon-detail-name">${weapon.name}</div>
-                <div class="weapon-detail-tag" style="color:${tagColor}">${tagStr}${classStr ? ' · ' + classStr : ''}</div>
+                <div class="weapon-detail-tag" style="color:${tagColor}">${tagStr}${classStr ? ' · ' + classStr : ''}${warnBadge}</div>
                 <div class="weapon-detail-desc">${weapon.desc || ''}</div>
                 <div class="weapon-detail-stats">
                     ${statLines.join('\n')}
@@ -374,6 +452,7 @@ const UISystem = {
         document.getElementById('levelUpOverlay').classList.add('hidden');
         document.getElementById('weaponSelectOverlay').classList.add('hidden');
         document.getElementById('difficultyOverlay').classList.add('hidden');
+        document.getElementById('pauseOverlay').classList.add('hidden');
         document.getElementById('charSelectOverlay').classList.remove('hidden');
         document.getElementById('hud').classList.add('hidden');
         this._renderCharSelect();
@@ -898,6 +977,75 @@ const UISystem = {
         document.getElementById('hud').classList.remove('hidden');
     },
 
+    /**
+     * 通关结算界面 (第 20 关 boss 死亡 + 非无尽模式)
+     * 复用 gameOverOverlay 风格的 finalWeapons / finalKills / finalMaterials 展示
+     * 不同点: 标题"系统通关!"、绿色胜利色、"再来一局"+"返回主菜单" 双按钮
+     */
+    showVictory() {
+        const p = PlayerSystem.player;
+        const result = UnlockSystem.endSession();
+
+        // 隐藏所有其他 overlay
+        ['menuOverlay', 'gameOverOverlay', 'shopOverlay', 'levelUpOverlay',
+         'charSelectOverlay', 'difficultyOverlay', 'weaponSelectOverlay',
+         'pauseOverlay', 'victoryOverlay', 'chestRewardOverlay'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
+        const overlay = document.getElementById('victoryOverlay');
+        if (overlay) overlay.classList.remove('hidden');
+        document.getElementById('hud').classList.add('hidden');
+
+        // 填充统计
+        document.getElementById('victoryLevel').textContent = WaveSystem.currentLevel || 20;
+        document.getElementById('victoryKills').textContent = p ? p.kills : 0;
+        document.getElementById('victoryMaterials').textContent = p ? p.materials : 0;
+        document.getElementById('victoryChar').textContent = CharacterSystem.selectedCharacterId ?
+            CharacterSystem.allCharacters.find(c => c.id === CharacterSystem.selectedCharacterId)?.name || _UI_STR.char_fallback_name : _UI_STR.char_fallback_name;
+
+        // 武器展示
+        const weaponContainer = document.getElementById('victoryWeapons');
+        weaponContainer.innerHTML = '';
+        const usedWeapons = result.weaponsUsed || (p && p.weapons ? p.weapons.map(w => w.id) : ['pistol']);
+        for (const wid of usedWeapons) {
+            const def = ShopSystem.allWeapons.find(w => w.id === wid);
+            if (def) {
+                const span = document.createElement('span');
+                span.className = 'final-weapon';
+                span.innerHTML = `${AssetSystem.weaponIconHTML(def.id)} ${def.name}`;
+                weaponContainer.appendChild(span);
+            }
+        }
+
+        // 新解锁
+        const unlockContainer = document.getElementById('victoryUnlocks');
+        unlockContainer.innerHTML = '';
+        if (result.newUnlocks && result.newUnlocks.length > 0) {
+            unlockContainer.parentElement.classList.remove('hidden');
+            for (const ul of result.newUnlocks) {
+                const div = document.createElement('div');
+                div.className = 'new-unlock';
+                if (ul.type === 'weapon') {
+                    const def = ShopSystem.allWeapons.find(w => w.id === ul.id);
+                    const iconHtml = def ? AssetSystem.weaponIconHTML(def.id) : '';
+                    const wName = def ? def.name : ul.id;
+                    div.innerHTML = _UI_STR.unlock_new_weapon.replace('{0}', iconHtml).replace('{1}', wName);
+                } else if (ul.type === 'character') {
+                    const def = CharacterSystem.allCharacters.find(c => c.id === ul.id);
+                    const iconHtml = def ? AssetSystem.charIconHTML(def.id) : '';
+                    const cName = def ? def.name : ul.id;
+                    div.innerHTML = _UI_STR.unlock_new_char.replace('{0}', iconHtml).replace('{1}', cName);
+                }
+                unlockContainer.appendChild(div);
+                setTimeout(() => div.classList.add('show'), 100);
+            }
+        } else {
+            unlockContainer.parentElement.classList.add('hidden');
+        }
+    },
+
     showShop() {
         const p = PlayerSystem.player;
         if (!p) return;
@@ -908,7 +1056,17 @@ const UISystem = {
 
         const char = CharacterSystem.allCharacters.find(c => c.id === CharacterSystem.selectedCharacterId);
         document.getElementById('shopCharInfo').innerHTML = `${char ? AssetSystem.charIconHTML(char.id) + ' ' + char.name : _UI_STR.shop_char_info}`;
-        document.getElementById('shopLevel').textContent = WaveSystem.currentLevel;
+        document.getElementById('shopLevel').textContent = WaveSystem.currentLevel || 1;
+
+        // 第 19 关商店: 显示"无尽模式"按钮 (允许跳过 20 关的通关判定,进入无尽挑战)
+        const endlessBtn = document.getElementById('shopEndlessBtn');
+        if (endlessBtn) {
+            if (WaveSystem.currentLevel === WaveSystem.MAX_LEVEL - 1) {
+                endlessBtn.classList.remove('hidden');
+            } else {
+                endlessBtn.classList.add('hidden');
+            }
+        }
 
         this.updateShop(p);
     },
@@ -974,10 +1132,21 @@ const UISystem = {
         document.getElementById('shopOverlay').classList.add('hidden');
     },
 
+    showPause() {
+        document.getElementById('pauseOverlay').classList.remove('hidden');
+    },
+
+    hidePause() {
+        document.getElementById('pauseOverlay').classList.add('hidden');
+    },
+
     _getDisplayCost(player, baseCost) {
-        if (player.coupon > 0) {
-            const discCost = Math.max(1, baseCost - player.coupon * 2);
-            return `<span style="text-decoration:line-through;opacity:0.5">🪙${baseCost}</span> 🪙${discCost}`;
+        // 打折券: player.shopDiscount (1.0=无折扣, 0.8=8折, 取最低折扣叠加)
+        const disc = (typeof player.shopDiscount === 'number' && player.shopDiscount > 0 && player.shopDiscount < 1)
+            ? player.shopDiscount : 1;
+        if (disc < 1) {
+            const discCost = Math.max(1, Math.ceil(baseCost * disc));
+            return `<span style="text-decoration:line-through;opacity:0.5">🪙${baseCost}</span> <span style="color:#7fff7f">🪙${discCost}</span>`;
         }
         return `<span>🪙 ${baseCost}</span>`;
     },
@@ -1010,6 +1179,11 @@ const UISystem = {
                 ownedWeapons[this._mergeSourceIdx] && ownedWeapons[this._mergeSourceIdx].id === w.id
             );
 
+            // 是否存在可合并伙伴（同 id + 同 level）
+            const canQuickMerge = !isMergeSource && ownedWeapons.some((o, j) =>
+                j !== idx && o.id === w.id && (o.level || 1) === level
+            );
+
             const div = document.createElement('div');
             div.className = `equipped-weapon-slot filled ${isMergeSource ? 'merge-source' : ''} ${canMergeTarget ? 'merge-target' : ''}`;
 
@@ -1020,17 +1194,20 @@ const UISystem = {
                 ${AssetSystem.weaponIconHTML(def.id)}
                 ${tagHtml}
                 <span class="slot-level">Lv.${level}</span>
-                <span class="slot-sell" data-idx="${idx}">✕</span>
+                <span class="slot-actions" data-idx="${idx}">
+                    <button class="slot-dropdown-btn" data-idx="${idx}" title="查看详情">▾</button>
+                </span>
             `;
 
-            const sellBtn = div.querySelector('.slot-sell');
-            sellBtn.addEventListener('click', (e) => {
+            // ▾ 点击 → 打开武器详情 Modal
+            const dropdownBtn = div.querySelector('.slot-dropdown-btn');
+            dropdownBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this._sellWeapon(parseInt(sellBtn.dataset.idx), player);
+                this._showWeaponDetailModal(idx, player, ownedWeapons);
             });
 
             div.addEventListener('click', (e) => {
-                if (e.target.classList.contains('slot-sell')) return;
+                if (e.target.closest('.slot-actions')) return;
                 this._handleWeaponClick(idx, ownedWeapons, player);
             });
 
@@ -1047,6 +1224,122 @@ const UISystem = {
             });
             container.appendChild(div);
         }
+    },
+
+    /**
+     * 显示武器详情 Modal (上半详情 + 下半 卖出/合并/取消 按钮)
+     * @param {number} idx - 武器在 ownedWeapons 中的索引
+     * @param {object} player
+     * @param {Array} ownedWeapons - 玩家当前持有的武器列表
+     */
+    _showWeaponDetailModal(idx, player, ownedWeapons) {
+        if (idx < 0 || idx >= ownedWeapons.length) return;
+        const w = ownedWeapons[idx];
+        const def = ShopSystem.allWeapons.find(d => d.id === w.id);
+        if (!def) return;
+
+        const level = w.level || 1;
+        // 用 FormulasSystem 计算当前等级的 dmg/cooldown/range/knockback/special
+        const stats = (typeof FormulasSystem !== 'undefined' && FormulasSystem.computeWeaponStats)
+            ? FormulasSystem.computeWeaponStats(def, level, player)
+            : null;
+
+        // === 填充上半详情 ===
+        document.getElementById('wdIcon').innerHTML = AssetSystem.weaponIconHTML(def.id, 48);
+        document.getElementById('wdName').textContent = def.name;
+        document.getElementById('wdLevel').textContent = `Lv.${level}`;
+
+        // 品质: 从 tagDef 颜色推断 (com/common/rare/epic/legendary)
+        const tagDef = TagSystem.getTagDef(def.tag);
+        const qualityColors = {
+            common:    { c: '#9e9e9e', label: '普通' },
+            uncommon:  { c: '#4caf50', label: '罕见' },
+            rare:      { c: '#2196f3', label: '稀有' },
+            epic:      { c: '#9c27b0', label: '史诗' },
+            legendary: { c: '#ff9800', label: '传说' },
+        };
+        const qKey = def.rarity || def.quality || 'common';
+        const q = qualityColors[qKey] || qualityColors.common;
+        const qEl = document.getElementById('wdQuality');
+        qEl.textContent = q.label;
+        qEl.style.color = q.c;
+        qEl.style.borderColor = q.c;
+
+        // === 填充 stats 表格 ===
+        const statsRows = [];
+        const fmt = (v, suffix = '') => v == null || v === '—' ? '—' : `${v}${suffix}`;
+        // def 可能字段名不一致:damage / damage_lv1 / baseDamage 等
+        const dmgVal = stats?.damage ?? def.damage_lv1 ?? def.damage ?? def.baseDamage ?? 0;
+        const cdVal  = stats?.cooldown ?? def.cooldown_lv1 ?? def.cooldown ?? 0;
+        const rngVal = stats?.range ?? def.attackRange ?? def.range ?? 0;
+        const kbgVal = def.knockback != null ? def.knockback : '—';
+        const spdVal = def.bulletSpeed || '—';
+        const cntVal = def.bulletCount != null ? def.bulletCount : '—';
+        const pieVal = def.pierce != null ? def.pierce : '—';
+        const kbRadVal = def.splashRadius || '—';
+
+        statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">⚔️ 伤害</span><span class="wd-stat-value dmg">${fmt(dmgVal)}</span></div>`);
+        statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">⏱ 冷却</span><span class="wd-stat-value cd">${fmt(cdVal, 's')}</span></div>`);
+        statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">📏 射程</span><span class="wd-stat-value rng">${fmt(rngVal)}</span></div>`);
+        statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">💥 击退</span><span class="wd-stat-value">${fmt(kbgVal)}</span></div>`);
+        if (spdVal !== '—') statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🚀 弹速</span><span class="wd-stat-value spd">${fmt(spdVal)}</span></div>`);
+        if (cntVal !== '—') statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🔢 弹数</span><span class="wd-stat-value">${fmt(cntVal)}</span></div>`);
+        if (pieVal !== '—') statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🎯 穿透</span><span class="wd-stat-value">${fmt(pieVal)}</span></div>`);
+        if (kbRadVal !== '—') statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">💣 溅射</span><span class="wd-stat-value">${fmt(kbRadVal)}</span></div>`);
+        if (tagDef) statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🏷 标签</span><span class="wd-stat-value tag">${tagDef.icon} ${tagDef.name || def.tag}</span></div>`);
+        if (def.behavior) statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🎬 行为</span><span class="wd-stat-value">${def.behavior}</span></div>`);
+        document.getElementById('wdStats').innerHTML = statsRows.join('');
+
+        // === 特殊属性 ===
+        const specials = [];
+        if (def.critChance) specials.push(`💥 暴击率 ${(def.critChance * 100).toFixed(0)}%`);
+        if (def.critMultiplier) specials.push(`💢 暴击伤害 ×${def.critMultiplier}`);
+        if (def.slowAmount) specials.push(`❄️ 减速 ${(def.slowAmount * 100).toFixed(0)}%/${def.slowDuration || 1}s`);
+        if (def.burnDPS) specials.push(`🔥 燃烧 ${def.burnDPS}/s×${def.burnDuration || 1}s`);
+        if (def.poisonDPS) specials.push(`☠️ 中毒 ${def.poisonDPS}/s×${def.poisonDuration || 1}s`);
+        if (def.lifesteal) specials.push(`🩸 吸血 ${(def.lifesteal * 100).toFixed(0)}%`);
+        if (def.splashOnHitOnly) specials.push(`⏱ 击中才炸(不自动爆)`);
+        if (def.sprayCone) specials.push(`🌫 扇形锥 ${def.sprayCone}rad`);
+        if (def.chainTargets) specials.push(`⚡ 弹射 ${def.chainTargets}目标`);
+        if (def.explodeOnDeath) specials.push(`💀 死亡爆炸`);
+        if (def.desc) specials.push(def.desc);
+        document.getElementById('wdSpecial').innerHTML = specials.length
+            ? specials.map(s => `<div>• ${s}</div>`).join('')
+            : '<div style="opacity:0.5">无特殊效果</div>';
+
+        // === 按钮可用性 ===
+        const canQuickMerge = ownedWeapons.some((o, j) =>
+            j !== idx && o.id === w.id && (o.level || 1) === level);
+        // 至少保留 1 把武器 (防 0 武器状态)
+        const canSell = ownedWeapons.length > 1;
+        const sellBtn = document.getElementById('wdBtnSell');
+        const mergeBtn = document.getElementById('wdBtnMerge');
+        sellBtn.disabled = !canSell;
+        if (!canSell) {
+            sellBtn.title = _UI_STR.shop_sell_min || '至少保留 1 把武器';
+        } else {
+            sellBtn.title = '';
+        }
+        mergeBtn.disabled = !canQuickMerge;
+
+        // === 绑定按钮事件 (一次性,每次 open 覆盖) ===
+        const modal = document.getElementById('weaponDetailModal');
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            sellBtn.onclick = null;
+            mergeBtn.onclick = null;
+            document.getElementById('wdBtnCancel').onclick = null;
+            document.getElementById('wdClose').onclick = null;
+        };
+        sellBtn.onclick = () => { closeModal(); this._sellWeapon(idx, player); };
+        mergeBtn.onclick = () => {
+            if (canQuickMerge) { closeModal(); this._quickMergeWeapon(idx, player); }
+        };
+        document.getElementById('wdBtnCancel').onclick = closeModal;
+        document.getElementById('wdClose').onclick = closeModal;
+
+        // === 打开 ===
+        modal.classList.remove('hidden');
     },
 
     _handleWeaponClick(idx, ownedWeapons, player) {
@@ -1075,12 +1368,26 @@ const UISystem = {
     _sellWeapon(idx, player) {
         const weapon = player.weapons[idx];
         const def = weapon ? ShopSystem.allWeapons.find(d => d.id === weapon.id) : null;
+        // 安全检查: ShopSystem.sellWeapon 是单点权威 (防 0 武器状态), 此处不重复检查
         if (ShopSystem.sellWeapon(idx)) {
             this._mergeSourceIdx = -1;
             this.updateShop(player);
             ParticleSystem.pickup(player.x, player.y);
             const refund = def ? Math.floor(def.cost / 2) + 1 : 0;
             this._showShopError(_UI_STR.shop_sold.replace('{0}', def ? def.name : '').replace('{1}', refund));
+        }
+    },
+
+    /**
+     * 一键合并：把 idx 这把武器与任意 同 id + 同 level 的伙伴合并（Brotato 风格）
+     */
+    _quickMergeWeapon(idx, player) {
+        if (ShopSystem.mergeWeaponWithAny(idx, player)) {
+            this._mergeSourceIdx = -1;
+            this.updateShop(player);
+            ParticleSystem.pickup(player.x, player.y);
+        } else {
+            this._showShopError(_UI_STR.shop_no_merge_partner || '无合并伙伴');
         }
     },
 
@@ -1094,6 +1401,7 @@ const UISystem = {
     },
 
     _renderPlayerStatsCompact(player) {
+        if (!player) return;
         const container = document.getElementById('playerStats');
         container.innerHTML = '';
         const titleEl = container.parentElement.querySelector('.panel-title');
@@ -1103,20 +1411,25 @@ const UISystem = {
         const PER_PAGE = 14;
         const allItems = [];
 
-        // 等级（特殊行，带 XP）
+        // 等级（特殊行，带 XP）— 防御性取值，防止 undefined 显示
+        const lv = player.level ?? 1;
+        const xpCur = Math.round(player.xp ?? 0);
+        const xpNeed = player.xpToNext ?? 25;
         allItems.push({
             _type: 'level',
             icon: '⬆️',
             label: _UI_STR.stat_label_level,
-            valueHtml: `<span class="stat-value warning">Lv.${player.level}</span><span class="stat-xp">XP ${Math.round(player.xp)}/${player.xpToNext}</span>`
+            valueHtml: `<span class="stat-value warning">Lv.${lv}</span><span class="stat-xp">XP ${xpCur}/${xpNeed}</span>`
         });
 
-        // HP
+        // HP — 防御性取值
+        const hpCur = Math.round(player.hp ?? player.maxHp ?? 0);
+        const hpMax = Math.round(player.maxHp ?? player.hp ?? 1);
         allItems.push({
             _type: 'hp',
             icon: '❤️',
             label: _UI_STR.stat_label_hp,
-            valueHtml: `<span class="stat-value danger">${Math.round(player.hp)}/${Math.round(player.maxHp)}</span>`
+            valueHtml: `<span class="stat-value danger">${hpCur}/${hpMax}</span>`
         });
 
         // 其他属性（getDisplayStats 已过滤 deprecated=0）
@@ -1260,9 +1573,13 @@ const UISystem = {
             if (isWeapon) {
                 // 数据驱动武器属性显示（仅非0值，CSS grid 2列，竖直对齐）
                 const statParts = [];
-                const shopKeys = ['damage_lv1', 'cooldown_lv1', 'attackRange', 'bulletCount', 'pierce', 'splashRadius', 'homingStrength', 'burnDps', 'chainCount', 'critChanceAdd', 'critDamageAdd', 'speedMult', 'lifeStealAdd', 'armorAdd', 'maxHpAdd', 'hpRegenAdd', 'knockback', 'sprayCone', 'slowAmount', 'slowDuration', 'healOnHit'];
+                const shopKeys = ['damage_lv1', 'cooldown_lv1', 'attackRange', 'bulletCount', 'pierce', 'splashRadius', 'homingStrength', 'burnDps', 'chainCount', 'critChanceAdd', 'critDamageAdd', 'speedMult', 'lifeStealAdd', 'armorAdd', 'maxHpAdd', 'hpRegenAdd', 'knockback', 'sprayCone', 'slowAmount', 'slowDuration', 'healOnHit', 'killHeal', 'damageReductionAura', 'auraHeal', 'auraRadius'];
                 for (const key of shopKeys) {
-                    const val = item[key];
+                    // Bug1 修复: damage_lv1 / cooldown_lv1 用 tier-aware 解析
+                    //   例: pike (minLevel=2) damage_lv1=0 是占位, 真实伤害在 damage_lv2=35
+                    const val = (key === 'damage_lv1' || key === 'cooldown_lv1')
+                        ? WeaponDisplay.getWeaponTierValue(item, key)
+                        : item[key];
                     if (val === undefined || val === null || val === 0 || val === '') continue;
                     const def = this._weaponStatDefs.find(d => d.key === key);
                     if (!def) continue;
@@ -1380,7 +1697,7 @@ const UISystem = {
             div.dataset.cardId = card.id;
 
             // 卡片图标：先试 PNG，失败则 fallback 到 emoji
-            const iconField = card.statField || card.actionType || 'default';
+            const iconField = card.statField || card.actionType || 'damagePercent';
             const iconWrap = document.createElement('div');
             iconWrap.className = 'levelup-card-icon-wrap';
             const img = document.createElement('img');

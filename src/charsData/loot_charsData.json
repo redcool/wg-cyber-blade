@@ -2,6 +2,7 @@
   "chest_normal": "普通宝箱",
   "chest_elite": "精英宝箱",
   "chest_legendary": "传奇宝箱",
+  "chest_advanced": "高级宝箱",
   "gold_name": "{0} 金币",
   "gold_desc": "获得 {0} 金币"
 }

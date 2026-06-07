@@ -1,7 +1,12 @@
 // ============================================================
 // src/engine/enemy.js — 敌人 AI 系统（7 行为 + 5 机制 + Build 克制）
-// 依赖: data.js (DataLoader), stats.js (StatsSystem)
+// 依赖: data.js (DataLoader), stats.js (StatsSystem), animator.js
 // ============================================================
+
+// Animator 双环境兼容 (浏览器: index.html 先加载 animator.js 设 globalThis.Animator;
+// vitest/Node: 调用方需保证 global.Animator 已设;否则 null 兜底跳过动画)
+// 注: 浏览器 <script> 共享全局 lexical scope, 不能用 const (跨文件重名冲突); 用 var 允许重复声明
+var _Animator = (typeof globalThis !== 'undefined' && globalThis.Animator) || null;
 
 /**
  * EnemySystem — 敌人 AI 系统
@@ -26,6 +31,19 @@
 // ============================================================
 // 7 种行为类型
 // ============================================================
+
+/** 敌人 _uid 计数器 (供呼吸动画错相位 / 击中去重) */
+let _enemyUidCounter = 0;
+
+/** 接触距离: 怪 + 玩家半径 + 15px 走位缓冲 (原 30, 减半让怪靠得更近) */
+const _touchDist = (e, p) => (e.radius || 14) + (p.radius || 10) + 15;
+
+/** 怪到玩家距离 (用 Vec2.dist 替代手写 sqrt, 演示 math 模块) */
+const _distToPlayer = (e, p) => {
+    if (typeof Vec2 !== 'undefined') return Vec2.dist(e, p);
+    return Math.hypot(e.x - p.x, e.y - p.y);
+};
+
 const BEHAVIORS = {
     /** 追击玩家，直线移动 + 接触伤害 */
     chaser: {
@@ -34,21 +52,20 @@ const BEHAVIORS = {
             const dy = player.y - enemy.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist > 5) {
+            if (dist > _touchDist(enemy, player)) {
                 const speed = (enemy.speed || 80) * dt;
-                enemy.x += (dx / dist) * speed + enemy.knockbackX * dt;
-                enemy.y += (dy / dist) * speed + enemy.knockbackY * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
             }
 
             enemy.attackTimer -= dt;
-            if (enemy.attackTimer <= 0 && dist < (enemy.radius || 14) + (player.radius || 10) + 5) {
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
                 if (typeof PlayerSystem !== 'undefined') {
                     PlayerSystem.takeDamage(enemy.damage || 8);
                     // 触发特殊机制（leech / freezer）
                     EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 8, player);
-                    const angle = Math.atan2(dy, dx);
-                    player.knockbackX = -Math.cos(angle) * 200;
-                    player.knockbackY = -Math.sin(angle) * 200;
+                    // v1.3: 移除接触击退 (Brotato 规则) — 怪只造成伤害, 不推玩家
+                    // 多怪围攻时击退叠加会压过玩家输入速度, 导致无法移动
                 }
                 enemy.attackTimer = enemy.attackCooldown || 1.5;
             }
@@ -66,14 +83,22 @@ const BEHAVIORS = {
             const speedMult = hpPct <= 0.5 ? 1.3 : 1.0;
             const dir = hpPct <= 0.5 ? -1 : 1; // flee when low HP
             const speed = (enemy.speed || 160) * speedMult * dt;
+            const touchDist = _touchDist(enemy, player);
 
-            if (dist > 5) {
-                enemy.x += (dx / dist) * speed * dir + enemy.knockbackX * dt;
-                enemy.y += (dy / dist) * speed * dir + enemy.knockbackY * dt;
+            if (dir > 0) {
+                // 追击: 距离玩家 > _touchDist 才推进 (避免合体)
+                if (dist > touchDist) {
+                    enemy.x += (dx / dist) * speed * dir;
+                    enemy.y += (dy / dist) * speed * dir;
+                }
+            } else {
+                // 逃离: 忽略 _touchDist, 持续远离玩家
+                enemy.x += (dx / dist) * speed * dir;
+                enemy.y += (dy / dist) * speed * dir;
             }
 
             enemy.attackTimer -= dt;
-            if (enemy.attackTimer <= 0 && dist < (enemy.radius || 10) + (player.radius || 10) + 5) {
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
                 if (typeof PlayerSystem !== 'undefined') {
                     PlayerSystem.takeDamage(enemy.damage || 6);
                     EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 6, player);
@@ -101,20 +126,19 @@ const BEHAVIORS = {
                     enemy.charging = false;
                     enemy.chargeTimer = 3.0;
                 }
-                if (dist > 5) {
+                if (dist > _touchDist(enemy, player)) {
                     const speed = (enemy.speed || 45) * 2 * dt;
                     enemy.x += (dx / dist) * speed;
                     enemy.y += (dy / dist) * speed;
                 }
                 // 冲锋中无视击退
-                enemy.knockbackX = 0;
-                enemy.knockbackY = 0;
+                enemy.knockbackRemaining = 0;
             } else {
                 // 正常慢速接近
-                if (dist > 5) {
+                if (dist > _touchDist(enemy, player)) {
                     const speed = (enemy.speed || 45) * dt;
-                    enemy.x += (dx / dist) * speed + enemy.knockbackX * dt;
-                    enemy.y += (dy / dist) * speed + enemy.knockbackY * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
                 }
 
                 enemy.chargeTimer -= dt;
@@ -128,7 +152,7 @@ const BEHAVIORS = {
 
             // 接触伤害
             enemy.attackTimer -= dt;
-            if (enemy.attackTimer <= 0 && dist < (enemy.radius || 22) + (player.radius || 10) + 5) {
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
                 if (typeof PlayerSystem !== 'undefined') {
                     PlayerSystem.takeDamage(enemy.damage || 15);
                     EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 15, player);
@@ -148,15 +172,12 @@ const BEHAVIORS = {
 
             if (dist < preferred - 50) {
                 const speed = (enemy.speed || 55) * dt;
-                enemy.x -= (dx / dist) * speed + enemy.knockbackX * dt;
-                enemy.y -= (dy / dist) * speed + enemy.knockbackY * dt;
+                enemy.x -= (dx / dist) * speed;
+                enemy.y -= (dy / dist) * speed;
             } else if (dist > preferred + 50) {
                 const speed = (enemy.speed || 55) * dt;
-                enemy.x += (dx / dist) * speed + enemy.knockbackX * dt;
-                enemy.y += (dy / dist) * speed + enemy.knockbackY * dt;
-            } else {
-                enemy.x += enemy.knockbackX * dt;
-                enemy.y += enemy.knockbackY * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
             }
 
             enemy.attackTimer -= dt;
@@ -179,10 +200,10 @@ const BEHAVIORS = {
 
             if (!enemy._bombTimer && !enemy._exploded) {
                 // 冲向玩家
-                if (dist > 5) {
+                if (dist > _touchDist(enemy, player)) {
                     const chargeSpeed = (enemy.speed || 120) * (1 + 0.5 * Math.min(1, 250 / Math.max(1, dist))) * dt;
-                    enemy.x += (dx / dist) * chargeSpeed + enemy.knockbackX * dt;
-                    enemy.y += (dy / dist) * chargeSpeed + enemy.knockbackY * dt;
+                        enemy.x += (dx / dist) * chargeSpeed;
+                        enemy.y += (dy / dist) * chargeSpeed;
                 }
 
                 if (dist < 40 && !enemy._bombTimer) {
@@ -260,14 +281,14 @@ const BEHAVIORS = {
             }
             const packMult = nearbySwarm >= 3 ? 1.3 : 1.0;
 
-            if (dist > 5) {
+            if (dist > _touchDist(enemy, player)) {
                 const speed = (enemy.speed || 100) * packMult * dt;
-                enemy.x += (dx / dist) * speed + enemy.knockbackX * dt;
-                enemy.y += (dy / dist) * speed + enemy.knockbackY * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
             }
 
             enemy.attackTimer -= dt;
-            if (enemy.attackTimer <= 0 && dist < (enemy.radius || 8) + (player.radius || 10) + 3) {
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
                 if (typeof PlayerSystem !== 'undefined') {
                     PlayerSystem.takeDamage(enemy.damage || 4);
                     EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 4, player);
@@ -286,8 +307,8 @@ const BEHAVIORS = {
 
             if (dist < 200) {
                 const speed = (enemy.speed || 65) * dt;
-                enemy.x -= (dx / dist) * speed + enemy.knockbackX * dt;
-                enemy.y -= (dy / dist) * speed + enemy.knockbackY * dt;
+                enemy.x -= (dx / dist) * speed;
+                enemy.y -= (dy / dist) * speed;
             } else {
                 enemy.x += enemy.knockbackX * dt;
                 enemy.y += enemy.knockbackY * dt;
@@ -350,7 +371,7 @@ const SPECIAL_MECHANICS = {
                     attackCooldown: (enemy.attackCooldown || 1.5) * 0.8,
                     attackTimer: 0,
                     flashTimer: 0,
-                    knockbackX: 0, knockbackY: 0,
+            knockbackRemaining: 0, knockbackDirX: 0, knockbackDirY: 0, stunTimer: 0,
                     slowTimer: 0, slowFactor: 0.5,
                     burnStacks: [],
                     preferredDist: 200,
@@ -444,9 +465,10 @@ const EnemySystem = {
     scaleByWave(type, waveLevel, difficultyMult) {
         const level = Math.max(1, waveLevel || 1);
         // 难度曲线: 每波 +15%HP +15%DMG +5%SPD（增强玩家危险感）
+        // 注: spdMult × 2 — 加倍怪物移动速度 (旧值偏慢, 战斗拖沓)
         const hpMult = 1 + level * 0.15;
         const dmgMult = 1 + level * 0.15;
-        const spdMult = 1 + level * 0.05;
+        const spdMult = (1 + level * 0.05) * 2;
 
         let extraHp = 0;
         let extraDmg = 0;
@@ -483,8 +505,10 @@ const EnemySystem = {
         const scaled = this.scaleByWave(type, level, difficultyMult);
 
         const enemy = {
+            _uid: ++_enemyUidCounter,
             typeId,
             x, y,
+            animator: _Animator ? _Animator.create({ phase: _enemyUidCounter * 0.7 }) : null,
             hp: scaled.hp,
             maxHp: scaled.hp,
             speed: scaled.speed,
@@ -499,7 +523,7 @@ const EnemySystem = {
             // 状态
             attackTimer: Math.random() * (type.attackCooldown || 1.5),
             flashTimer: 0,
-            knockbackX: 0, knockbackY: 0,
+            knockbackX: 0, knockbackY: 0,  // 兼容旧字段 (主循环不再用)
             slowTimer: 0, slowFactor: 0.5,
             burnStacks: [],
             // 行为参数
@@ -578,8 +602,23 @@ const EnemySystem = {
 
             // 通用状态更新
             if (e.flashTimer > 0) e.flashTimer -= dt;
-            e.knockbackX *= 0.9;
-            e.knockbackY *= 0.9;
+            // 击退 i-frame 衰减 (0.3s 免疫)
+            if (e.kbImmuneTimer > 0) e.kbImmuneTimer -= dt;
+
+            // 击退位移 (一次性推 N 像素, kbSpeed 600 px/s 推完)
+            if (e.knockbackRemaining > 0) {
+                const kbSpeed = 600;
+                const step = Math.min(e.knockbackRemaining, kbSpeed * dt);
+                e.x += (e.knockbackDirX || 0) * step;
+                e.y += (e.knockbackDirY || 0) * step;
+                e.knockbackRemaining -= step;
+            }
+
+            // 击退 stun (AI 暂停, 不追不攻击)
+            if (e.stunTimer > 0) {
+                e.stunTimer -= dt;
+                if (e.stunTimer > 0) continue;
+            }
 
             // 减速
             if (e.slowTimer > 0) {
@@ -593,11 +632,31 @@ const EnemySystem = {
             // 行为 AI
             this._updateEnemyAI(e, dt, player);
 
+            // 动画状态切换: 怪在攻击 cd 中 (attackTimer > 0) → attack, 否则 idle
+            if (_Animator && e.animator) {
+                _Animator.update(e.animator, dt);
+                if (e.inAttackRange && e.attackTimer > 0) {
+                    _Animator.setState(e.animator, 'attack');
+                } else {
+                    _Animator.setState(e.animator, 'idle');
+                }
+            }
+
             // 边界钳制
             if (typeof GameWorld !== 'undefined') {
                 e.x = Math.max(10, Math.min(GameWorld.width - 10, e.x));
                 e.y = Math.max(10, Math.min(GameWorld.height - 10, e.y));
             }
+        }
+
+        // ====== 重建空间网格 (供武器碰撞粗筛用) ======
+        if (typeof SpatialGrid !== 'undefined') {
+            if (!this._grid) {
+                const w = (typeof GameWorld !== 'undefined' && GameWorld.width)  || 3000;
+                const h = (typeof GameWorld !== 'undefined' && GameWorld.height) || 3000;
+                this._grid = SpatialGrid.create(80, w, h);
+            }
+            SpatialGrid.rebuild(this._grid, this.enemies);
         }
     },
 
@@ -697,8 +756,7 @@ const EnemySystem = {
             const dx = enemy.x - p.x;
             const dy = enemy.y - p.y;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            enemy.knockbackX += (dx / dist) * 300;
-            enemy.knockbackY += (dy / dist) * 300;
+            this.applyKnockback(enemy, dx, dy, dist, 300);
         }
 
         // 受击特效
@@ -714,6 +772,80 @@ const EnemySystem = {
             return -1;
         }
         return 0;
+    },
+
+    // -------------------------------------------------------
+    // 击退 (Brotato 风格: 近战强 / 射击弱 + 大体型抗性)
+    // -------------------------------------------------------
+
+    /**
+     * 应用击退到敌人
+     * @param {Object} e     敌人实例
+     * @param {number} dx    方向 X（朝向敌人的反向,或击退方向）
+     * @param {number} dy    方向 Y
+     * @param {number} dist  距离
+     * @param {number} kbStr 武器击退强度（无单位,与武器定义对应）
+     * @param {Object} [opts] { ranged:bool=false, mass:number=auto }
+     *   - ranged=true  → 远程武器(子弹/箭/魔法),击退效果 ×0.2
+     *   - mass         → 自定义质量倍数(基于radius=14基准,1.0=basic)
+     *   - 精英/Boss    → 免疫击退
+     */
+    /**
+     * 应用击退（距离 + 方向 + stun，Brotato 风格）
+     * 击退本质: 一次性推 N 像素(非累加速度)，同时 stun 0.15-0.25s
+     * @param {Object} e          敌人
+     * @param {number} dx         方向 X (e-攻击者)
+     * @param {number} dy         方向 Y
+     * @param {number} dist       |dx,dy| 距离(>0)
+     * @param {number} kbStr      击退力度
+     * @param {Object} [opts]     { ranged, mass }
+     *   - ranged=true    远程武器击退更弱 + 短 stun
+     *   - mass           自定义质量(默认 auto = (radius/14)²)
+     */
+    /**
+     * 击退系统 (Brotato 风格)
+     * - kbStr 是 Brotato 单位值 (hand=30, trident=-30, 范围 ±100)
+     *   单位换算: 1 单位 ≈ 2.5 像素 (30 单位 → 75 像素)
+     * - i-frame: 敌人 0.3s 免疫再次击退, 防止反复推
+     * - 不累加: 多次击退取 cap, 避免过远
+     * - cap: 150 像素, 防止极端
+     * - mass: (radius/14)² 体型抗性, 远程 ×0.2 弱化
+     * - 负 kbStr = 拉近 (Trident 风格)
+     */
+    applyKnockback(e, dx, dy, dist, kbStr, opts = {}) {
+        if (!e || !e.alive) return 0;
+        if (e.isElite || e.isBoss) return 0;
+        if (!kbStr) return 0;
+
+        // i-frame 免疫 (0.3s 内不再击退, 防止反复推)
+        if ((e.kbImmuneTimer || 0) > 0) return 0;
+
+        const rangedFactor = opts.ranged ? 0.2 : 1.0;
+        const radius = e.radius || 14;
+        const mass = opts.mass != null ? opts.mass : Math.pow(radius / 14, 2);
+
+        // 单位 → 像素 (Brotato: 1 单位 ≈ 2.5px; 30 单位 = 75 像素 ≈ 1/8 屏)
+        const PIXELS_PER_UNIT = 2.5;
+        const MAX_KB_PIXELS = 150;
+        const final = (kbStr * rangedFactor * PIXELS_PER_UNIT) / mass;
+
+        if (Math.abs(final) < 0.1) return 0;
+
+        // cap (防止过远, 包括负向拉近)
+        const capped = Math.max(-MAX_KB_PIXELS, Math.min(MAX_KB_PIXELS, final));
+        const norm = dist > 0 ? 1 / dist : 0;
+
+        // 不再累加 — 直接覆盖, 但保留 i-frame 期间的方向 (防抖)
+        e.knockbackRemaining = capped;
+        e.knockbackDirX = dx * norm;
+        e.knockbackDirY = dy * norm;
+        // i-frame: 0.3s 免疫再次击退
+        e.kbImmuneTimer = 0.3;
+
+        // stun (远程 0.15s, 近战 0.25s, 取长)
+        const stunDur = opts.ranged ? 0.15 : 0.25;
+        e.stunTimer = Math.max(e.stunTimer || 0, stunDur);
+        return capped;
     },
 
     // -------------------------------------------------------

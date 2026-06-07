@@ -1,0 +1,16 @@
+[
+  {
+    "key": "weaponOrbitDistance",
+    "value": "64",
+    "valueType": "number",
+    "desc": "武器图标中心到角色中心的像素距离",
+    "group": "orbit"
+  },
+  {
+    "key": "weaponOrbitExtraPerSlot",
+    "value": "6",
+    "valueType": "number",
+    "desc": "每多 1 个 slot 武器额外外推的像素",
+    "group": "orbit"
+  }
+]

@@ -1,0 +1,25 @@
+1) 打开主页
+2) 启动游戏 + 进 shopping
+3) 注入 3 把武器: pistol Lv1, pistol Lv1, sword Lv2
+4) ▾ 按钮数量 = 3（预期 3）
+5) 打开第 1 把 pistol modal
+   Modal hidden = false（预期 false）
+   Name: 手枪, Level: Lv.1, Quality: 普通
+   Stats rows: 9（预期 >= 4）, Special: true
+   Merge 按钮 (1 pistol + 1 同 level pistol) disabled = false（预期 false）
+6) 点 🪙 卖出 → 第 1 把 pistol 卖出 + 武器 -1
+   卖出前 3 → 卖出后 2（预期 2）
+   Modal hidden = true（预期 true）
+   剩余武器 = [pistol Lv1, sword Lv2]（预期含 pistol Lv1, sword Lv2）
+7) 打开 sword Lv2 modal → 验证 Merge 禁用 (无同 level 伙伴)
+   sword Lv2 merge disabled = true（预期 true）
+8) 点取消 → Modal 关闭 + 武器不变
+   武器数 2 → 2（预期不变）, Modal hidden = true（预期 true）
+9) 注入同 id 同 level 武器 → 验证合并流程
+   Merge 按钮启用 = true（预期 true）
+   合并后武器 = [pistol Lv2]（预期 [pistol Lv2]）
+10) 验证 × 关闭按钮
+   × 关闭后 Modal hidden = true（预期 true）
+✅ ALL PASS
+
+ERRORS:

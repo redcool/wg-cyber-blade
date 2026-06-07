@@ -277,14 +277,15 @@ describe('WaveSystem - 更新', () => {
         expect(EnemySystem.create).toHaveBeenCalled();
     });
 
-    it('W25: 预算耗尽 + 敌人全灭 → endWave', () => {
+    it('W25: 预算耗尽 + 敌人全灭 → 倒计时未归零, 不结束', () => {
         WaveSystem.startNextLevel();
         expect(WaveSystem._remainingBudget).toBeGreaterThan(0);
         WaveSystem._remainingBudget = 0;
-        // 敌人全灭
+        // 敌人全灭, 但 waveTimer=0 < levelDuration
         expect(WaveSystem.waveActive).toBe(true);
         WaveSystem.update(1.0, { x: 200, y: 200 });
-        expect(WaveSystem.waveActive).toBe(false);
+        // 倒计时必须归零才结束 (用户反馈: "12秒结束" 不正常)
+        expect(WaveSystem.waveActive).toBe(true);
     });
 
     it('W26: 超时 60s → endWave', () => {
@@ -327,22 +328,24 @@ describe('WaveSystem - _getConfig', () => {
 // 8. _spawnBatch
 // ============================================================
 describe('WaveSystem - _spawnBatch', () => {
-    it('W30: _spawnBatch 创建敌人并扣除预算', () => {
+    it('W30: _spawnBatch 创建敌人 (Brotato 风格, 不再扣预算)', () => {
         vi.spyOn(Math, 'random').mockReturnValue(0.9); // 不使用 counter
         WaveSystem.currentLevel = 5;
         WaveSystem.startNextLevel();
         const budgetBefore = WaveSystem._remainingBudget;
         WaveSystem._spawnBatch({ x: 200, y: 200 });
         expect(EnemySystem.createBatch).toHaveBeenCalled();
-        expect(WaveSystem._remainingBudget).toBeLessThan(budgetBefore);
+        // 预算不再被扣 (Brotato 风格: 倒计时归零前持续刷怪, 无 budget 上限)
+        expect(WaveSystem._remainingBudget).toBe(budgetBefore);
     });
 
-    it('W31: _spawnBatch 预算不足时停止', () => {
+    it('W31: _spawnBatch 即使预算为 0 也持续刷怪 (Brotato 风格)', () => {
         WaveSystem.currentLevel = 1;
         WaveSystem.startNextLevel();
         WaveSystem._remainingBudget = 0;
         WaveSystem._spawnBatch({ x: 200, y: 200 });
-        expect(EnemySystem.createBatch).not.toHaveBeenCalled();
+        // 刷怪不受 budget 限制, 仍然创建
+        expect(EnemySystem.createBatch).toHaveBeenCalled();
     });
 
     it('W32: _getCostForType 正确', () => {
@@ -367,5 +370,29 @@ describe('WaveSystem - 重置', () => {
         expect(WaveSystem._bossSpawned).toBe(false);
         expect(WaveSystem.waveTimer).toBe(0);
         expect(WaveSystem.spawnTimer).toBe(0);
+    });
+});
+
+// ============================================================
+// 10. 通关点 / 无尽模式 (新增)
+// ============================================================
+describe('WaveSystem - 通关点 / 无尽模式', () => {
+    it('W34: MAX_LEVEL = 20 (普通模式通关点)', () => {
+        expect(WaveSystem.MAX_LEVEL).toBe(20);
+    });
+
+    it('W35: isFinalLevel 在 currentLevel = 20 时返回 true', () => {
+        WaveSystem.currentLevel = 20;
+        expect(WaveSystem.isFinalLevel()).toBe(true);
+    });
+
+    it('W36: isFinalLevel 在 currentLevel = 19 时返回 false (仍是普通关)', () => {
+        WaveSystem.currentLevel = 19;
+        expect(WaveSystem.isFinalLevel()).toBe(false);
+    });
+
+    it('W37: isFinalLevel 在 currentLevel > 20 时仍返回 true (无尽模式上限保护)', () => {
+        WaveSystem.currentLevel = 25;
+        expect(WaveSystem.isFinalLevel()).toBe(true);
     });
 });

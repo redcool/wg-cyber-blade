@@ -151,6 +151,14 @@ const BulletSystem = {
                     if (b.splashOnHitOnly && b.splashRadius > 0) {
                         this._checkSplash(b);
                     }
+                    // 连锁电击 (闪电杖/雷电杖等 chainCount>0 武器, 暴击时触发)
+                    // 注: 必须在子弹消失前调用 (后续 pierce 分支可能 pool.push)
+                    if (b.chainCount > 0) {
+                        const p = typeof PlayerSystem !== 'undefined' ? PlayerSystem.player : null;
+                        if (p && p._lastCrit) {
+                            this.chainLightning(b, hit);
+                        }
+                    }
                     // 击杀奖励
                     if (killed === -1 && typeof GameEngine !== 'undefined' && GameEngine._handleEnemyKill) {
                         GameEngine._handleEnemyKill(hit, b.damage);
@@ -352,3 +360,7 @@ const BulletSystem = {
         }
     }
 };
+
+if (typeof module !== 'undefined') {
+    module.exports = { BulletSystem };
+}
