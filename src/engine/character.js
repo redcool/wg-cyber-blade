@@ -53,7 +53,19 @@ const CharacterSystem = {
 
         if (!chars || chars.length === 0) {
             console.warn('[CharacterSystem] characters.json 加载失败，使用默认角色');
-            chars = [];
+            chars = [{
+                id: 'default', name: '默认', desc: '均衡型角色', icon: '👤',
+                unlocked: true, weaponSlots: 6,
+                maxHp: 100, hpRegen: 0.5, speed: 220,
+                attackSpeed: 1.0, attackRange: 280,
+                armor: 1, dodge: 0.02, critChance: 0.05, critDamage: 2.0,
+                lifeSteal: 0, damagePercent: 0,
+                meleeDamage: 0, rangedDamage: 0, elementalDamage: 0, engineering: 0,
+                harvesting: 0, luck: 0, xpGain: 0, materialGain: 0,
+                tags: ['melee', 'ranged'],
+                penalties: {}, passives: [],
+                unlockType: '', unlockValue: 0,
+            }];
         }
 
         // 标准化标签（旧 → 新 7 标签）
@@ -63,6 +75,12 @@ const CharacterSystem = {
             penalties: ch.penalties || {},
             passives: ch.passives || [],
         }));
+
+        // 自动选中第一个已解锁角色（如 'default'）
+        const firstUnlocked = this.allCharacters.find(c => c.unlocked);
+        if (firstUnlocked) {
+            this.selectedCharacterId = firstUnlocked.id;
+        }
     },
 
     /**
@@ -131,6 +149,9 @@ const CharacterSystem = {
         player.weaponSlots = ch.weaponSlots || 6;
         player.characterId = characterId;
         player.tags = [...(ch.tags || [])];
+        // 存储 class 亲和偏好（供伤害公式 class 匹配倍率用）
+        player.preferredClasses = [...(ch.preferredClasses || [])];
+        player.preferredClasses_2 = [...(ch.preferredClasses_2 || [])];
 
         // 4. 重置 HP
         player.hp = player.maxHp;
@@ -256,6 +277,17 @@ const CharacterSystem = {
             }
         }
         return false;
+    },
+
+    /**
+     * 获取角色的初始武器列表
+     * @param {string} characterId
+     * @returns {string[]} 武器 ID 数组（可能为空）
+     */
+    getStartingWeapons(characterId) {
+        const ch = this.getCharacterDef(characterId);
+        if (!ch || !ch.startingWeapons) return [];
+        return [...ch.startingWeapons];
     },
 
     /**

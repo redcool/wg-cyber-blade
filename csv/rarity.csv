@@ -1,0 +1,16 @@
+# 商店稀有度配置表
+# 格式: CSV (逗号分隔)，以 # 开头的行为注释行
+# 注: 颜色/显示名由 rarityColors.csv 提供，此表仅存数值参数
+#
+# ====== 列说明 ======
+# id:      稀有度标识 (common|uncommon|rare|epic|legendary)
+# weight:  权重(越高出现概率越大)
+# minWave: 最小出现波次
+# costMult:价格倍率
+#
+id,weight,minWave,costMult
+common,60,1,1.0
+uncommon,40,2,1.2
+rare,25,3,1.5
+epic,10,6,2.5
+legendary,5,10,4.0

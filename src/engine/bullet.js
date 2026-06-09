@@ -117,15 +117,6 @@ const BulletSystem = {
                 continue;
             }
 
-            // 范围爆炸（火箭筒）— 仅对飞行超时爆炸类(默认)生效;命中才炸的弹(splashOnHitOnly=true)跳过
-            if (b.splashRadius > 0 && b.life <= 2.9 && !b.splashOnHitOnly) {
-                // 只有飞出去后才检查爆炸
-                this._checkSplash(b);
-                this.pool.push(b);
-                this.bullets.splice(i, 1);
-                continue;
-            }
-
             // ====== 玩家子弹命中检测 (修复: 之前普通子弹飞到死不扣血) ======
             if (b.isPlayer) {
                 const hit = this._checkHit(b);
@@ -169,6 +160,10 @@ const BulletSystem = {
                         if (!b.hits) b.hits = [];
                         b.hits.push(hit);
                     } else {
+                        // 爆炸类: 命中消失时爆炸 (非 splashOnHitOnly, 即飞行超时爆炸类)
+                        if (b.splashRadius > 0 && !b.splashOnHitOnly) {
+                            this._checkSplash(b);
+                        }
                         // 子弹消失
                         this.pool.push(b);
                         this.bullets.splice(i, 1);
@@ -185,18 +180,27 @@ const BulletSystem = {
                 continue;
             }
 
-            // 超出武器射程 → 消失
+            // 超出武器射程 → 爆炸或消失
             if (b.maxRange > 0) {
                 const dx = b.x - b.startX;
                 const dy = b.y - b.startY;
                 if (dx * dx + dy * dy > b.maxRange * b.maxRange) {
+                    // 爆炸类: 到达射程极限时爆炸
+                    if (b.splashRadius > 0 && !b.splashOnHitOnly) {
+                        this._checkSplash(b);
+                    }
                     this.pool.push(b);
                     this.bullets.splice(i, 1);
                     continue;
                 }
             }
 
+            // 寿命耗尽 → 爆炸或消失
             if (b.life <= 0) {
+                // 爆炸类: 寿命耗尽时爆炸
+                if (b.splashRadius > 0 && !b.splashOnHitOnly) {
+                    this._checkSplash(b);
+                }
                 this.pool.push(b);
                 this.bullets.splice(i, 1);
             }

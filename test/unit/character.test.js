@@ -84,15 +84,17 @@ describe('CharacterSystem - 数据加载', () => {
     });
 
     it('C2: loadCharacters 失败优雅降级', async () => {
+        const origLoad = global.DataLoader.load;
         global.DataLoader.load = async () => [];
-        await CharacterSystem.loadCharacters(); // 不抛出，降级到默认角色
-        expect(CharacterSystem.allCharacters.length).toBeGreaterThanOrEqual(1);
-        expect(CharacterSystem.getCharacterDef('default')).toBeDefined();
-        // restore
-        global.DataLoader.load = async (name) => {
-            if (name === 'characters') return MOCK_CHARACTERS;
-            return [];
-        };
+        try {
+            await CharacterSystem.loadCharacters(); // 不抛出，降级到默认角色
+            expect(CharacterSystem.allCharacters.length).toBeGreaterThanOrEqual(1);
+            expect(CharacterSystem.getCharacterDef('default')).toBeDefined();
+            expect(CharacterSystem.getCharacterDef('default').maxHp).toBe(100);
+        } finally {
+            // 即使断言失败也务必恢复 DataLoader，防止后续测试污染
+            global.DataLoader.load = origLoad;
+        }
     });
 
     it('C3: _normalizeTags 标签精确 (新系统)', () => {
@@ -136,7 +138,9 @@ describe('CharacterSystem - applyToPlayer', () => {
         const p = makePlayer();
         CharacterSystem.applyToPlayer(p, 'glassCannon');
         expect(p._baseDamage).toBe(15);
-        expect(p.damage).toBe(0.50);
+        // damage = 15 + meleeDamage + rangedDamage + elementalDamage
+        // glassCannon 三项=0, so damage=15 (damagePercent=0.50 是独立字段)
+        expect(p.damage).toBe(15);
         expect(p.critMultiplier).toBe(2.0);
     });
 
@@ -227,12 +231,12 @@ describe('CharacterSystem - 查询', () => {
         expect(CharacterSystem.select('nonexistent')).toBe(false);
     });
 
-    it('C20: reset 清空状态', () => {
-        CharacterSystem.loadCharacters();
+    it('C20: reset 清空状态', async () => {
+        await CharacterSystem.loadCharacters();
         CharacterSystem.selectedCharacterId = 'glassCannon';
         CharacterSystem.reset();
         expect(CharacterSystem.allCharacters).toEqual([]);
-        expect(CharacterSystem.selectedCharacterId).toBe('default');
+        expect(CharacterSystem.selectedCharacterId).toBeNull();
     });
 });
 

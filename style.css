@@ -168,6 +168,37 @@ body {
     padding: 2px 8px;
     border-radius: 6px;
 }
+.char-detail-passives {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(120, 200, 255, 0.15);
+}
+.char-detail-section-title {
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+.char-passive-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65em;
+    padding: 3px 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+.char-passive-icon { font-size: 1.1em; }
+.char-passive-name {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.char-passive-desc {
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: auto;
+    font-size: 0.95em;
+}
 .stat-item b {
     color: #ff8833;
     margin-right: 2px;
@@ -1683,6 +1714,15 @@ body {
     width: 100%;
     line-height: 1.3;
 }
+.mixed-card .mc-tag-row {
+    min-height: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin-bottom: 1px;
+    width: 100%;
+}
 .mixed-card .mc-tag {
     display: inline-block;
     font-size: 0.4em;
@@ -1691,7 +1731,6 @@ body {
     border: 1px solid currentColor;
     opacity: 0.6;
     font-family: 'Orbitron', monospace;
-    margin: 0 auto 1px;
     text-align: center;
     width: fit-content;
     line-height: 1.3;
@@ -1785,6 +1824,54 @@ body {
 .mixed-card .mc-lock.locked:hover {
     background: rgba(255, 204, 0, 0.2);
 }
+
+/* 适配度进度条 (武器卡片) */
+.mc-fit-bar {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    margin: 2px 0 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.mc-fit-bar .mc-fit-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+/* fit-0 时轨道染淡红色，fill 至少可见一截 */
+.mc-fit-bar:has(.fit-0) { background: rgba(255,68,68,0.12); }
+.mc-fit-bar .mc-fit-fill.fit-0  { width: 8%;   background: #ff4444; }
+.mc-fit-bar .mc-fit-fill.fit-50 { width: 50%;  background: #ffaa00; }
+.mc-fit-bar .mc-fit-fill.fit-100{ width: 100%; background: #44cc44; }
+
+/* 适配度进度条 (详情面板) */
+.wd-fit-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    margin: 6px 0 4px;
+    overflow: hidden;
+}
+.wd-fit-bar .wd-fit-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+.wd-fit-bar:has(.fit-0) { background: rgba(255,68,68,0.15); }
+.wd-fit-bar .wd-fit-fill.fit-0  { width: 8%;   background: #ff4444; }
+.wd-fit-bar .wd-fit-fill.fit-50 { width: 50%;  background: #ffaa00; }
+.wd-fit-bar .wd-fit-fill.fit-100{ width: 100%; background: #44cc44; }
+.wd-fit-label {
+    font-size: 0.75em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2px;
+}
+.wd-fit-label .fit-0  { color: #ff4444; }
+.wd-fit-label .fit-50 { color: #ffaa00; }
+.wd-fit-label .fit-100{ color: #44cc44; }
+
 .mixed-card .mc-slots {
     font-size: 0.45em;
     color: #ff8800;
@@ -1993,6 +2080,11 @@ body {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.85em;
 }
+.hud-synergy-item .hud-synergy-bonus {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.85em;
+    margin-left: auto;
+}
 
 /* === 宝箱奖励 === */
 .chest-reward-content {
@@ -2183,6 +2275,76 @@ body {
     min-height: 32px;
 }
 .wd-special:empty { display: none; }
+.wd-dmg-breakdown {
+    background: rgba(255, 200, 100, 0.06);
+    border-left: 3px solid rgba(255, 200, 100, 0.3);
+    padding: 6px 12px;
+    margin: 4px 0 10px;
+    border-radius: 4px;
+    font-size: 0.78em;
+    color: rgba(255, 255, 255, 0.7);
+}
+.wd-dmg-breakdown-title {
+    color: rgba(255, 200, 100, 0.7);
+    font-size: 0.9em;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+.wd-dmg-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1px 0;
+    line-height: 1.5;
+}
+.wd-dmg-breakdown-row .dmg { color: #ff7a7a; }
+.wd-dmg-breakdown-total {
+    border-top: 1px solid rgba(255, 200, 100, 0.2);
+    margin-top: 2px;
+    padding-top: 3px;
+    font-weight: 600;
+    color: #fff;
+}
+.wd-synergy-block {
+    background: rgba(120, 200, 255, 0.04);
+    border-left: 3px solid rgba(120, 200, 255, 0.25);
+    padding: 6px 12px;
+    margin: 4px 0 10px;
+    border-radius: 4px;
+    font-size: 0.78em;
+}
+.wd-synergy-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+.wd-syn-tier {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 0;
+    line-height: 1.5;
+}
+.wd-syn-tier.wd-syn-active {
+    color: rgba(255, 255, 255, 0.85);
+}
+.wd-syn-tier.wd-syn-inactive {
+    color: rgba(255, 255, 255, 0.3);
+}
+.wd-syn-tier-label {
+    min-width: 2.5em;
+    font-weight: 600;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85em;
+}
+.wd-syn-tier-bonus {
+    flex: 1;
+}
+.wd-syn-tier-check {
+    color: #44cc44;
+    font-weight: 700;
+    font-size: 1.1em;
+}
 .wd-actions {
     display: flex;
     gap: 8px;

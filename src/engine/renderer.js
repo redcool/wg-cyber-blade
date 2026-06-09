@@ -343,6 +343,11 @@ const Renderer = {
         ctx.save();
         ctx.translate(player.x, player.y);
 
+        // 受伤闪烁
+        if (player.damageFlashTimer > 0) {
+            ctx.globalAlpha = 0.5 + Math.sin(player.damageFlashTimer * 200) * 0.5;
+        }
+
         const facingLeft = player.facingAngle > Math.PI / 2 || player.facingAngle < -Math.PI / 2;
         if (facingLeft) {
             ctx.scale(-1, 1);

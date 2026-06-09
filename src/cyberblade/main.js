@@ -49,30 +49,24 @@ GameEngine.startGame = function(startWeaponId, difficulty) {
             p.weapons = [{ id: startWeaponId, level: 1, quality: 'T1' }];
         }
     }
-    // 兜底：如果没有任何武器，根据角色标签选择适合的初始武器
+    // 兜底：如果没有任何武器，优先使用角色数据驱动的 startingWeapons
     if (!p.weapons || p.weapons.length === 0) {
-        const charTags = CharacterSystem.getCharacterDef
-            ? (CharacterSystem.getCharacterDef(CharacterSystem.selectedCharacterId) || {}).tags || []
+        const startWeapons = CharacterSystem.getStartingWeapons
+            ? CharacterSystem.getStartingWeapons(CharacterSystem.selectedCharacterId)
             : [];
-        const tagWeaponMap = {
-            'melee': 'sword',
-            'lance': 'pike',
-            'ranged': 'pistol',
-            'fire': 'fire_wand',
-            'tech': 'heal_gun',
-        };
-        let defaultId = 'pistol';
-        for (const tag of charTags) {
-            if (tagWeaponMap[tag]) {
-                defaultId = tagWeaponMap[tag];
-                break;
+        const weaponIds = startWeapons.length > 0 ? startWeapons : ['pistol'];
+        p.weapons = [];
+        for (const wid of weaponIds) {
+            const def = ShopSystem.getWeaponDef(wid);
+            if (def) {
+                p.weapons.push({ id: wid, level: 1, quality: 'T1' });
             }
         }
-        const def = ShopSystem.getWeaponDef(defaultId);
-        if (def) {
-            p.weapons = [{ id: defaultId, level: 1, quality: 'T1' }];
-        } else {
-            p.weapons = [{ id: 'pistol', level: 1, quality: 'T1' }];
+        if (p.weapons.length === 0) {
+            const fallbackDef = ShopSystem.getWeaponDef('pistol');
+            if (fallbackDef) {
+                p.weapons = [{ id: 'pistol', level: 1, quality: 'T1' }];
+            }
         }
     }
     // 初始化武器参数

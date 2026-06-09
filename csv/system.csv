@@ -16,3 +16,16 @@
 # weaponOrbitExtraPerSlot: 每多 1 个 slot 额外外推的像素(默认 6)
 weaponOrbitDistance,64,number,武器图标中心到角色中心的像素距离,orbit
 weaponOrbitExtraPerSlot,6,number,每多 1 个 slot 武器额外外推的像素,orbit
+
+# ====== 商店参数 ======
+shop.refreshCost,2,number,商店初始刷新费用,shop
+shop.pityRare,3,number,保底稀有(rare)的连续未出次数,shop
+shop.pityEpic,10,number,保底史诗(epic)的连续未出次数,shop
+shop.pityLegendary,20,number,保底传说(legendary)的连续未出次数,shop
+shop.weaponProbBase,0.85,number,每槽武器概率基数,shop
+shop.weaponProbDecay,0.04,number,每波武器概率衰减值,shop
+shop.weaponProbMin,0.35,number,每槽武器概率最小值,shop
+shop.biasStrength,0.2,number,标签偏向强度,shop
+shop.charTagInject,2.0,number,角色标签注入权重,shop
+shop.classPerfectBonus,2.0,number,完美适配(class+class_2命中)权重加值,shop
+shop.classPartialBonus,1.0,number,部分适配(class或class_2命中)权重加值,shop

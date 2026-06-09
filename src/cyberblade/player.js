@@ -57,6 +57,8 @@ const PlayerSystem = {
             // 无敌帧
             invincibleTimer: 0,
             invincibleDuration: 0.5,
+            // 受伤闪烁
+            damageFlashTimer: 0,
             // 击退
             knockbackX: 0,
             knockbackY: 0,
@@ -278,6 +280,7 @@ const PlayerSystem = {
         p.x = Math.max(30, Math.min(GameWorld.width - 30, p.x));
         p.y = Math.max(30, Math.min(GameWorld.height - 30, p.y));
         if (p.invincibleTimer > 0) p.invincibleTimer -= dt;
+        if (p.damageFlashTimer > 0) p.damageFlashTimer -= dt;
     },
 
     /** 自动攻击：每个武器独立冷却 + 独立搜索目标 */
@@ -869,7 +872,11 @@ const PlayerSystem = {
             BulletSystem.create(
                 spawnX, spawnY,
                 a, dmg, params.bulletSpeed, totalPierce, true, weaponId,
-                { range: bulletRange }
+                { 
+                    range: bulletRange,
+                    burnDps: params.burnDps || 0,
+                    burnMaxStacks: params.burnMaxStacks || 0
+                }
             );
         }
     },
@@ -1016,7 +1023,12 @@ const PlayerSystem = {
         const b = BulletSystem.create(
             spawnX, spawnY,
             angle, dmg, params.bulletSpeed, 0, true, weaponId,
-            { splashRadius: params.splashRadius || 60, range }
+            { 
+                splashRadius: params.splashRadius || 60, 
+                range,
+                burnDps: params.burnDps || 0,
+                burnMaxStacks: params.burnMaxStacks || 0
+            }
         );
         b.splashRadius = params.splashRadius || 60;
     },
@@ -1034,7 +1046,11 @@ const PlayerSystem = {
             const b = BulletSystem.create(
                 spawnX, spawnY,
                 a, dmg, params.bulletSpeed, totalPierce, true, weaponId,
-                { slowAmount: 0.5, slowDuration: 2.0, splashRadius: splashR, range: bulletRange }
+                { 
+                    slowAmount: 0.5, slowDuration: 2.0, splashRadius: splashR, range: bulletRange,
+                    burnDps: params.burnDps || 0,
+                    burnMaxStacks: params.burnMaxStacks || 0
+                }
             );
             b.splashOnHitOnly = true; // 冰霜命中才冰爆
         }
@@ -1272,6 +1288,7 @@ const PlayerSystem = {
         const finalDmg = StatsSystem.calcDamageReduction(finalRawDmg, p.armor);
         p.hp -= finalDmg;
         p.invincibleTimer = p.invincibleDuration;
+        p.damageFlashTimer = 0.15; // 受伤闪烁 0.15秒
 
         // 受伤音效
         if (typeof AudioSystem !== 'undefined') AudioSystem.play('hurt');

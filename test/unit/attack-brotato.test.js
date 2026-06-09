@@ -119,9 +119,10 @@ describe('v1.3 锥形: thrust 5° / sweep 180° (Brotato 规则)', () => {
         expect(inCone(170 * Math.PI / 180, 0, cone)).toBe(true);
     });
 
-    it('AT13: sweep 180° 锥形 — 怪偏 181° (=-179°) → 不命中 (背面)', () => {
+    it('AT13: sweep 180° 锥形 (=±180° 全覆盖) — 怪偏 181° (=-179°) → 命中 (|179°| ≤ 180°)', () => {
         const cone = Math.PI;
-        expect(inCone(-179 * Math.PI / 180, 0, cone)).toBe(false);
+        // cone = π 意味着半弧 ±180° = 全圆覆盖，没有'背面'
+        expect(inCone(-179 * Math.PI / 180, 0, cone)).toBe(true);
     });
 
     it('AT14: 锥形弧长随射程自然放大 (Brotato 风格)', () => {

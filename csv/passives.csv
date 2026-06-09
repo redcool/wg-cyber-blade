@@ -1,0 +1,37 @@
+# 被动技能表
+# 格式: CSV (逗号分隔)，以 # 开头的行为注释行
+# 可在 Excel / Google Sheets 中直接编辑
+#
+# ====== 列说明 (11列) ======
+# id:          被动唯一标识 (英文，程序内部用)
+# name:        被动名 (中文)
+# desc:        被动描述
+# icon:        图标 (emoji)
+# triggerType: 触发类型 (Passive|OnHit|OnKill|PerSecond|OnLowHP)
+# condition:   触发条件 (JSON 或空)
+# chance:      触发概率 (0~1.0)
+# effect:      效果配置 (JSON，用双引号包裹，内部引号用 "" 转义)
+# target:      目标对象 (player|enemy)
+# tags:        标签 (pipe 分隔)
+# cooldown:    冷却时间 (秒，0=无冷却)
+#
+id,name,desc,icon,triggerType,condition,chance,effect,target,tags,cooldown
+swordsman_blade_master,连斩,每次命中+3%伤害持续3秒，最多叠加5层,⚔️,OnHit,,1.0,"{""type"":""damagePercentBoost"",""value"":0.03,""duration"":3.0}",player,melee,0
+gunslinger_gun_expert,弹幕,攻击15%几率射弹翻倍,🔫,OnHit,,0.15,"{""type"":""duplicateBullet""}",player,ranged,0
+fire_mage_nova,火焰新星,击杀时对周围敌人造成100%范围伤害,🔥,OnKill,,1.0,"{""type"":""explosion"",""radius"":100,""damagePercent"":1.0}",enemy,fire,0
+archer_eagle_eye,鹰眼,射程+30%，暴击率+5%,🏹,Passive,,1.0,"{""type"":""statMod"",""attackRange"":0.3,""critChance"":0.05}",player,ranged,0
+mech_heavy_armor,重型装甲,护甲+4,🛡️,Passive,,1.0,"{""type"":""statMod"",""armor"":4}",player,tech,0
+assassin_shadow_step,暗影步,击杀后移速+150%持续2秒,💨,OnKill,,1.0,"{""type"":""speedBoost"",""value"":1.5,""duration"":2.0}",player,crit,0
+medic_emergency,急救,每5秒回复5%生命值,💊,PerSecond,,1.0,"{""type"":""heal"",""value"":5}",player,tech,5.0
+paladin_holy_shield,圣盾,护甲+2，每秒回复0.5HP,✨,Passive,,1.0,"{""type"":""statMod"",""armor"":2,""hpRegen"":0.5}",player,melee,0
+engineer_overclock,增效,伤害+12%,⚡,Passive,,1.0,"{""type"":""statMod"",""damagePercent"":0.12}",player,tech,0
+berserker_rage,血怒,HP低于30%时+50%伤害持续5秒,💢,OnLowHP,,1.0,"{""type"":""damagePercentBoost"",""value"":0.5,""duration"":5.0}",player,melee,10.0
+dragon_knight_breath,龙息,攻击25%几率施加燃烧每秒15伤害持续4秒,🐉,OnHit,,0.25,"{""type"":""applyBurn"",""dps"":15,""duration"":4.0,""maxStacks"":3}",enemy,melee,1.0
+crossbowman_pierce,穿刺,射程+20，暴击伤害+0.5,🎯,Passive,,1.0,"{""type"":""statMod"",""attackRange"":20,""critDamage"":0.5}",player,ranged,0
+boxer_quick_combo,连打,攻速+0.2，近战伤害+2,🥊,Passive,,1.0,"{""type"":""statMod"",""attackSpeed"":0.2,""meleeDamage"":2}",player,melee,0
+axeman_whirlwind,旋风,击杀时30%几率触发范围爆炸(80%伤害),🪓,OnKill,,0.3,"{""type"":""explosion"",""radius"":120,""damagePercent"":0.8}",enemy,melee,0
+lancer_phalanx,枪阵,近战伤害+5，护甲+1,🔱,Passive,,1.0,"{""type"":""statMod"",""meleeDamage"":5,""armor"":1}",player,melee,0
+blade_wielder_flash,刀光,攻击20%几率触发刀气造成50%范围伤害,💥,OnHit,,0.2,"{""type"":""explosion"",""radius"":60,""damagePercent"":0.5}",enemy,melee,0
+ninja_shadow_dance,影舞,闪避+0.1，移速+15%,🥷,Passive,,1.0,"{""type"":""statMod"",""dodge"":0.1,""speed"":15}",player,crit,0
+ji_master_chi,气功,元素伤害+3，每秒回复0.5HP,☯️,Passive,,1.0,"{""type"":""statMod"",""elementalDamage"":3,""hpRegen"":0.5}",player,fire,0
+teng_pai_iron_wall,铁壁,护甲+4，闪避+0.03,🛡️,Passive,,1.0,"{""type"":""statMod"",""armor"":4,""dodge"":0.03}",player,melee,0

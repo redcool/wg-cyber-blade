@@ -57,8 +57,14 @@ const ShopSystem = {
     /** 锁定商品列表（刷新时保留） */
     lockedItems: [],
 
-    /** 刷新成本（固定 2 金币） */
+    /** 刷新成本（可变，每次刷新+1；初始值由 system.csv shop.refreshCost 控制） */
     refreshCost: 2,
+    _getBaseRefreshCost() {
+        if (typeof SystemConfig !== 'undefined' && typeof SystemConfig.get === 'function') {
+            return SystemConfig.get('shop.refreshCost', 2);
+        }
+        return 2;
+    },
 
     /** 上次购买错误信息 */
     _lastBuyError: '',
@@ -136,14 +142,17 @@ const ShopSystem = {
     applyPity(rolledRarity, pityTracker) {
         let finalRarity = rolledRarity;
 
-        // 从高到低检查保底
-        if (pityTracker.sinceLastLegendary >= 20) {
+        // 从高到低检查保底（阈值由 system.csv 控制）
+        const pityLeg = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.pityLegendary', 20) : 20;
+        const pityEpic = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.pityEpic', 10) : 10;
+        const pityRare = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.pityRare', 3) : 3;
+        if (pityTracker.sinceLastLegendary >= pityLeg) {
             finalRarity = 'legendary';
-        } else if (pityTracker.sinceLastEpic >= 10) {
+        } else if (pityTracker.sinceLastEpic >= pityEpic) {
             if (rolledRarity !== 'legendary') {
                 finalRarity = 'epic';
             }
-        } else if (pityTracker.sinceLastRare >= 3) {
+        } else if (pityTracker.sinceLastRare >= pityRare) {
             if (rolledRarity === 'common') {
                 finalRarity = 'rare';
             }
@@ -176,17 +185,20 @@ const ShopSystem = {
      * 流派偏向加权选择
      * @param {Object[]} pool - 可选物品数组
      * @param {Object} biasWeights - TagSystem.getBiasWeights() 的结果
+     * @param {Object} [characterDef] - 角色定义（传入后 class/class_2 亲和额外加权）
      * @returns {Object|null} 选中的物品，池空返回 null
      *
      * 算法:
      * 1. 为 pool 中每个物品计算 finalWeight:
-     *    - 获取物品标签 (TagSystem.getTags)
-     *    - 有标签: finalWeight = 1.0 + sum((biasWeight[tag] - 1.0) / tags.length)
-     *    - 无标签: finalWeight = 1.0
+     *    - 基础权重 = 1.0
+     *    - tag 偏向: 有标签时按 biasWeights 计算增幅
+     *    - class 亲和: 若 weapon.class 匹配 ch.preferredClasses → +1.0
+     *                  weapon.class_2 匹配 ch.preferredClasses_2 → +1.0
+     *                  (完美适配总共 +2.0 = 基础×3)
      * 2. 按 finalWeight 加权随机选择
      * 3. 返回选中的物品
      */
-    biasedSelect(pool, biasWeights) {
+    biasedSelect(pool, biasWeights, characterDef) {
         if (!pool || pool.length === 0) return null;
 
         const weightedPool = pool.map(item => {
@@ -195,12 +207,29 @@ const ShopSystem = {
                 : [];
             let weight = 1.0;
 
+            // ① tag 偏向权重（原逻辑）
             if (tags.length > 0 && biasWeights) {
                 for (const tag of tags) {
                     if (biasWeights[tag] !== undefined) {
                         weight += (biasWeights[tag] - 1.0) / tags.length;
                     }
                 }
+            }
+
+            // ② class 亲和权重（直接对应 UI 适配条，阈值由 system.csv 控制）
+            if (characterDef) {
+                const pref1 = characterDef.preferredClasses || [];
+                const pref2 = characterDef.preferredClasses_2 || [];
+                const inPref1 = item.class && pref1.includes(item.class);
+                const inPref2 = item.class_2 && pref2.includes(item.class_2);
+                const perfectBonus = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.classPerfectBonus', 2.0) : 2.0;
+                const partialBonus = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.classPartialBonus', 1.0) : 1.0;
+                if (inPref1 && inPref2) {
+                    weight += perfectBonus;  // 完美适配 → ×(1+perfectBonus)
+                } else if (inPref1 || inPref2) {
+                    weight += partialBonus;  // 部分适配 → ×(1+partialBonus)
+                }
+                // 不匹配 → 不加权，保持基础×1
             }
 
             return { item, weight: Math.max(0.01, weight) };
@@ -231,10 +260,50 @@ const ShopSystem = {
             await Promise.all([
                 DataLoader.load('weapons'),
                 DataLoader.load('items'),
+                DataLoader.load('rarity'),
             ]);
             // 从 DataLoader 缓存读取数据
             this.allWeapons = (DataLoader._cache && DataLoader._cache.weapons) || [];
             this.allItems = (DataLoader._cache && DataLoader._cache.items) || [];
+            // 从 rarity.csv 加载稀有度定义
+            this._loadRarityFromData();
+        }
+    },
+
+    /**
+     * 从 DataLoader 缓存中读取 rarity 数据，重建 this.RARITY
+     * rarity.csv 只存 weight/minWave/costMult，name/color 由 RarityColorSystem 覆盖
+     */
+    _loadRarityFromData() {
+        if (typeof DataLoader === 'undefined') return;
+        const cache = DataLoader._cache;
+        if (!cache || !cache.rarity) return;
+        const rows = cache.rarity;
+        if (!Array.isArray(rows) || rows.length === 0) return;
+        const newRarity = {};
+        const rarityColors = cache.rarityColors;
+        for (const row of rows) {
+            const id = row.id || 'common';
+            let name = id;
+            let color = '#aaaaaa';
+            if (rarityColors) {
+                const colorRow = rarityColors.find(r => r.key === id);
+                if (colorRow) {
+                    name = colorRow.name || id;
+                    color = colorRow.color || '#aaaaaa';
+                }
+            }
+            newRarity[id] = {
+                name,
+                color,
+                weight: row.weight ?? 60,
+                minWave: row.minWave ?? 1,
+                costMult: row.costMult ?? 1.0,
+            };
+        }
+        // 只在不空时覆盖，防止空数据破坏运行时
+        if (Object.keys(newRarity).length > 0) {
+            this.RARITY = newRarity;
         }
     },
 
@@ -258,7 +327,10 @@ const ShopSystem = {
      */
     pickSlotType(currentWave) {
         const wave = currentWave || 1;
-        const pWeapon = Math.max(0.35, 0.85 - wave * 0.04);
+        const base = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.weaponProbBase', 0.85) : 0.85;
+        const decay = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.weaponProbDecay', 0.04) : 0.04;
+        const minP = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.weaponProbMin', 0.35) : 0.35;
+        const pWeapon = Math.max(minP, base - wave * decay);
         return Math.random() < pWeapon ? 'weapon' : 'item';
     },
 
@@ -270,9 +342,9 @@ const ShopSystem = {
      *   `(4 - lockedCount)`，确保总商品数（包含 locked）不超过 4。
      *
      * 算法（Brotato 风格 — 每槽独立 roll）:
-     * 1. 获取玩家 Build 标签计数 + 流派偏向权重
+     * 1. 获取玩家 Build 标签计数 + class 亲和 + 流派偏向权重
      * 2. 清空商品列表
-     * 3. 武器池：流派过滤（持有≥2 同 tag 武器后只刷对应 tag）
+     * 3. 武器池：class 亲和 + tag 偏向加权（无硬过滤）
      * 4. 道具池：排除已购 unique
      * 5. 循环 maxSlots 次, 每槽:
      *    a. pickSlotType(wave) 决定本槽 weapon / item
@@ -294,8 +366,24 @@ const ShopSystem = {
         const tagCounts = typeof TagSystem !== 'undefined'
             ? TagSystem.mergeTagCounts(weaponCounts, itemCounts)
             : {};
+        // 注入角色标签作为隐式偏向（2.0=两件"已持有"），保证空手开局也有流派偏向
+        let _charDef = null;
+        if (typeof CharacterSystem !== 'undefined' && CharacterSystem.selectedCharacterId) {
+            _charDef = CharacterSystem.getCharacterDef(CharacterSystem.selectedCharacterId);
+            if (_charDef && _charDef.tags) {
+                const injectW = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.charTagInject', 2.0) : 2.0;
+                for (const tag of _charDef.tags) {
+                    if (tagCounts[tag] !== undefined) {
+                        tagCounts[tag] += injectW;
+                    } else {
+                        tagCounts[tag] = injectW;
+                    }
+                }
+            }
+        }
+        const biasStrength = typeof SystemConfig !== 'undefined' ? SystemConfig.get('shop.biasStrength', 0.2) : 0.2;
         const biasWeights = typeof TagSystem !== 'undefined'
-            ? TagSystem.getBiasWeights(tagCounts)
+            ? TagSystem.getBiasWeights(tagCounts, biasStrength)
             : {};
 
         // 2. 清空
@@ -305,23 +393,10 @@ const ShopSystem = {
         const maxSlots = (availableSlots !== undefined) ? availableSlots : 4;
         if (maxSlots <= 0) return;
 
-        // 4. 武器池（流派过滤：持有≥2件同tag后只刷对应tag武器）
+        // 4. 武器池（原"dominant tag"过滤器已移除 —— 改为用 class 亲和 + tag 偏向加权）
         let weaponPool = (typeof DataLoader !== 'undefined' && DataLoader._cache && DataLoader._cache.weapons)
             ? [...DataLoader._cache.weapons]
             : [];
-
-        // 找出玩家持有多件（≥2）的 dominant tag
-        const dominantTags = [];
-        for (const [tag, count] of Object.entries(tagCounts || {})) {
-            if (count >= 2) dominantTags.push(tag);
-        }
-        if (dominantTags.length > 0) {
-            const filtered = weaponPool.filter(w => {
-                const wt = typeof TagSystem !== 'undefined' ? TagSystem.getTags(w) : [];
-                return wt.some(t => dominantTags.includes(t));
-            });
-            if (filtered.length > 0) weaponPool = filtered;
-        }
 
         // 5. 道具池（排除已购 unique）
         const allItems = (typeof ItemSystem !== 'undefined' && ItemSystem.allItems)
@@ -352,7 +427,7 @@ const ShopSystem = {
 
         // 7. 生成武器
         for (let i = 0; i < weaponRolls && weaponPool.length > 0; i++) {
-            const selected = this.biasedSelect(weaponPool, biasWeights);
+            const selected = this.biasedSelect(weaponPool, biasWeights, _charDef);
             if (!selected) continue;
 
             // 去重
@@ -383,7 +458,7 @@ const ShopSystem = {
 
         // 8. 生成道具
         for (let i = 0; i < itemRolls && itemPool.length > 0; i++) {
-            const selected = this.biasedSelect(itemPool, biasWeights);
+            const selected = this.biasedSelect(itemPool, biasWeights, _charDef);
             if (!selected) continue;
 
             const selIdx = itemPool.indexOf(selected);
@@ -822,7 +897,7 @@ const ShopSystem = {
     reset() {
         this.items = [];
         this.lockedItems = [];
-        this.refreshCost = 2;
+        this.refreshCost = this._getBaseRefreshCost();
         this._boughtUniqueItems = [];
         this._pity = {
             weapons: { totalRolls: 0, sinceLastRare: 0, sinceLastEpic: 0, sinceLastLegendary: 0 },

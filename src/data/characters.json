@@ -31,7 +31,9 @@
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "swordsman_blade_master"
+    ],
     "preferredClasses": [
       "Blade",
       "Heavy",
@@ -76,7 +78,9 @@
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "gunslinger_gun_expert"
+    ],
     "preferredClasses": [
       "Gun"
     ],
@@ -118,7 +122,9 @@
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "fire_mage_nova"
+    ],
     "preferredClasses": [
       "Elemental",
       "Explosive"
@@ -160,7 +166,9 @@
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "archer_eagle_eye"
+    ],
     "preferredClasses": [
       "Bow",
       "Crossbow"
@@ -205,7 +213,9 @@
     ],
     "unlockType": "maxLevel",
     "unlockValue": 5,
-    "passives": [],
+    "passives": [
+      "mech_heavy_armor"
+    ],
     "preferredClasses": [
       "Heavy",
       "Gun"
@@ -251,7 +261,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 100,
-    "passives": [],
+    "passives": [
+      "assassin_shadow_step"
+    ],
     "preferredClasses": [
       "Precise",
       "Blade"
@@ -295,7 +307,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 80,
-    "passives": [],
+    "passives": [
+      "medic_emergency"
+    ],
     "preferredClasses": [
       "Medical",
       "Elemental"
@@ -340,7 +354,9 @@
     ],
     "unlockType": "maxLevel",
     "unlockValue": 10,
-    "passives": [],
+    "passives": [
+      "paladin_holy_shield"
+    ],
     "preferredClasses": [
       "Blade",
       "Medical",
@@ -386,7 +402,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 200,
-    "passives": [],
+    "passives": [
+      "engineer_overclock"
+    ],
     "preferredClasses": [
       "Gun",
       "Elemental",
@@ -437,7 +455,9 @@
     ],
     "unlockType": "maxLevel",
     "unlockValue": 15,
-    "passives": [],
+    "passives": [
+      "berserker_rage"
+    ],
     "preferredClasses": [
       "Blade",
       "Blunt",
@@ -545,7 +565,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 300,
-    "passives": [],
+    "passives": [
+      "dragon_knight_breath"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -586,7 +608,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 60,
-    "passives": [],
+    "passives": [
+      "crossbowman_pierce"
+    ],
     "preferredClasses": [
       "Crossbow",
       "Bow"
@@ -630,7 +654,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 30,
-    "passives": [],
+    "passives": [
+      "boxer_quick_combo"
+    ],
     "preferredClasses": [
       "Heavy",
       "Blunt"
@@ -674,7 +700,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 50,
-    "passives": [],
+    "passives": [
+      "axeman_whirlwind"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -717,7 +745,9 @@
     ],
     "unlockType": "maxLevel",
     "unlockValue": 3,
-    "passives": [],
+    "passives": [
+      "lancer_phalanx"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -760,7 +790,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 80,
-    "passives": [],
+    "passives": [
+      "blade_wielder_flash"
+    ],
     "preferredClasses": [
       "Blade",
       "Precise"
@@ -806,7 +838,9 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 150,
-    "passives": [],
+    "passives": [
+      "ninja_shadow_dance"
+    ],
     "preferredClasses": [
       "Precise",
       "Blade"
@@ -851,7 +885,9 @@
     ],
     "unlockType": "maxLevel",
     "unlockValue": 8,
-    "passives": [],
+    "passives": [
+      "ji_master_chi"
+    ],
     "preferredClasses": [
       "Elemental",
       "Medical"
@@ -897,16 +933,16 @@
     ],
     "unlockType": "totalKills",
     "unlockValue": 120,
-    "passives": [],
+    "passives": [
+      "teng_pai_iron_wall"
+    ],
     "preferredClasses": [
-      "Medical",
-      "Heavy"
+      "Medical"
     ],
     "preferredClasses_2": [
       "shield",
       "regen",
-      "lance",
-      "halberd"
+      "holy"
     ]
   }
 ]

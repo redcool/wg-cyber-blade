@@ -1,0 +1,20 @@
+# 场景物品配置表
+# 格式: CSV (逗号分隔), 以 # 开头的行为注释行
+# 可在 Excel / Google Sheets 中直接编辑
+#
+# ====== 列说明 (5列) ======
+# id:      场景物品唯一标识 (英文)
+# name:    显示名 (中文)
+# image:   图片文件名 (assets/sceneItems/ 目录下)
+# width:   显示宽度 (px)
+# height:  显示高度 (px)
+#
+# 用途:
+#   medic_kit     — 可击破医疗箱 (容器), 掉落血包
+#   health_pickup — 血包拾取物
+#   turret        — 炮塔 (1级, 需要道具"炮塔建造器")
+#
+id,name,image,width,height
+medic_kit,医疗箱,medic_kit.png,36,36
+health_pickup,血包,health_pickup.png,20,20
+turret,炮塔,turret.png,32,32

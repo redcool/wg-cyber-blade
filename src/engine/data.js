@@ -12,7 +12,7 @@ const DataLoader = {
     /** UI 字符表路径 (i18n 字符串,非 CSV 生成) */
     _charsDataPath: 'src/charsData/',
     /** 数据版本（改数据时 +1 强制刷新） */
-    _dataVersion: '7.10',
+    _dataVersion: '7.11',
 
     /**
      * 加载 JSON 数据文件
@@ -61,7 +61,7 @@ const DataLoader = {
      * @returns {Promise<void>}
      */
     async preloadAll() {
-        const names = ['characters', 'characterLevel', 'weapons', 'items', 'enemies', 'bosses', 'waves', 'level_duration', 'weaponStats', 'charStats', 'difficulty', 'debug', 'levelUpCards', 'rarityColors', 'audio', 'classes', 'system'];
+        const names = ['characters', 'characterLevel', 'weapons', 'items', 'enemies', 'bosses', 'waves', 'passives', 'level_duration', 'weaponStats', 'charStats', 'difficulty', 'debug', 'levelUpCards', 'rarityColors', 'rarity', 'audio', 'classes', 'system'];
         await Promise.all(names.map(n => this.load(n)));
         if (typeof SystemConfig !== 'undefined') await SystemConfig.load();
         console.log('[DataLoader] 全部数据预加载完成');

@@ -223,13 +223,19 @@ const UISystem = {
             _UI_STR.weapon_select_hint.replace('{0}', ch.name);
 
         const affinities = ch.tags || ch.weaponAffinities || [];
-        const normalizeWeaponTag = (t) => ({ gun: 'ranged', bow: 'ranged', magic: 'fire', medic: 'tech', lance: 'melee' }[t] || t);
+        // Bug3 Fix: 角色标签和武器标签使用同一套原始值 (gun/bow/magic/medic/lance/melee)
+        //   不要在这里 normalize weapon.tag, 否则 gunslinger(tag:gun) 会对不上 ranged
         const basicWeapons = ShopSystem.allWeapons.filter(w =>
-            affinities.includes(normalizeWeaponTag(w.tag)) && UnlockSystem.basicWeaponIds.has(w.id)
+            affinities.includes(w.tag) && UnlockSystem.basicWeaponIds.has(w.id)
         );
 
-        const tagOrder = ['melee', 'ranged', 'fire', 'explosive', 'crit', 'tech', 'economy'];
-        basicWeapons.sort((a, b) => tagOrder.indexOf(a.tag) - tagOrder.indexOf(b.tag));
+        // 按武器原始标签排序 (与 affinities 词汇一致)
+        const tagOrder = ['melee', 'gun', 'bow', 'magic', 'medic', 'lance'];
+        basicWeapons.sort((a, b) => {
+            const ai = tagOrder.indexOf(a.tag);
+            const bi = tagOrder.indexOf(b.tag);
+            return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        });
 
         // 选中第一个武器
         this._selectedWeaponId = basicWeapons.length > 0 ? basicWeapons[0].id : 'pistol';
@@ -291,7 +297,6 @@ const UISystem = {
             : '';
 
         // 构建属性列表（数据驱动，非0即显示，2列）
-        // Report 3: 伤害项加 fit 进度条 (从红到绿, 反映角色×武器适配度)
         const statLines = [];
         for (const def of this._weaponStatDefs) {
             // Bug1 修复: damage_lv1 / cooldown_lv1 用 tier-aware 解析
@@ -302,19 +307,24 @@ const UISystem = {
             const shouldShow = cond ? cond(val) : (val !== undefined && val !== 0 && val !== null && val !== '');
             if (!shouldShow) continue;
             const fmt = _WPN_FMT[def.key] || (v => v);
-            // 关键属性 (伤害 / 冷却) 加 fit 进度条背景
-            const isKey = (def.key === 'damage_lv1' || def.key === 'cooldown_lv1');
-            const fitHint = isKey
-                ? `<span class="fit-hint" title="适配度 ${Math.round(fitScore * 100)}%">${fitScore === 1 ? '💚' : (fitScore === 0.5 ? '💛' : '❤️')}</span>`
-                : '';
-            statLines.push(`<span class="stat-item ${isKey ? fitCls : ''}"><b>${def['中文名']}</b> ${fmt(val)}${fitHint}</span>`);
+            statLines.push(`<span class="stat-item"><b>${def['中文名']}</b> ${fmt(val)}</span>`);
         }
+        // 适配度进度条
+        const fitPct = fitScore === 1 ? '100' : (fitScore === 0.5 ? '50' : '0');
+        const fitColors = { '0': '#ff4444', '50': '#ffaa00', '100': '#44cc44' };
+        const fitLabel = { '0': '不推荐', '50': '部分适配', '100': '完美适配' };
+        const fitBar = `
+            <div style="margin-top:6px">
+                <div class="wd-fit-label">角色适配度 <span class="fit-${fitPct}" style="color:${fitColors[fitPct]}">${fitLabel[fitPct]}</span></div>
+                <div class="wd-fit-bar"><div class="wd-fit-fill fit-${fitPct}"></div></div>
+            </div>`;
 
         detail.innerHTML = `
             <div class="weapon-detail-avatar">${AssetSystem.weaponIconHTML(weapon.id, 72)}</div>
             <div class="weapon-detail-info">
                 <div class="weapon-detail-name">${weapon.name}</div>
                 <div class="weapon-detail-tag" style="color:${tagColor}">${tagStr}${classStr ? ' · ' + classStr : ''}${warnBadge}</div>
+                ${fitBar}
                 <div class="weapon-detail-desc">${weapon.desc || ''}</div>
                 <div class="weapon-detail-stats">
                     ${statLines.join('\n')}
@@ -573,6 +583,19 @@ const UISystem = {
         const unlocked = ch.unlocked || UnlockSystem.isCharacterUnlocked(ch.id);
         if (unlocked) {
             const s = ch;
+            // 载入被动数据
+            const cache = typeof DataLoader !== 'undefined' && DataLoader._cache;
+            const bundle = typeof window !== 'undefined' && window.__DATA_BUNDLE__;
+            const passivesData = (bundle && bundle.passives) || (cache && cache.passives) || [];
+            const passiveMap = {};
+            for (const p of passivesData) passiveMap[p.id] = p;
+            const passiveHTML = (ch.passives || []).map(pId => {
+                const pDef = passiveMap[pId];
+                if (!pDef) return '';
+                return `<div class="char-passive-item"><span class="char-passive-icon">${pDef.icon}</span><span class="char-passive-name">${pDef.name}</span><span class="char-passive-desc">${pDef.desc}</span></div>`;
+            }).filter(Boolean).join('');
+            const passivesSection = passiveHTML ? `<div class="char-detail-passives"><div class="char-detail-section-title">被动技能</div>${passiveHTML}</div>` : '';
+
             detail.innerHTML = `
                 <div class="char-detail-avatar">${AssetSystem.charIconHTML(ch.id, 80)}</div>
                 <div class="char-detail-info">
@@ -581,6 +604,7 @@ const UISystem = {
                     <div class="char-detail-stats">
                         ${this._buildCharStatLines(ch)}
                     </div>
+                    ${passivesSection}
                 </div>
                 <div class="char-detail-radar" id="charRadarContainer"></div>
             `;
@@ -1290,6 +1314,69 @@ const UISystem = {
         if (def.behavior) statsRows.push(`<div class="wd-stat-row"><span class="wd-stat-label">🎬 行为</span><span class="wd-stat-value">${def.behavior}</span></div>`);
         document.getElementById('wdStats').innerHTML = statsRows.join('');
 
+        // === 伤害细分（先清理旧实例，防止重复追加） ===
+        const oldBreakdown = document.getElementById('wdDmgBreakdown');
+        if (oldBreakdown) oldBreakdown.remove();
+        if (typeof FormulaSystem !== 'undefined' && FormulaSystem._calcBaseDamage) {
+            try {
+                const bDmg = FormulaSystem._calcBaseDamage(def, player, level);
+                const fDmg = FormulaSystem._calcFlatDamage(def, player);
+                const pMult = FormulaSystem._calcPercentMultiplier(player);
+                const effDmg = Math.round((bDmg + fDmg) * pMult);
+                if (bDmg > 0 || fDmg > 0) {
+                    document.getElementById('wdStats').insertAdjacentHTML('afterend',
+                        `<div id="wdDmgBreakdown" class="wd-dmg-breakdown"><div class="wd-dmg-breakdown-title">📐 伤害计算</div>
+                        <div class="wd-dmg-breakdown-row"><span>武器基础</span><span>${bDmg.toFixed(1)}</span></div>
+                        ${fDmg > 0 ? `<div class="wd-dmg-breakdown-row"><span>角色加成</span><span class="dmg">+${fDmg.toFixed(1)}</span></div>` : ''}
+                        <div class="wd-dmg-breakdown-row"><span>伤害倍率</span><span>×${(pMult * 100).toFixed(0)}%</span></div>
+                        <div class="wd-dmg-breakdown-row wd-dmg-breakdown-total"><span>有效伤害</span><span class="dmg">${effDmg}</span></div>
+                        </div>`
+                    );
+                }
+            } catch (e) {
+                // FormulaSystem 计算过程中出错则静默跳过伤害细分
+            }
+        }
+
+        // === 羁绊加成（先清理旧实例） ===
+        const oldSyn = document.getElementById('wdSynergy');
+        if (oldSyn) oldSyn.remove();
+        const TAG_NORMALIZE = { gun: 'ranged', bow: 'ranged', magic: 'fire', medic: 'tech', lance: 'melee' };
+        const synTag = TAG_NORMALIZE[def.tag] || def.tag;
+        const synThresholds = (typeof TagSystem !== 'undefined' && TagSystem.synergyThresholds)
+            ? TagSystem.synergyThresholds[synTag] : null;
+        if (synThresholds) {
+            const weaponTags = player && player.weapons ? TagSystem.countWeaponTags(player.weapons) : {};
+            const currentCount = weaponTags[synTag] || 0;
+            const synTagDef = TagSystem.getTagDef(synTag);
+            const synIcon = synTagDef ? synTagDef.icon : '🏷️';
+            const synName = synTagDef ? synTagDef.name : synTag;
+            const tierRows = Object.entries(synThresholds)
+                .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                .map(([tier, bonus]) => {
+                    const t = parseInt(tier);
+                    const active = currentCount >= t;
+                    const bonusText = this._formatSynergyBonus(bonus);
+                    return `<div class="wd-syn-tier ${active ? 'wd-syn-active' : 'wd-syn-inactive'}">
+                        <span class="wd-syn-tier-label">${tier}件</span>
+                        <span class="wd-syn-tier-bonus">${bonusText}</span>
+                        ${active ? '<span class="wd-syn-tier-check">✓</span>' : ''}
+                    </div>`;
+                }).join('');
+            // 插入到 wdSpecial 之前
+            const specialEl = document.getElementById('wdSpecial');
+            if (specialEl) {
+                const synDiv = document.createElement('div');
+                synDiv.id = 'wdSynergy';
+                synDiv.className = 'wd-synergy-block';
+                synDiv.innerHTML = `
+                    <div class="wd-synergy-title"><span style="color:${this._tagColor(synTag)}">${synIcon} ${synName}</span></div>
+                    ${tierRows}
+                `;
+                specialEl.parentNode.insertBefore(synDiv, specialEl);
+            }
+        }
+
         // === 特殊属性 ===
         const specials = [];
         if (def.critChance) specials.push(`💥 暴击率 ${(def.critChance * 100).toFixed(0)}%`);
@@ -1306,6 +1393,32 @@ const UISystem = {
         document.getElementById('wdSpecial').innerHTML = specials.length
             ? specials.map(s => `<div>• ${s}</div>`).join('')
             : '<div style="opacity:0.5">无特殊效果</div>';
+
+        // === 适配度进度条 ===
+        const charId = CharacterSystem.selectedCharacterId;
+        const chDef = CharacterSystem.getCharacterDef(charId);
+        if (chDef) {
+            const score = WeaponDisplay.getWeaponFitScore(def, chDef);
+            const pct = score === 1 ? '100' : (score === 0.5 ? '50' : '0');
+            const fitColors = { '0': '#ff4444', '50': '#ffaa00', '100': '#44cc44' };
+            const fitLabel = { '0': '不推荐', '50': '部分适配', '100': '完美适配' };
+            const existingFit = document.getElementById('wdFitBar');
+            if (existingFit) existingFit.remove();
+            const fitDiv = document.createElement('div');
+            fitDiv.id = 'wdFitBar';
+            fitDiv.style.cssText = 'margin:6px 0 0;padding:4px 0;border-top:1px solid rgba(120,200,255,0.1)';
+            fitDiv.innerHTML = `
+                <div style="display:flex;justify-content:space-between;font-size:0.8em;margin-bottom:2px">
+                    <span style="color:rgba(255,255,255,0.5)">角色适配度</span>
+                    <span style="color:${fitColors[pct]};font-weight:600">${fitLabel[pct]}</span>
+                </div>
+                <div class="wd-fit-bar"><div class="wd-fit-fill fit-${pct}"></div></div>
+            `;
+            const specialEl = document.getElementById('wdSpecial');
+            if (specialEl) {
+                specialEl.parentNode.insertBefore(fitDiv, specialEl);
+            }
+        }
 
         // === 按钮可用性 ===
         const canQuickMerge = ownedWeapons.some((o, j) =>
@@ -1553,12 +1666,22 @@ const UISystem = {
 
             const typeLabel = isWeapon ? _UI_STR.type_weapon : _UI_STR.type_item;
             const iconHtml = isWeapon ? AssetSystem.weaponIconHTML(item.id) : AssetSystem.itemIconHTML(item.id, 44);
-            const tagDef = TagSystem.getTagDef(item.tag);
-            let tagHtml = tagDef ? `<div class="mc-tag" style="color:${this._tagColor(tagDef.id)}">${tagDef.icon}${tagDef.name}</div>` : '';
+            // 标签统一归一化（确保武器卡片布局一致）
+            let tagHtml = '';
+            const TAG_NORMALIZE = { gun: 'ranged', bow: 'ranged', magic: 'fire', medic: 'tech', lance: 'melee' };
             if (isWeapon) {
+                const displayTag = TAG_NORMALIZE[item.tag] || item.tag;
+                const tDef = TagSystem.getTagDef(displayTag);
+                const tCol = tDef ? this._tagColor(tDef.id) : '#ffffff';
+                const tIcn = tDef ? tDef.icon : '🏷️';
+                const tNme = tDef ? tDef.name : displayTag;
+                tagHtml = `<div class="mc-tag" style="color:${tCol}">${tIcn}${tNme}</div>`;
                 const classDefs = (typeof DataLoader !== 'undefined' && DataLoader._cache && DataLoader._cache.classes) || [];
                 const wClass = classDefs.find(c => c.id === item.class);
                 if (wClass) tagHtml += `<span class="mc-class-badge">⚜${wClass['中文名']}</span>`;
+            } else {
+                const tDef = TagSystem.getTagDef(item.tag);
+                if (tDef) tagHtml = `<div class="mc-tag" style="color:${this._tagColor(tDef.id)}">${tDef.icon}${tDef.name}</div>`;
             }
             const countBadge = !isWeapon && count > 0 ? `<span class="mc-count-badge">×${count}</span>` : '';
 
@@ -1593,13 +1716,26 @@ const UISystem = {
                 descText = modParts.length > 0 ? modParts.join(' · ') : item.desc;
             }
             const ownedText = isWeapon ? (ownedHas ? `<div class="mc-owned">${_UI_STR.owned_equipped}</div>` : '') : (count > 0 ? `<div class="mc-owned">${_UI_STR.owned_held.replace('{0}', count)}</div>` : '');
+            // 适配度进度条 (仅武器)
+            let fitBarHtml = '';
+            if (isWeapon) {
+                const charId = CharacterSystem.selectedCharacterId;
+                const ch = CharacterSystem.getCharacterDef(charId);
+                if (ch) {
+                    const score = WeaponDisplay.getWeaponFitScore(item, ch);
+                    const pct = score === 1 ? '100' : (score === 0.5 ? '50' : '0');
+                    fitBarHtml = `<div class="mc-fit-bar" title="角色适配度 ${pct}%"><div class="mc-fit-fill fit-${pct}"></div></div>`;
+                }
+            }
+
             div.innerHTML = `
                 <span class="mc-type-badge">${typeLabel}</span>
                 ${rarityBadgeHtml}
                 ${countBadge}
                 <div class="mc-icon">${iconHtml}</div>
+                <div class="mc-tag-row">${tagHtml}</div>
                 <div class="mc-name">${item.name}</div>
-                ${tagHtml}
+                ${fitBarHtml}
                 <div class="${isStatsGrid ? 'mc-stats-grid' : 'mc-desc'}">${descText}</div>
                 ${ownedText}
                 <div class="mc-price-row">
@@ -1792,8 +1928,9 @@ const UISystem = {
             const color = this._tagColor(syn.tagId);
             div.innerHTML = `
                 <span class="synergy-icon" style="color:${color}">${syn.tagIcon}</span>
-                <span style="color:${color}">${syn.tagName}</span>
+                <span class="synergy-name" style="color:${color}">${syn.tagName}</span>
                 <span class="synergy-count">${syn.count}/${syn.threshold}</span>
+                <span class="hud-synergy-bonus">${this._formatSynergyBonus(syn.bonus)}</span>
             `;
             container.appendChild(div);
         }

@@ -12,5 +12,82 @@
     "valueType": "number",
     "desc": "每多 1 个 slot 武器额外外推的像素",
     "group": "orbit"
+  },
+  {
+    "key": "shop.refreshCost",
+    "value": "2",
+    "valueType": "number",
+    "desc": "商店初始刷新费用",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityRare",
+    "value": "3",
+    "valueType": "number",
+    "desc": "保底稀有(rare)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityEpic",
+    "value": "10",
+    "valueType": "number",
+    "desc": "保底史诗(epic)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityLegendary",
+    "value": "20",
+    "valueType": "number",
+    "desc": "保底传说(legendary)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbBase",
+    "value": "0.85",
+    "valueType": "number",
+    "desc": "每槽武器概率基数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbDecay",
+    "value": "0.04",
+    "valueType": "number",
+    "desc": "每波武器概率衰减值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbMin",
+    "value": "0.35",
+    "valueType": "number",
+    "desc": "每槽武器概率最小值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.biasStrength",
+    "value": "0.2",
+    "valueType": "number",
+    "desc": "标签偏向强度",
+    "group": "shop"
+  },
+  {
+    "key": "shop.charTagInject",
+    "value": "2.0",
+    "valueType": "number",
+    "desc": "角色标签注入权重",
+    "group": "shop"
+  },
+  {
+    "key": "shop.classPerfectBonus",
+    "value": "2.0",
+    "valueType": "number",
+    "desc": "完美适配(class+class_2命中)权重加值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.classPartialBonus",
+    "value": "1.0",
+    "valueType": "number",
+    "desc": "部分适配(class或class_2命中)权重加值",
+    "group": "shop"
   }
 ]

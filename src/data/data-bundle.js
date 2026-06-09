@@ -39,7 +39,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "swordsman_blade_master"
+    ],
     "preferredClasses": [
       "Blade",
       "Heavy",
@@ -84,7 +86,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "gunslinger_gun_expert"
+    ],
     "preferredClasses": [
       "Gun"
     ],
@@ -126,7 +130,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "fire_mage_nova"
+    ],
     "preferredClasses": [
       "Elemental",
       "Explosive"
@@ -168,7 +174,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "",
     "unlockValue": 0,
-    "passives": [],
+    "passives": [
+      "archer_eagle_eye"
+    ],
     "preferredClasses": [
       "Bow",
       "Crossbow"
@@ -213,7 +221,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "maxLevel",
     "unlockValue": 5,
-    "passives": [],
+    "passives": [
+      "mech_heavy_armor"
+    ],
     "preferredClasses": [
       "Heavy",
       "Gun"
@@ -259,7 +269,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 100,
-    "passives": [],
+    "passives": [
+      "assassin_shadow_step"
+    ],
     "preferredClasses": [
       "Precise",
       "Blade"
@@ -303,7 +315,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 80,
-    "passives": [],
+    "passives": [
+      "medic_emergency"
+    ],
     "preferredClasses": [
       "Medical",
       "Elemental"
@@ -348,7 +362,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "maxLevel",
     "unlockValue": 10,
-    "passives": [],
+    "passives": [
+      "paladin_holy_shield"
+    ],
     "preferredClasses": [
       "Blade",
       "Medical",
@@ -394,7 +410,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 200,
-    "passives": [],
+    "passives": [
+      "engineer_overclock"
+    ],
     "preferredClasses": [
       "Gun",
       "Elemental",
@@ -445,7 +463,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "maxLevel",
     "unlockValue": 15,
-    "passives": [],
+    "passives": [
+      "berserker_rage"
+    ],
     "preferredClasses": [
       "Blade",
       "Blunt",
@@ -553,7 +573,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 300,
-    "passives": [],
+    "passives": [
+      "dragon_knight_breath"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -594,7 +616,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 60,
-    "passives": [],
+    "passives": [
+      "crossbowman_pierce"
+    ],
     "preferredClasses": [
       "Crossbow",
       "Bow"
@@ -638,7 +662,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 30,
-    "passives": [],
+    "passives": [
+      "boxer_quick_combo"
+    ],
     "preferredClasses": [
       "Heavy",
       "Blunt"
@@ -682,7 +708,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 50,
-    "passives": [],
+    "passives": [
+      "axeman_whirlwind"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -725,7 +753,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "maxLevel",
     "unlockValue": 3,
-    "passives": [],
+    "passives": [
+      "lancer_phalanx"
+    ],
     "preferredClasses": [
       "Heavy"
     ],
@@ -768,7 +798,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 80,
-    "passives": [],
+    "passives": [
+      "blade_wielder_flash"
+    ],
     "preferredClasses": [
       "Blade",
       "Precise"
@@ -814,7 +846,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 150,
-    "passives": [],
+    "passives": [
+      "ninja_shadow_dance"
+    ],
     "preferredClasses": [
       "Precise",
       "Blade"
@@ -859,7 +893,9 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "maxLevel",
     "unlockValue": 8,
-    "passives": [],
+    "passives": [
+      "ji_master_chi"
+    ],
     "preferredClasses": [
       "Elemental",
       "Medical"
@@ -905,19 +941,19 @@ __DATA_BUNDLE__['characters'] = [
     ],
     "unlockType": "totalKills",
     "unlockValue": 120,
-    "passives": [],
+    "passives": [
+      "teng_pai_iron_wall"
+    ],
     "preferredClasses": [
-      "Medical",
-      "Heavy"
+      "Medical"
     ],
     "preferredClasses_2": [
       "shield",
       "regen",
-      "lance",
-      "halberd"
+      "holy"
     ]
   }
-]
+];
 
 __DATA_BUNDLE__['characterLevel'] = [
   {
@@ -3591,7 +3627,7 @@ __DATA_BUNDLE__['weapons'] = [
     "damageReductionAura": 0,
     "killHeal": 0
   }
-]
+];
 
 __DATA_BUNDLE__['items'] = [
   {
@@ -5101,125 +5137,364 @@ __DATA_BUNDLE__['waves'] = [
 ];
 
 __DATA_BUNDLE__['passives'] = [
-    {
-        "id": "berserker_rage",
-        "name": "嗜血狂暴",
-        "desc": "低血量时 +30% 伤害",
-        "icon": "💢",
-        "triggerType": "OnLowHP",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "damagePercentBoost",
-            "value": 0.3,
-            "duration": 999
-        },
-        "target": "player",
-        "tags": ["melee"],
-        "cooldown": 5.0
+  {
+    "id": "swordsman_blade_master",
+    "name": "连斩",
+    "desc": "每次命中+3%伤害持续3秒，最多叠加5层",
+    "icon": "⚔️",
+    "triggerType": "OnHit",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "damagePercentBoost",
+      "value": 0.03,
+      "duration": 3
     },
-    {
-        "id": "engineer_turret_boost",
-        "name": "工程精通",
-        "desc": "工程物 +50% 伤害",
-        "icon": "🤖",
-        "triggerType": "Passive",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "statMod",
-            "turretDamage": 0.5
-        },
-        "target": "player",
-        "tags": ["tech"],
-        "cooldown": 0
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "gunslinger_gun_expert",
+    "name": "弹幕",
+    "desc": "攻击15%几率射弹翻倍",
+    "icon": "🔫",
+    "triggerType": "OnHit",
+    "condition": null,
+    "chance": 0.15,
+    "effect": {
+      "type": "duplicateBullet"
     },
-    {
-        "id": "pyro_burn_on_hit",
-        "name": "火焰之触",
-        "desc": "攻击命中时 100% 施加燃烧",
-        "icon": "🔥",
-        "triggerType": "OnHit",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "applyBurn",
-            "dps": 8,
-            "duration": 3.0,
-            "maxStacks": 3
-        },
-        "target": "enemy",
-        "tags": ["fire"],
-        "cooldown": 0.5
+    "target": "player",
+    "tags": [
+      "ranged"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "fire_mage_nova",
+    "name": "火焰新星",
+    "desc": "击杀时对周围敌人造成100%范围伤害",
+    "icon": "🔥",
+    "triggerType": "OnKill",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "explosion",
+      "radius": 100,
+      "damagePercent": 1
     },
-    {
-        "id": "pyro_fire_damage_boost",
-        "name": "火焰专精",
-        "desc": "火焰伤害 +20%",
-        "icon": "🔥",
-        "triggerType": "Passive",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "statMod",
-            "elementalDamage": 4
-        },
-        "target": "player",
-        "tags": ["fire"],
-        "cooldown": 0
+    "target": "enemy",
+    "tags": [
+      "fire"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "archer_eagle_eye",
+    "name": "鹰眼",
+    "desc": "射程+30%，暴击率+5%",
+    "icon": "🏹",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "attackRange": 0.3,
+      "critChance": 0.05
     },
-    {
-        "id": "hunter_ranged_boost",
-        "name": "精准射击",
-        "desc": "远程伤害 +5",
-        "icon": "🏹",
-        "triggerType": "Passive",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "statMod",
-            "rangedDamage": 5
-        },
-        "target": "player",
-        "tags": ["ranged"],
-        "cooldown": 0
+    "target": "player",
+    "tags": [
+      "ranged"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "mech_heavy_armor",
+    "name": "重型装甲",
+    "desc": "护甲+4",
+    "icon": "🛡️",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "armor": 4
     },
-    {
-        "id": "merchant_gold_damage",
-        "name": "金钱之力",
-        "desc": "每 50 金币 +5% 伤害",
-        "icon": "💰",
-        "triggerType": "PerSecond",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "conditionalStatMod",
-            "stat": "damagePercent",
-            "formula": "Math.floor(materials / 50) * 0.05"
-        },
-        "target": "player",
-        "tags": ["economy"],
-        "cooldown": 1.0
+    "target": "player",
+    "tags": [
+      "tech"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "assassin_shadow_step",
+    "name": "暗影步",
+    "desc": "击杀后移速+150%持续2秒",
+    "icon": "💨",
+    "triggerType": "OnKill",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "speedBoost",
+      "value": 1.5,
+      "duration": 2
     },
-    {
-        "id": "assassin_crit_boost",
-        "name": "致命一击",
-        "desc": "暴击时 +50% 额外伤害",
-        "icon": "💥",
-        "triggerType": "OnCrit",
-        "condition": null,
-        "chance": 1.0,
-        "effect": {
-            "type": "damagePercentBoost",
-            "value": 0.5,
-            "duration": 0.5
-        },
-        "target": "player",
-        "tags": ["crit"],
-        "cooldown": 0
-    }
-]
-;
+    "target": "player",
+    "tags": [
+      "crit"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "medic_emergency",
+    "name": "急救",
+    "desc": "每5秒回复5%生命值",
+    "icon": "💊",
+    "triggerType": "PerSecond",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "heal",
+      "value": 5
+    },
+    "target": "player",
+    "tags": [
+      "tech"
+    ],
+    "cooldown": 5
+  },
+  {
+    "id": "paladin_holy_shield",
+    "name": "圣盾",
+    "desc": "护甲+2，每秒回复0.5HP",
+    "icon": "✨",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "armor": 2,
+      "hpRegen": 0.5
+    },
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "engineer_overclock",
+    "name": "增效",
+    "desc": "伤害+12%",
+    "icon": "⚡",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "damagePercent": 0.12
+    },
+    "target": "player",
+    "tags": [
+      "tech"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "berserker_rage",
+    "name": "血怒",
+    "desc": "HP低于30%时+50%伤害持续5秒",
+    "icon": "💢",
+    "triggerType": "OnLowHP",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "damagePercentBoost",
+      "value": 0.5,
+      "duration": 5
+    },
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 10
+  },
+  {
+    "id": "dragon_knight_breath",
+    "name": "龙息",
+    "desc": "攻击25%几率施加燃烧每秒15伤害持续4秒",
+    "icon": "🐉",
+    "triggerType": "OnHit",
+    "condition": null,
+    "chance": 0.25,
+    "effect": {
+      "type": "applyBurn",
+      "dps": 15,
+      "duration": 4,
+      "maxStacks": 3
+    },
+    "target": "enemy",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 1
+  },
+  {
+    "id": "crossbowman_pierce",
+    "name": "穿刺",
+    "desc": "射程+20，暴击伤害+0.5",
+    "icon": "🎯",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "attackRange": 20,
+      "critDamage": 0.5
+    },
+    "target": "player",
+    "tags": [
+      "ranged"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "boxer_quick_combo",
+    "name": "连打",
+    "desc": "攻速+0.2，近战伤害+2",
+    "icon": "🥊",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "attackSpeed": 0.2,
+      "meleeDamage": 2
+    },
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "axeman_whirlwind",
+    "name": "旋风",
+    "desc": "击杀时30%几率触发范围爆炸(80%伤害)",
+    "icon": "🪓",
+    "triggerType": "OnKill",
+    "condition": null,
+    "chance": 0.3,
+    "effect": {
+      "type": "explosion",
+      "radius": 120,
+      "damagePercent": 0.8
+    },
+    "target": "enemy",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "lancer_phalanx",
+    "name": "枪阵",
+    "desc": "近战伤害+5，护甲+1",
+    "icon": "🔱",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "meleeDamage": 5,
+      "armor": 1
+    },
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "blade_wielder_flash",
+    "name": "刀光",
+    "desc": "攻击20%几率触发刀气造成50%范围伤害",
+    "icon": "💥",
+    "triggerType": "OnHit",
+    "condition": null,
+    "chance": 0.2,
+    "effect": {
+      "type": "explosion",
+      "radius": 60,
+      "damagePercent": 0.5
+    },
+    "target": "enemy",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "ninja_shadow_dance",
+    "name": "影舞",
+    "desc": "闪避+0.1，移速+15%",
+    "icon": "🥷",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "dodge": 0.1,
+      "speed": 15
+    },
+    "target": "player",
+    "tags": [
+      "crit"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "ji_master_chi",
+    "name": "气功",
+    "desc": "元素伤害+3，每秒回复0.5HP",
+    "icon": "☯️",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "elementalDamage": 3,
+      "hpRegen": 0.5
+    },
+    "target": "player",
+    "tags": [
+      "fire"
+    ],
+    "cooldown": 0
+  },
+  {
+    "id": "teng_pai_iron_wall",
+    "name": "铁壁",
+    "desc": "护甲+4，闪避+0.03",
+    "icon": "🛡️",
+    "triggerType": "Passive",
+    "condition": null,
+    "chance": 1,
+    "effect": {
+      "type": "statMod",
+      "armor": 4,
+      "dodge": 0.03
+    },
+    "target": "player",
+    "tags": [
+      "melee"
+    ],
+    "cooldown": 0
+  }
+];
 
 __DATA_BUNDLE__['levelUpCards'] = [
   {
@@ -6923,6 +7198,39 @@ __DATA_BUNDLE__['rarityColors'] = [
   }
 ];
 
+__DATA_BUNDLE__['rarity'] = [
+  {
+    "id": "common",
+    "weight": 60,
+    "minWave": 1,
+    "costMult": 1
+  },
+  {
+    "id": "uncommon",
+    "weight": 40,
+    "minWave": 2,
+    "costMult": 1.2
+  },
+  {
+    "id": "rare",
+    "weight": 25,
+    "minWave": 3,
+    "costMult": 1.5
+  },
+  {
+    "id": "epic",
+    "weight": 10,
+    "minWave": 6,
+    "costMult": 2.5
+  },
+  {
+    "id": "legendary",
+    "weight": 5,
+    "minWave": 10,
+    "costMult": 4
+  }
+];
+
 __DATA_BUNDLE__['audio'] = [
   {
     "category": "bgm",
@@ -7438,5 +7746,82 @@ __DATA_BUNDLE__['system'] = [
     "valueType": "number",
     "desc": "每多 1 个 slot 武器额外外推的像素",
     "group": "orbit"
+  },
+  {
+    "key": "shop.refreshCost",
+    "value": "2",
+    "valueType": "number",
+    "desc": "商店初始刷新费用",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityRare",
+    "value": "3",
+    "valueType": "number",
+    "desc": "保底稀有(rare)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityEpic",
+    "value": "10",
+    "valueType": "number",
+    "desc": "保底史诗(epic)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.pityLegendary",
+    "value": "20",
+    "valueType": "number",
+    "desc": "保底传说(legendary)的连续未出次数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbBase",
+    "value": "0.85",
+    "valueType": "number",
+    "desc": "每槽武器概率基数",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbDecay",
+    "value": "0.04",
+    "valueType": "number",
+    "desc": "每波武器概率衰减值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.weaponProbMin",
+    "value": "0.35",
+    "valueType": "number",
+    "desc": "每槽武器概率最小值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.biasStrength",
+    "value": "0.2",
+    "valueType": "number",
+    "desc": "标签偏向强度",
+    "group": "shop"
+  },
+  {
+    "key": "shop.charTagInject",
+    "value": "2.0",
+    "valueType": "number",
+    "desc": "角色标签注入权重",
+    "group": "shop"
+  },
+  {
+    "key": "shop.classPerfectBonus",
+    "value": "2.0",
+    "valueType": "number",
+    "desc": "完美适配(class+class_2命中)权重加值",
+    "group": "shop"
+  },
+  {
+    "key": "shop.classPartialBonus",
+    "value": "1.0",
+    "valueType": "number",
+    "desc": "部分适配(class或class_2命中)权重加值",
+    "group": "shop"
   }
 ];

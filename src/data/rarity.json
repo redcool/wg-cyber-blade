@@ -1,0 +1,32 @@
+[
+  {
+    "id": "common",
+    "weight": 60,
+    "minWave": 1,
+    "costMult": 1
+  },
+  {
+    "id": "uncommon",
+    "weight": 40,
+    "minWave": 2,
+    "costMult": 1.2
+  },
+  {
+    "id": "rare",
+    "weight": 25,
+    "minWave": 3,
+    "costMult": 1.5
+  },
+  {
+    "id": "epic",
+    "weight": 10,
+    "minWave": 6,
+    "costMult": 2.5
+  },
+  {
+    "id": "legendary",
+    "weight": 5,
+    "minWave": 10,
+    "costMult": 4
+  }
+]

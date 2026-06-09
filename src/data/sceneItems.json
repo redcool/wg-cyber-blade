@@ -1,0 +1,23 @@
+[
+  {
+    "id": "medic_kit",
+    "name": "医疗箱",
+    "image": "medic_kit.png",
+    "width": 36,
+    "height": 36
+  },
+  {
+    "id": "health_pickup",
+    "name": "血包",
+    "image": "health_pickup.png",
+    "width": 20,
+    "height": 20
+  },
+  {
+    "id": "turret",
+    "name": "炮塔",
+    "image": "turret.png",
+    "width": 32,
+    "height": 32
+  }
+]

@@ -138,6 +138,27 @@ const FormulaSystem = {
     },
 
     // -------------------------------------------------------
+    // Class 匹配倍率: 角色 preferredClasses / preferredClasses_2 与武器 class / class_2 比对
+    //   完美 2/2 → 1.0x (100%)
+    //   部分 1/2 → 0.6x (60%)
+    //   不符 0/2 → 0.3x (30%)
+    // -------------------------------------------------------
+    _calcClassFitMult(player, weaponDef) {
+        if (!player || !weaponDef) return 1.0;
+        const pref1 = player.preferredClasses;
+        const pref2 = player.preferredClasses_2;
+        if (!pref1 || !pref2 || (pref1.length === 0 && pref2.length === 0)) return 1.0;
+        const hasClass = !!(weaponDef.class || weaponDef.class_2);
+        if (!hasClass) return 1.0;
+        const inPref1 = weaponDef.class && pref1.includes(weaponDef.class);
+        const inPref2 = weaponDef.class_2 && pref2.includes(weaponDef.class_2);
+        const hits = (inPref1 ? 1 : 0) + (inPref2 ? 1 : 0);
+        if (hits === 0) return 0.30;  // 不匹配
+        if (hits === 1) return 0.60;  // 部分匹配
+        return 1.0;                    // 完美匹配
+    },
+
+    // -------------------------------------------------------
     // P 层: 百分比倍率
     //   P = 1 + player.damagePercent
     // -------------------------------------------------------
@@ -221,8 +242,10 @@ const FormulaSystem = {
         const S = this._getSpecialModifier(player, target);
 
         // 应用 tag 匹配惩罚: 伤害 = (B + F) × P × C × S × tagMult
-        // 兜底: 任何武器进攻击范围都至少造成 1 dmg (避免非擅长武器"完全无反应")
-        const result = Math.max(1, Math.round((B + F) * P * C * S * tagMult));
+        let result = Math.max(1, Math.round((B + F) * P * C * S * tagMult));
+        // 应用 class 匹配倍率 (class/class_2 fit)
+        const classMult = this._calcClassFitMult(player, rawDef);
+        result = Math.max(1, Math.round(result * classMult));
         return result;
     },
 
@@ -252,7 +275,8 @@ const FormulaSystem = {
         const critChance = Math.min(0.8, (player.critChance || 0) + weaponCrit);
         const C_exp = 1 + critChance * (cd - 1);
 
-        const avgDamage = (B + F) * P * C_exp * tagMult;
+        const classMult = this._calcClassFitMult(player, rawDef);
+        const avgDamage = (B + F) * P * C_exp * tagMult * classMult;
 
         const cooldown = this.calcWeaponCooldown(rawDef, player, level);
         const atkSpeed = cooldown > 0 ? 1.0 / cooldown : 1.0;
@@ -266,8 +290,9 @@ const FormulaSystem = {
     calcWeaponPreview(weaponDef, player, currentLevel, targetLevel) {
         const tag = weaponDef ? (weaponDef.tag || '') : '';
         const tagMult = this._isTagMatched(player, tag) ? 1.0 : this.UNMATCHED_MULT;
-        const currentDmg = this._calcBaseDamage(weaponDef, player, currentLevel) * tagMult;
-        const newDmg = this._calcBaseDamage(weaponDef, player, targetLevel) * tagMult;
+        const classMult = this._calcClassFitMult(player, weaponDef);
+        const currentDmg = this._calcBaseDamage(weaponDef, player, currentLevel) * tagMult * classMult;
+        const newDmg = this._calcBaseDamage(weaponDef, player, targetLevel) * tagMult * classMult;
         const currentCD = this.calcWeaponCooldown(weaponDef, player, currentLevel);
         const newCD = this.calcWeaponCooldown(weaponDef, player, targetLevel);
 
@@ -302,7 +327,8 @@ const FormulaSystem = {
             cd += weaponParams.critDamageAdd;
         }
 
-        const base = (B + F) * P * S * tagMult;
+        const classMult = this._calcClassFitMult(player, rawDef);
+        const base = (B + F) * P * S * tagMult * classMult;
         const critDmg = Math.round(base * (cd || 1.0));
 
         return {

@@ -207,10 +207,12 @@ const CSV2JSON = {
             { name: 'debug',csv: 'csv/debug.csv',json: 'src/data/debug.json',schema: debugSchema },
             { name: 'levelUpCards',csv: 'csv/levelUpCards.csv',json: 'src/data/levelUpCards.json',schema: levelUpCardsSchema },
             { name: 'rarityColors',csv: 'csv/rarityColors.csv',json: 'src/data/rarityColors.json',schema: rarityColorsSchema },
+            { name: 'rarity',csv: 'csv/rarity.csv',json: 'src/data/rarity.json',schema: raritySchema },
             { name: 'audio',csv: 'csv/audio.csv',json: 'src/data/audio.json',schema: audioSchema },
             { name: 'classes',csv: 'csv/classes.csv',json: 'src/data/classes.json',schema: classSchema },
             { name: 'level_duration',csv: 'csv/level_duration.csv',json: 'src/data/level_duration.json',schema: levelDurationSchema },
             { name: 'system',csv: 'csv/system.csv',json: 'src/data/system.json',schema: systemSchema },
+            { name: 'passives',csv: 'csv/passives.csv',json: 'src/data/passives.json',schema: passivesSchema },
         ];
 
         let success = 0;
@@ -530,6 +532,18 @@ const rarityColorsSchema = {
 };
 
 /**
+ * rarity.csv Schema
+ * 列: id,weight,minWave,costMult
+ * 商店稀有度数值参数，颜色/名称由 rarityColors.csv 单独提供
+ */
+const raritySchema = {
+    id: 'string',
+    weight: 'number',
+    minWave: 'number',
+    costMult: 'number',
+};
+
+/**
  * audio.csv Schema
  * 列: category,id,type,file,name,categoryTag
  * category: bgm=BGM曲目, sfx_type=type→seId映射, sfx_file=seId→文件名映射
@@ -567,6 +581,26 @@ const levelDurationSchema = {
 };
 
 /**
+ * passives.csv Schema
+ * 列: id,name,desc,icon,triggerType,condition,chance,effect,target,tags,cooldown
+ * 被动技能数据表，每个角色对应的专属被动
+ * effect 为 JSON 对象，按 type 字段区分不同的效果结构
+ */
+const passivesSchema = {
+    id: 'string',
+    name: 'string',
+    desc: 'string',
+    icon: 'string',
+    triggerType: 'string',
+    condition: 'json',
+    chance: 'number',
+    effect: 'json',
+    target: 'string',
+    tags: 'array',
+    cooldown: 'number',
+};
+
+/**
  * system.csv Schema
  * 列: key,value,valueType,desc,group
  *  - key: 参数唯一标识 (英文)
@@ -591,7 +625,7 @@ if (require.main === module) {
     process.exit(ok ? 0 : 1);
 }
 
-module.exports = { CSV2JSON, characterSchema, characterLevelSchema, weaponSchema, itemSchema, enemySchema, bossSchema, waveSchema, weaponStatSchema, charStatSchema, difficultySchema, debugSchema, levelUpCardsSchema, rarityColorsSchema, audioSchema, classSchema, levelDurationSchema };
+module.exports = { CSV2JSON, characterSchema, characterLevelSchema, weaponSchema, itemSchema, enemySchema, bossSchema, waveSchema, weaponStatSchema, charStatSchema, difficultySchema, debugSchema, levelUpCardsSchema, rarityColorsSchema, audioSchema, classSchema, levelDurationSchema, passivesSchema };
 
 /**
  * level_duration.csv Schema
