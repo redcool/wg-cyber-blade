@@ -21,6 +21,13 @@
     "group": "orbit"
   },
   {
+    "key": "bulletRotationOffset",
+    "value": "1.57079632679",
+    "valueType": "number",
+    "desc": "弹道图片旋转偏移(弧度 默认PI/2 正方向向上)",
+    "group": "orbit"
+  },
+  {
     "key": "shop.refreshCost",
     "value": "2",
     "valueType": "number",

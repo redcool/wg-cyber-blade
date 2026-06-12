@@ -604,6 +604,7 @@ const bulletTypeSchema = {
     shape: 'string',
     color: 'string',
     size: 'number',
+    pierce: 'number',
     glowColor: 'string',
     glowSize: 'number',
     trail: 'string',

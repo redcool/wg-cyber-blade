@@ -34,8 +34,8 @@ const TurretSystem = {
 
     /** 创建单个炮塔并加入列表 */
     _addTurret(player, level) {
-        // 从 sceneItems 表读取尺寸，无代码缩放
-        let width = 128; // 默认 128px（匹配 PNG 原生尺寸）
+        // 从 sceneItems 表读取炮塔视觉尺寸，无代码缩放
+        let width = 128;
         if (typeof DataLoader !== 'undefined') {
             const items = DataLoader.get('sceneItems');
             const item = items.find(it => it.id === `turret${level}`);
@@ -43,15 +43,27 @@ const TurretSystem = {
         }
         const radius = Math.round(width / 2);
 
+        // 从 weaponBulletTypes 表读取弹道尺寸和穿透（按 behavior 查找）
+        const BEHAVIOR_MAP = { 1: 'turret_cannon', 2: 'turret_spray_fire', 3: 'turret_spray_ice', 4: 'turret_laser' };
+        let bulletSize = 16, bulletPierce = 0;
+        if (typeof DataLoader !== 'undefined') {
+            const bTypes = DataLoader.get('bulletTypes');
+            const bCfg = bTypes.find(it => it.behavior === BEHAVIOR_MAP[level]);
+            if (bCfg) {
+                if (bCfg.size > 0) bulletSize = bCfg.size;
+                if (bCfg.pierce !== undefined && bCfg.pierce !== null) bulletPierce = bCfg.pierce;
+            }
+        }
+
         const angle = Math.random() * Math.PI * 2;
         const dist = 70 + Math.random() * 30;
 
-        // 等级参数
+        // 等级参数（射程/射速/弹速/扩散/弹数 — 弹道尺寸和穿透由表驱动）
         const LEVEL_CFG = {
-            1: { range: 280, fireRate: 1.5, speed: 600, radius: 12, pierce: 0, spread: 0, count: 1 },   // 炮击
-            2: { range: 160, fireRate: 0.25, speed: 700, radius: 8, pierce: 1, spread: 0.45, count: 3 },// 喷火
-            3: { range: 180, fireRate: 0.3, speed: 700, radius: 8, pierce: 1, spread: 0.45, count: 3 }, // 冷冻
-            4: { range: 350, fireRate: 0.1, speed: 0, radius: 0, pierce: 999, spread: 0, count: 1 },     // 激光
+            1: { range: 280, fireRate: 1.5, speed: 600, spread: 0, count: 1 },   // 炮击
+            2: { range: 160, fireRate: 0.25, speed: 700, spread: 0.45, count: 3 },// 喷火
+            3: { range: 180, fireRate: 0.3, speed: 700, spread: 0.45, count: 3 }, // 冷冻
+            4: { range: 350, fireRate: 0.1, speed: 0, spread: 0, count: 1 },      // 激光
         };
         const cfg = LEVEL_CFG[level] || LEVEL_CFG[1];
 
@@ -61,19 +73,18 @@ const TurretSystem = {
             level: level,
             range: cfg.range,
             fireRate: cfg.fireRate,
-            fireTimer: Math.random() * cfg.fireRate, // 错峰
+            fireTimer: Math.random() * cfg.fireRate,
             speed: cfg.speed,
-            bulletRadius: cfg.radius,
-            pierce: cfg.pierce,
+            bulletSize: bulletSize,       // 来自 weaponBulletTypes.csv size 列（半宽→半径=size/2）
+            bulletPierce: bulletPierce,   // 来自 weaponBulletTypes.csv pierce 列
             spread: cfg.spread,
             bulletCount: cfg.count,
             baseDamage: 10,
             alive: true,
-            radius: radius,
+            radius: radius,               // 炮塔视觉尺寸，来自 sceneItems.csv
             angle: angle,
             targetAngle: angle,
             attackPulse: 0,
-            // 激光持续计时
             beamTimer: 0,
             beamTarget: null,
         });
@@ -150,11 +161,11 @@ const TurretSystem = {
             vx: Math.cos(angle) * t.speed,
             vy: Math.sin(angle) * t.speed,
             damage: damage,
-            radius: t.bulletRadius || 6,
+            radius: (t.bulletSize || 12) / 2,
             life: t.range / t.speed + 0.3,
             alive: true,
             level: 1,
-            pierceRemaining: 0,
+            pierceRemaining: t.bulletPierce || 0,
             hitTargets: [],
         };
         this.bullets.push(b);
@@ -175,7 +186,7 @@ const TurretSystem = {
         const count = t.bulletCount || 3;
         const spread = t.spread || 0.45;
         const startAngle = angle - spread * (count - 1) / 2;
-        const pierce = t.pierce || 1;
+        const pierce = t.bulletPierce ?? 1;
 
         for (let i = 0; i < count; i++) {
             const a = startAngle + spread * i;
@@ -185,7 +196,7 @@ const TurretSystem = {
                 vx: Math.cos(a) * t.speed,
                 vy: Math.sin(a) * t.speed,
                 damage: damage,
-                radius: t.bulletRadius || 3,
+                radius: (t.bulletSize || 16) / 2,
                 life: t.range / t.speed + 0.2,
                 alive: true,
                 level: t.level,
@@ -323,16 +334,14 @@ const TurretSystem = {
                         }
                     }
 
-                    // 穿透处理
+                    // 穿透处理（pierce=N 表示可额外穿透 N 个怪，共命中 N+1 个）
                     if (b.pierceRemaining !== undefined && b.pierceRemaining > 0) {
+                        // 有穿透：记命中，减次数，继续飞行（次数用完也不立即销毁，等下次命中再销毁）
                         if (!b.hitTargets) b.hitTargets = [];
                         b.hitTargets.push(e);
                         b.pierceRemaining--;
-                        if (b.pierceRemaining <= 0) {
-                            used = true;
-                            break;
-                        }
                     } else {
+                        // 无穿透：本次命中后销毁
                         used = true;
                         break;
                     }

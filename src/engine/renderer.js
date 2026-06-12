@@ -622,13 +622,16 @@ const Renderer = {
         const cfgSize = bConfig ? (bConfig.size || 0) : 0;
         const visualR = cfgSize > 0 ? cfgSize / 2 : (bullet.radius || 4);
 
-        // 优先使用图片（非空 image 字段）
+        // 优先使用图片（非空 image 字段），按武器规则：PNG 正方向=图的上方，旋转至飞行方向
         if (bConfig && bConfig.image) {
             const img = this._loadBulletImage(bConfig.image);
             if (img && img.complete && img.naturalWidth > 0) {
                 const s = bConfig.size || 8;
-                ctx.drawImage(img, bullet.x - s / 2, bullet.y - s / 2, s, s);
-                ctx.restore();
+                const angle = Math.atan2(bullet.vy, bullet.vx) + SystemConfig.get('bulletRotationOffset');
+                ctx.translate(bullet.x, bullet.y);
+                ctx.rotate(angle);
+                ctx.drawImage(img, -s / 2, -s / 2, s, s);
+                ctx.restore(); // 恢复 drawBullet 入口的 save
                 return;
             }
         }

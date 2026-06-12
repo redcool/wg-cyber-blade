@@ -17,6 +17,7 @@
 weaponOrbitDistance,64,number,武器图标中心到角色中心的像素距离,orbit
 weaponOrbitExtraPerSlot,6,number,每多 1 个 slot 武器额外外推的像素,orbit
 weaponRotationOffset,1.57079632679,number,武器渲染旋转偏移(弧度 默认PI/2),orbit
+bulletRotationOffset,1.57079632679,number,弹道图片旋转偏移(弧度 默认PI/2 正方向向上),orbit
 
 # ====== 商店参数 ======
 shop.refreshCost,2,number,商店初始刷新费用,shop
