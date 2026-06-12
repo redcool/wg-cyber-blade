@@ -430,7 +430,7 @@ __DATA_BUNDLE__['characters'] = [
   {
     "id": "engineer",
     "name": "工程师",
-    "desc": "扳手近战·炮塔建造者",
+    "desc": "扳手近战·搭建防御基地",
     "icon": "🔧",
     "unlocked": false,
     "maxWeapons": 6,
@@ -5316,6 +5316,134 @@ __DATA_BUNDLE__['enemies'] = [
     "specialMechanic": ""
   },
   {
+    "id": "swarm",
+    "name": "虫群",
+    "behavior": "swarm",
+    "hp": 8,
+    "speed": 110,
+    "damage": 2,
+    "radius": 8,
+    "color": "#88ff44",
+    "glowColor": "#66ff22",
+    "xpValue": 2,
+    "materialValue": 1,
+    "attackCooldown": 0.8,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": ""
+  },
+  {
+    "id": "summoner",
+    "name": "召唤师",
+    "behavior": "summoner",
+    "hp": 20,
+    "speed": 55,
+    "damage": 5,
+    "radius": 16,
+    "color": "#ff88ff",
+    "glowColor": "#ff66ff",
+    "xpValue": 5,
+    "materialValue": 2,
+    "attackCooldown": 4,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": {
+      "preferredDist": 300
+    },
+    "specialMechanic": ""
+  },
+  {
+    "id": "splitter",
+    "name": "分裂者",
+    "behavior": "chase",
+    "hp": 18,
+    "speed": 75,
+    "damage": 4,
+    "radius": 14,
+    "color": "#ffaa44",
+    "glowColor": "#ff8822",
+    "xpValue": 3,
+    "materialValue": 1,
+    "attackCooldown": 1.5,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": "splitter"
+  },
+  {
+    "id": "shielded",
+    "name": "护盾者",
+    "behavior": "chase",
+    "hp": 15,
+    "speed": 60,
+    "damage": 3,
+    "radius": 16,
+    "color": "#4488ff",
+    "glowColor": "#2266ff",
+    "xpValue": 3,
+    "materialValue": 1,
+    "attackCooldown": 1.5,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": "shielded"
+  },
+  {
+    "id": "leech",
+    "name": "吸血者",
+    "behavior": "chase",
+    "hp": 12,
+    "speed": 85,
+    "damage": 4,
+    "radius": 14,
+    "color": "#ff4488",
+    "glowColor": "#ff2266",
+    "xpValue": 3,
+    "materialValue": 1,
+    "attackCooldown": 1.5,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": "leech"
+  },
+  {
+    "id": "reflect",
+    "name": "反伤者",
+    "behavior": "chase",
+    "hp": 14,
+    "speed": 70,
+    "damage": 5,
+    "radius": 14,
+    "color": "#cc44ff",
+    "glowColor": "#aa22ff",
+    "xpValue": 3,
+    "materialValue": 1,
+    "attackCooldown": 1.5,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": "reflect"
+  },
+  {
+    "id": "freezer",
+    "name": "冰冻者",
+    "behavior": "chase",
+    "hp": 12,
+    "speed": 75,
+    "damage": 3,
+    "radius": 14,
+    "color": "#44ccff",
+    "glowColor": "#22aaff",
+    "xpValue": 3,
+    "materialValue": 1,
+    "attackCooldown": 1.5,
+    "isElite": false,
+    "isBoss": false,
+    "paramsJson": null,
+    "specialMechanic": "freeze"
+  },
+  {
     "id": "elite",
     "name": "精英猎手",
     "behavior": "chase",
@@ -5334,21 +5462,61 @@ __DATA_BUNDLE__['enemies'] = [
     "specialMechanic": ""
   },
   {
-    "id": "boss",
-    "name": "BOSS·毁灭者",
+    "id": "fireLord",
+    "name": "火焰领主",
     "behavior": "chase",
     "hp": 264,
     "speed": 55,
     "damage": 10,
     "radius": 36,
-    "color": "#ff0044",
-    "glowColor": "#ff0000",
+    "color": "#ff4400",
+    "glowColor": "#ff2200",
     "xpValue": 26,
     "materialValue": 13,
     "attackCooldown": 0.8,
     "isElite": false,
     "isBoss": true,
     "paramsJson": null,
+    "specialMechanic": ""
+  },
+  {
+    "id": "frostLord",
+    "name": "冰霜领主",
+    "behavior": "tank",
+    "hp": 352,
+    "speed": 40,
+    "damage": 8,
+    "radius": 38,
+    "color": "#44ccff",
+    "glowColor": "#22aaff",
+    "xpValue": 30,
+    "materialValue": 15,
+    "attackCooldown": 1.2,
+    "isElite": false,
+    "isBoss": true,
+    "paramsJson": null,
+    "specialMechanic": ""
+  },
+  {
+    "id": "shadowAssassin",
+    "name": "暗影刺客",
+    "behavior": "blink",
+    "hp": 200,
+    "speed": 70,
+    "damage": 12,
+    "radius": 30,
+    "color": "#cc44ff",
+    "glowColor": "#aa22ff",
+    "xpValue": 28,
+    "materialValue": 14,
+    "attackCooldown": 1,
+    "isElite": false,
+    "isBoss": true,
+    "paramsJson": {
+      "blinkCooldown": 1.5,
+      "blinkDist": 120,
+      "dodgeChance": 0.4
+    },
     "specialMechanic": ""
   }
 ];
@@ -5544,7 +5712,8 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
       "splitter",
@@ -5564,7 +5733,8 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
       "splitter",
@@ -5584,11 +5754,10 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech"
     ],
     "spawnPattern": "random",
@@ -5605,11 +5774,11 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech",
       "reflect"
     ],
@@ -5627,11 +5796,11 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech",
       "reflect"
     ],
@@ -5649,7 +5818,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -5671,7 +5842,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -5694,7 +5867,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -5717,7 +5892,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -5740,7 +5917,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -5763,7 +5942,9 @@ __DATA_BUNDLE__['waves'] = [
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",

@@ -422,7 +422,7 @@
   {
     "id": "engineer",
     "name": "工程师",
-    "desc": "扳手近战·炮塔建造者",
+    "desc": "扳手近战·搭建防御基地",
     "icon": "🔧",
     "unlocked": false,
     "maxWeapons": 6,

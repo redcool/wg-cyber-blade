@@ -132,7 +132,8 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
       "splitter",
@@ -152,7 +153,8 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
       "splitter",
@@ -172,11 +174,10 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech"
     ],
     "spawnPattern": "random",
@@ -193,11 +194,11 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech",
       "reflect"
     ],
@@ -215,11 +216,11 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
-      "splitter",
-      "shielded",
       "leech",
       "reflect"
     ],
@@ -237,7 +238,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -259,7 +262,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -282,7 +287,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -305,7 +312,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -328,7 +337,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",
@@ -351,7 +362,9 @@
       "explode",
       "heal",
       "mortar",
-      "blink"
+      "blink",
+      "swarm",
+      "summoner"
     ],
     "availableMechanics": [
       "splitter",

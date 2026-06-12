@@ -14,6 +14,8 @@
 #   heal     治疗者 (远程治疗友军)
 #   mortar   迫击炮 (远程范围攻击)
 #   blink    闪现 (间歇性瞬移)
+#   swarm    虫群 (群聚加速)
+#   summoner 召唤师 (召唤小怪)
 # hp:              基础生命值
 # speed:           基础移动速度 (像素/秒)
 # damage:          基础伤害值 (每次攻击)
@@ -40,11 +42,11 @@
 #     blinkDist        闪现距离 (像素)
 #     dodgeChance      闪避概率 (小数)
 # specialMechanic:  特殊机制
-#   splitOnDeath  死亡分裂
-#   shield        护盾
-#   leech         吸血
-#   reflect       反伤
-#   freeze        冰冻
+#   splitter  死亡分裂
+#   shielded  护盾
+#   leech     吸血
+#   reflect   反伤
+#   freeze    冰冻
 #   空 = 无特殊机制
 #
 # 注意: 难度缩放(每关+12%HP/+10%DMG/+4%SPD) 在代码 enemy.js 中实现
@@ -63,6 +65,19 @@ healer,修复者,heal,12,65,2,14,#44ff88,#22ff66,3,1,2.5,,,"{""preferredDist"":2
 mortar,迫击者,mortar,10,40,6,14,#aa44ff,#8822ff,3,1,3.0,,,"{""preferredDist"":350,""mortarCooldown"":3.0,""mortarSpeed"":180}",
 blinker,闪现者,blink,8,90,5,12,#ff44ff,#ff00ff,3,1,1.5,,,"{""blinkCooldown"":2.0,""blinkDist"":100,""dodgeChance"":0.3}",
 #
+# ====== 群体/召唤型 ======
+swarm,虫群,swarm,8,110,2,8,#88ff44,#66ff22,2,1,0.8,,,,,
+summoner,召唤师,summoner,20,55,5,16,#ff88ff,#ff66ff,5,2,4.0,,,"{""preferredDist"":300}",
+#
+# ====== 特殊机制敌人 ======
+splitter,分裂者,chase,18,75,4,14,#ffaa44,#ff8822,3,1,1.5,,,,splitter
+shielded,护盾者,chase,15,60,3,16,#4488ff,#2266ff,3,1,1.5,,,,shielded
+leech,吸血者,chase,12,85,4,14,#ff4488,#ff2266,3,1,1.5,,,,leech
+reflect,反伤者,chase,14,70,5,14,#cc44ff,#aa22ff,3,1,1.5,,,,reflect
+freezer,冰冻者,chase,12,75,3,14,#44ccff,#22aaff,3,1,1.5,,,,freeze
+#
 # ====== 精英/Boss ======
 elite,精英猎手,chase,83,70,7,24,#ffcc00,#ffaa00,10,5,1.0,true,,,
-boss,BOSS·毁灭者,chase,264,55,10,36,#ff0044,#ff0000,26,13,0.8,,true,,
+fireLord,火焰领主,chase,264,55,10,36,#ff4400,#ff2200,26,13,0.8,,true,,
+frostLord,冰霜领主,tank,352,40,8,38,#44ccff,#22aaff,30,15,1.2,,true,,
+shadowAssassin,暗影刺客,blink,200,70,12,30,#cc44ff,#aa22ff,28,14,1.0,,true,"{""blinkCooldown"":1.5,""blinkDist"":120,""dodgeChance"":0.4}",

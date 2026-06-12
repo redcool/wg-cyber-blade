@@ -42,7 +42,7 @@ const BulletSystem = {
             b.behavior = extra.behavior || 'bullet';
         }
         // 清除池复用污染（强制重置所有特殊属性，防止上一轮残留）
-        b.isMortar = false;
+        b.isMortar = extra.isMortar || false;
         b.cosmetic = extra.cosmetic || false;  // true = 纯视觉子弹, 不检测碰撞不造成伤害
         b.splashOnHitOnly = false; // true = 命中敌人才触发溅射(冰爆/冰霜), false = 飞行超时爆炸(火箭筒)
         // 特殊属性

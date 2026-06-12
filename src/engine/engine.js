@@ -132,6 +132,10 @@ const GameEngine = {
         for (const enemy of EnemySystem.enemies) Renderer.drawEnemy(enemy);
         for (const p of ParticleSystem.particles) Renderer.drawParticle(p);
         Renderer.drawPlayer(player);
+
+        // Boss 波红色关门屏障（Brotato 风格）
+        const hasActiveBoss = EnemySystem.enemies.some(e => e.alive && e.isBoss);
+        if (hasActiveBoss) Renderer.drawBossBarrier();
         for (const b of BulletSystem.bullets) Renderer.drawBullet(b);
         if (typeof TurretSystem !== 'undefined') {
             // 先画激光（在炮塔下方），再画炮塔，最后画子弹

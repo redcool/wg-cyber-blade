@@ -8,4 +8,4 @@
 //    (powershell -File scripts/sync-version.ps1)
 // 3. data.js 会自动使用 CACHE_VER
 // ============================================================
-const CACHE_VER = '2026061106';
+const CACHE_VER = '2026061108';

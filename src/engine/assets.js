@@ -4,12 +4,22 @@
 // 每个 CSV 对应一个 assets/ 子目录
 // ============================================================
 
-// 敌人 sprite 帧文件夹名映射（仅缺失的 ID 需要映射）
+// 敌人 sprite 帧文件夹名映射（缺失 sprite 目录的 ID 映射到现有目录）
 const ENEMY_SPRITE_SLUG = {
-    exploder: 'basic',
-    healer:   'elite',
-    mortar:   'ranged',
-    blinker:  'fast',
+    exploder:         'basic',
+    healer:           'elite',
+    mortar:           'ranged',
+    blinker:          'fast',
+    swarm:            'basic',
+    summoner:         'elite',
+    splitter:         'basic',
+    shielded:         'tank',
+    leech:            'fast',
+    reflect:          'ranged',
+    freezer:          'ranged',
+    fireLord:         'boss',
+    frostLord:        'boss',
+    shadowAssassin:   'boss',
 };
 
 const AssetSystem = {

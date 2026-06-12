@@ -122,9 +122,18 @@ const SPAWN_PATTERNS = {
 // 敌人 Cost 分级
 // ============================================================
 const ENEMY_TIERS = {
-    1: { cost: 1, types: ['basic', 'fast'] },
+    1: { cost: 1, types: ['basic', 'fast', 'swarm'] },
     2: { cost: 3, types: ['tank', 'ranged', 'exploder'] },
-    3: { cost: 5, types: ['healer', 'mortar', 'blinker', 'elite'] },
+    3: { cost: 5, types: ['healer', 'mortar', 'blinker', 'summoner', 'elite'] },
+    4: { cost: 4, types: ['splitter', 'shielded', 'leech', 'reflect', 'freezer'] },
+};
+
+/** behavior 名称 → tier 映射（用于 CSV 的 availableBehaviors → availableTiers 转换） */
+const BEHAVIOR_TIER_MAP = {
+    'chase': 1, 'fast': 1, 'swarm': 1,
+    'tank': 2, 'ranged': 2, 'explode': 2,
+    'heal': 3, 'mortar': 3, 'blink': 3, 'summoner': 3, 'elite': 3,
+    'splitter': 4, 'shielded': 4, 'leech': 4, 'reflect': 4, 'freeze': 4,
 };
 
 // ============================================================
@@ -370,13 +379,28 @@ const WaveSystem = {
      */
     /** 构建完整的可用敌人类型池（含难度解锁 + 精英注入） */
     _buildTypePool(config) {
-        // 基础池：从可用 Tier 展开
-        const tiers = config.availableTiers || [1];
         const pool = new Set();
-        for (const t of tiers) {
-            const def = ENEMY_TIERS[t];
-            if (def) def.types.forEach(id => pool.add(id));
+
+        // 优先使用 availableBehaviors（CSV 数据路径）
+        if (config.availableBehaviors && config.availableBehaviors.length > 0) {
+            const resolvedTiers = new Set();
+            for (const bhv of config.availableBehaviors) {
+                const t = BEHAVIOR_TIER_MAP[bhv];
+                if (t) resolvedTiers.add(t);
+            }
+            for (const t of resolvedTiers) {
+                const def = ENEMY_TIERS[t];
+                if (def) def.types.forEach(id => pool.add(id));
+            }
+        } else {
+            // 兼容 WAVE_INTERVALS / endless 回退路径
+            const tiers = config.availableTiers || [1];
+            for (const t of tiers) {
+                const def = ENEMY_TIERS[t];
+                if (def) def.types.forEach(id => pool.add(id));
+            }
         }
+
         // 难度解锁额外敌人（newEnemyTypes）
         const cfg = this.difficultyConfig;
         if (cfg && cfg.newEnemyTypes && cfg.newEnemyTypes.length > 0) {
@@ -441,10 +465,12 @@ const WaveSystem = {
      */
     spawnBoss(player) {
         if (typeof EnemySystem === 'undefined') return;
-        // 使用 Boss 配置：在 Boss 波使用 'boss' 类型
+        // 随机选择一个 Boss
+        const bossPool = ['fireLord', 'frostLord', 'shadowAssassin'];
+        const bossId = bossPool[Math.floor(Math.random() * bossPool.length)];
         const x = player ? player.x + (Math.random() - 0.5) * 200 : 480;
         const y = player ? player.y - 200 : 100;
-            EnemySystem.create('boss', x, y, this.effectiveLevel);
+        EnemySystem.create(bossId, x, y, this.effectiveLevel);
     },
 
     /**

@@ -45,6 +45,31 @@ const Renderer = {
         this.ctx.restore();
     },
 
+    /** 绘制 Boss 关门屏障（红色发光边框） */
+    drawBossBarrier() {
+        const ctx = this.ctx;
+        const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 400);
+        const alpha = 0.3 + pulse * 0.4;
+        const w = GameWorld.width || 3000;
+        const h = GameWorld.height || 3000;
+        const thickness = 8;
+
+        ctx.save();
+        ctx.shadowColor = '#ff0000';
+        ctx.shadowBlur = 20 + pulse * 15;
+        ctx.strokeStyle = `rgba(255, 0, 0, ${alpha})`;
+        ctx.lineWidth = thickness;
+        ctx.strokeRect(0, 0, w, h);
+
+        // 内发光层
+        ctx.shadowBlur = 5;
+        ctx.strokeStyle = `rgba(255, 50, 0, ${alpha * 0.5})`;
+        ctx.lineWidth = thickness + 4;
+        ctx.strokeRect(-2, -2, w + 4, h + 4);
+
+        ctx.restore();
+    },
+
     // ============================================================
     // 背景网格
     // ============================================================

@@ -55,9 +55,6 @@ const TurretSystem = {
             }
         }
 
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 70 + Math.random() * 30;
-
         // 等级参数（射程/射速/弹速/扩散/弹数 — 弹道尺寸和穿透由表驱动）
         const LEVEL_CFG = {
             1: { range: 280, fireRate: 1.5, speed: 600, spread: 0, count: 1 },   // 炮击
@@ -67,27 +64,75 @@ const TurretSystem = {
         };
         const cfg = LEVEL_CFG[level] || LEVEL_CFG[1];
 
+        // ====== 防重叠放置（工程师聚集，其他角色分散）======
+        const isEngineer = player.characterId === 'engineer';
+        const minDist = radius * 2 + 20; // 炮塔间距 ≥ 直径+边距
+        let x, y, attempts = 0;
+        const maxAttempts = 40;
+
+        if (this.turrets.length === 0) {
+            // 第一个炮塔：玩家周围随机
+            const a = Math.random() * Math.PI * 2;
+            const d = isEngineer ? 30 + Math.random() * 30 : 70 + Math.random() * 30;
+            x = player.x + Math.cos(a) * d;
+            y = player.y + Math.sin(a) * d;
+        } else if (isEngineer) {
+            // 工程师：聚集放置（围绕已有炮塔群中心，形成阵地）
+            let cx = 0, cy = 0;
+            for (const t of this.turrets) { cx += t.x; cy += t.y; }
+            cx /= this.turrets.length;
+            cy /= this.turrets.length;
+            do {
+                const a = Math.random() * Math.PI * 2;
+                const d = minDist * 0.5 + Math.random() * minDist * 0.6; // 紧凑聚集
+                x = cx + Math.cos(a) * d;
+                y = cy + Math.sin(a) * d;
+                attempts++;
+            } while (attempts < maxAttempts && this._hasOverlap(x, y, minDist));
+        } else {
+            // 其他角色：玩家周围较大范围分散
+            do {
+                const a = Math.random() * Math.PI * 2;
+                const d = 80 + Math.random() * 80;
+                x = player.x + Math.cos(a) * d;
+                y = player.y + Math.sin(a) * d;
+                attempts++;
+            } while (attempts < maxAttempts && this._hasOverlap(x, y, minDist));
+        }
+
+        // 初始朝向（不影响自动索敌，仅首帧使用）
+        const initAngle = Math.random() * Math.PI * 2;
+
         this.turrets.push({
-            x: player.x + Math.cos(angle) * dist,
-            y: player.y + Math.sin(angle) * dist,
+            x, y,
             level: level,
             range: cfg.range,
             fireRate: cfg.fireRate,
             fireTimer: Math.random() * cfg.fireRate,
             speed: cfg.speed,
-            bulletSize: bulletSize,       // 来自 weaponBulletTypes.csv size 列（半宽→半径=size/2）
-            bulletPierce: bulletPierce,   // 来自 weaponBulletTypes.csv pierce 列
+            bulletSize: bulletSize,
+            bulletPierce: bulletPierce,
             spread: cfg.spread,
             bulletCount: cfg.count,
             baseDamage: 10,
             alive: true,
-            radius: radius,               // 炮塔视觉尺寸，来自 sceneItems.csv
-            angle: angle,
-            targetAngle: angle,
+            radius: radius,
+            angle: initAngle,
+            targetAngle: initAngle,
             attackPulse: 0,
             beamTimer: 0,
             beamTarget: null,
         });
+    },
+
+    /** 检查 (x,y) 是否与已有炮塔重叠 */
+    _hasOverlap(x, y, minDist) {
+        for (const t of this.turrets) {
+            const dx = t.x - x;
+            const dy = t.y - y;
+            if (dx * dx + dy * dy < minDist * minDist) return true;
+        }
+        return false;
     },
 
     /**

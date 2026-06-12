@@ -345,6 +345,165 @@ const BEHAVIORS = {
             }
         },
     },
+
+    /** 治疗者：保持距离，治疗受伤友军 */
+    healer: {
+        update(enemy, dt, player) {
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const preferred = enemy.preferredDist || 250;
+
+            // 保持距离
+            if (dist < preferred - 60) {
+                const speed = (enemy.speed || 60) * dt;
+                enemy.x -= (dx / dist) * speed;
+                enemy.y -= (dy / dist) * speed;
+            } else if (dist > preferred + 60) {
+                const speed = (enemy.speed || 60) * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
+            }
+
+            // 治疗近处受伤友军
+            enemy.healTimer = enemy.healTimer || 0;
+            enemy.healTimer -= dt;
+            if (enemy.healTimer <= 0) {
+                const healRange = enemy.healRange || 120;
+                const healAmount = enemy.healAmount || 10;
+                let healed = false;
+                for (const other of EnemySystem.enemies) {
+                    if (other === enemy || !other.alive) continue;
+                    const odx = other.x - enemy.x;
+                    const ody = other.y - enemy.y;
+                    const oDist = Math.sqrt(odx * odx + ody * ody);
+                    if (oDist < healRange && other.hp < other.maxHp) {
+                        other.hp = Math.min(other.maxHp, other.hp + healAmount);
+                        if (typeof ParticleSystem !== 'undefined') {
+                            ParticleSystem.emit(other.x, other.y, 2, {
+                                speed: 30, color: '#44ff44', life: 0.3, size: 4, type: 'spark',
+                            });
+                        }
+                        healed = true;
+                        break;
+                    }
+                }
+                // 无治疗目标时当 chaser
+                if (!healed && dist > _touchDist(enemy, player)) {
+                    const speed = (enemy.speed || 60) * dt;
+                    enemy.x += (dx / dist) * speed;
+                    enemy.y += (dy / dist) * speed;
+                }
+                enemy.healTimer = enemy.healCooldown || 2.0;
+            }
+
+            // 接触伤害（被近身时自卫）
+            enemy.attackTimer -= dt;
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
+                if (typeof PlayerSystem !== 'undefined') {
+                    PlayerSystem.takeDamage(enemy.damage || 6);
+                    EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 6, player);
+                }
+                enemy.attackTimer = enemy.attackCooldown || 2.0;
+            }
+        },
+    },
+
+    /** 闪现者：周期性瞬移靠近玩家 */
+    blinker: {
+        update(enemy, dt, player) {
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            // 普通移动（chaser 逻辑）
+            if (dist > _touchDist(enemy, player)) {
+                const speed = (enemy.speed || 80) * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
+            }
+
+            // 冷却递减
+            enemy.blinkTimer = enemy.blinkTimer || 0;
+            enemy.blinkTimer -= dt;
+
+            // 闪烁瞬移
+            if (enemy.blinkTimer <= 0 && dist > 100) {
+                const blinkDist = enemy.blinkDist || 150;
+                const angle = Math.atan2(dy, dx);
+                // 瞬移到玩家附近的随机偏移位置
+                const offsetAngle = angle + (Math.random() - 0.5) * 1.0;
+                const offsetDist = Math.min(blinkDist, dist - 60) * (0.5 + Math.random() * 0.5);
+                enemy.x = player.x - Math.cos(offsetAngle) * offsetDist;
+                enemy.y = player.y - Math.sin(offsetAngle) * offsetDist;
+                // 闪烁后短暂无敌
+                enemy.invulnTimer = enemy.invulnTimer || 0;
+                enemy.invulnTimer += 0.15;
+
+                if (typeof ParticleSystem !== 'undefined') {
+                    ParticleSystem.emit(enemy.x, enemy.y, 8, {
+                        speed: 80, color: '#aa66ff', life: 0.3, size: 8, type: 'glow',
+                    });
+                }
+                enemy.blinkTimer = enemy.blinkCooldown || 3.0;
+            }
+
+            // 接触伤害
+            enemy.attackTimer -= dt;
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
+                if (typeof PlayerSystem !== 'undefined') {
+                    PlayerSystem.takeDamage(enemy.damage || 10);
+                    EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 10, player);
+                }
+                enemy.attackTimer = enemy.attackCooldown || 1.2;
+            }
+        },
+    },
+
+    /** 迫击者：保持距离，抛射范围炮弹 */
+    mortar: {
+        update(enemy, dt, player) {
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const preferred = enemy.preferredDist || 350;
+
+            // 保持距离
+            if (dist < preferred - 80) {
+                const speed = (enemy.speed || 50) * dt;
+                enemy.x -= (dx / dist) * speed;
+                enemy.y -= (dy / dist) * speed;
+            } else if (dist > preferred + 80) {
+                const speed = (enemy.speed || 50) * dt;
+                enemy.x += (dx / dist) * speed;
+                enemy.y += (dy / dist) * speed;
+            }
+
+            // 发射迫击炮弹
+            enemy.mortarTimer = enemy.mortarTimer || 0;
+            enemy.mortarTimer -= dt;
+            if (enemy.mortarTimer <= 0 && dist < 600) {
+                const angle = Math.atan2(dy, dx);
+                const mortarDmg = enemy.mortarDamage || (enemy.damage || 15) * 2;
+                const mortarSpeed = enemy.mortarSpeed || 200;
+                const mortarRadius = enemy.mortarRadius || 60;
+                if (typeof BulletSystem !== 'undefined') {
+                    BulletSystem.create(enemy.x, enemy.y, angle, mortarDmg, mortarSpeed, 0, false, 'mortar', { isMortar: true, splashRadius: mortarRadius });
+                }
+                enemy.mortarTimer = enemy.mortarCooldown || 4.0;
+            }
+
+            // 接触伤害（被近身时自卫）
+            enemy.attackTimer -= dt;
+            if (enemy.attackTimer <= 0 && dist < _touchDist(enemy, player)) {
+                if (typeof PlayerSystem !== 'undefined') {
+                    PlayerSystem.takeDamage(enemy.damage || 6);
+                    EnemySystem._triggerMechanicsOnAttack(enemy, enemy.damage || 6, player);
+                }
+                enemy.attackTimer = enemy.attackCooldown || 2.0;
+            }
+        },
+    },
 };
 
 // ============================================================
@@ -697,14 +856,14 @@ const EnemySystem = {
      * 根据 behavior 分发 AI 更新
      */
     _updateEnemyAI(e, dt, player) {
-        // behavior 别名映射（enemies.json 命名 → BEHAVIORS 键）
+        // behavior 别名映射（enemies.json/C SV 命名 → BEHAVIORS 键）
         const BEHAVIOR_ALIAS = {
             'chase': 'chaser',
             'ranged': 'shooter',
             'explode': 'bomber',
-            'heal': 'chaser',
-            'mortar': 'shooter',
-            'blink': 'chaser',
+            'heal': 'healer',
+            'mortar': 'mortar',
+            'blink': 'blinker',
         };
         const behaviorKey = BEHAVIOR_ALIAS[e.behavior] || e.behavior;
         const behaviorFn = BEHAVIORS[behaviorKey];

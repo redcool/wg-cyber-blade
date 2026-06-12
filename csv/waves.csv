@@ -8,7 +8,7 @@
 # maxBudget:           生成预算最大值 (上限, 约 = minBudget + 10%)
 #                      难度曲线: wave 1=8~10, wave 20=200~220
 # availableBehaviors:  可选敌人行为, 用 | 分隔
-#                      chase|fast|ranged|explode|heal|mortar|blink
+#                      chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner
 # availableMechanics:  可选特殊机制, 用 | 分隔
 #                      splitter|shielded|leech|reflect|freeze
 #                      空 = 本波无特殊机制敌人
@@ -35,14 +35,14 @@ waveNumber,minBudget,maxBudget,availableBehaviors,availableMechanics,spawnPatter
 7,32,36,chase|fast|ranged|explode|heal,,random,
 8,36,40,chase|fast|ranged|explode|heal|mortar,,random,
 9,40,45,chase|fast|ranged|explode|heal|mortar|blink,,random,
-10,50,55,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded,random,
-11,60,66,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded,random,
-12,70,77,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech,random,
-13,80,88,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,
-14,90,99,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,
-15,100,110,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect,random,bossEvery5
-16,120,132,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
-17,140,154,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
-18,160,176,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
-19,180,198,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,
-20,200,220,chase|fast|ranged|explode|heal|mortar|blink,splitter|shielded|leech|reflect|freeze,random,bossEvery5
+10,50,55,chase|fast|ranged|explode|heal|mortar|blink|swarm,splitter|shielded,random,
+11,60,66,chase|fast|ranged|explode|heal|mortar|blink|swarm,splitter|shielded,random,
+12,70,77,chase|fast|ranged|explode|heal|mortar|blink|swarm,leech,random,
+13,80,88,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,leech|reflect,random,
+14,90,99,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,leech|reflect,random,
+15,100,110,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect,random,bossEvery5
+16,120,132,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect|freeze,random,
+17,140,154,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect|freeze,random,
+18,160,176,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect|freeze,random,
+19,180,198,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect|freeze,random,
+20,200,220,chase|fast|ranged|explode|heal|mortar|blink|swarm|summoner,splitter|shielded|leech|reflect|freeze,random,bossEvery5
