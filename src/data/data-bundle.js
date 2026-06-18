@@ -108,9 +108,9 @@ __DATA_BUNDLE__['characters'] = [
     "maxWeapons": 6,
     "maxHp": 20,
     "hpRegen": 0.1,
-    "speed": 130,
+    "speed": 145,
     "damagePercent": 0,
-    "attackSpeed": 0.9,
+    "attackSpeed": 1.05,
     "attackRange": 0,
     "armor": 0,
     "dodge": 0.02,
@@ -2796,10 +2796,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 30,
     "damage_lv3": 40,
     "damage_lv4": 60,
-    "cooldown_lv1": 0.9,
-    "cooldown_lv2": 0.84,
-    "cooldown_lv3": 0.78,
-    "cooldown_lv4": 0.72,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -2848,10 +2848,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 45,
-    "cooldown_lv1": 0.9,
-    "cooldown_lv2": 0.84,
-    "cooldown_lv3": 0.78,
-    "cooldown_lv4": 0.72,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -2900,10 +2900,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 30,
     "damage_lv3": 40,
     "damage_lv4": 60,
-    "cooldown_lv1": 1,
-    "cooldown_lv2": 0.93,
-    "cooldown_lv3": 0.86,
-    "cooldown_lv4": 0.79,
+    "cooldown_lv1": 0.65,
+    "cooldown_lv2": 0.6,
+    "cooldown_lv3": 0.56,
+    "cooldown_lv4": 0.52,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -2952,10 +2952,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 35,
     "damage_lv3": 55,
     "damage_lv4": 75,
-    "cooldown_lv1": 1,
-    "cooldown_lv2": 0.93,
-    "cooldown_lv3": 0.86,
-    "cooldown_lv4": 0.79,
+    "cooldown_lv1": 0.65,
+    "cooldown_lv2": 0.6,
+    "cooldown_lv3": 0.56,
+    "cooldown_lv4": 0.52,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3004,10 +3004,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 45,
-    "cooldown_lv1": 0.8,
-    "cooldown_lv2": 0.74,
-    "cooldown_lv3": 0.69,
-    "cooldown_lv4": 0.63,
+    "cooldown_lv1": 0.55,
+    "cooldown_lv2": 0.51,
+    "cooldown_lv3": 0.48,
+    "cooldown_lv4": 0.44,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3056,10 +3056,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 40,
-    "cooldown_lv1": 1,
-    "cooldown_lv2": 0.93,
-    "cooldown_lv3": 0.86,
-    "cooldown_lv4": 0.79,
+    "cooldown_lv1": 0.7,
+    "cooldown_lv2": 0.65,
+    "cooldown_lv3": 0.6,
+    "cooldown_lv4": 0.55,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3109,9 +3109,9 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv3": 70,
     "damage_lv4": 100,
     "cooldown_lv1": 0,
-    "cooldown_lv2": 1.12,
-    "cooldown_lv3": 1.04,
-    "cooldown_lv4": 0.96,
+    "cooldown_lv2": 0.8,
+    "cooldown_lv3": 0.75,
+    "cooldown_lv4": 0.7,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3160,10 +3160,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 30,
     "damage_lv3": 40,
     "damage_lv4": 60,
-    "cooldown_lv1": 0.9,
-    "cooldown_lv2": 0.84,
-    "cooldown_lv3": 0.78,
-    "cooldown_lv4": 0.72,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "speedMult": 0,
     "critChanceAdd": 0.1,
     "critDamageAdd": 0,
@@ -3212,10 +3212,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 40,
-    "cooldown_lv1": 0.7,
-    "cooldown_lv2": 0.65,
-    "cooldown_lv3": 0.6,
-    "cooldown_lv4": 0.55,
+    "cooldown_lv1": 0.45,
+    "cooldown_lv2": 0.42,
+    "cooldown_lv3": 0.39,
+    "cooldown_lv4": 0.36,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3224,7 +3224,7 @@ __DATA_BUNDLE__['weapons'] = [
     "maxHpAdd": 0,
     "lifeStealAdd": 0,
     "bulletCount": 1,
-    "bulletSpeed": 450,
+    "bulletSpeed": 900,
     "bulletMaxRange": 0,
     "attackRange": 320,
     "spread": 0.06,
@@ -3264,10 +3264,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 40,
     "damage_lv3": 60,
     "damage_lv4": 85,
-    "cooldown_lv1": 0.9,
-    "cooldown_lv2": 0.84,
-    "cooldown_lv3": 0.78,
-    "cooldown_lv4": 0.72,
+    "cooldown_lv1": 0.6,
+    "cooldown_lv2": 0.56,
+    "cooldown_lv3": 0.52,
+    "cooldown_lv4": 0.48,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3368,10 +3368,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 40,
-    "cooldown_lv1": 0.7,
-    "cooldown_lv2": 0.65,
-    "cooldown_lv3": 0.6,
-    "cooldown_lv4": 0.55,
+    "cooldown_lv1": 0.5,
+    "cooldown_lv2": 0.47,
+    "cooldown_lv3": 0.43,
+    "cooldown_lv4": 0.4,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -3420,10 +3420,10 @@ __DATA_BUNDLE__['weapons'] = [
     "damage_lv2": 20,
     "damage_lv3": 30,
     "damage_lv4": 40,
-    "cooldown_lv1": 0.7,
-    "cooldown_lv2": 0.65,
-    "cooldown_lv3": 0.6,
-    "cooldown_lv4": 0.55,
+    "cooldown_lv1": 0.5,
+    "cooldown_lv2": 0.47,
+    "cooldown_lv3": 0.43,
+    "cooldown_lv4": 0.4,
     "speedMult": 0,
     "critChanceAdd": 0,
     "critDamageAdd": 0,
@@ -6342,111 +6342,110 @@ __DATA_BUNDLE__['levelUpCards'] = [
     "id": "maxHp_t1",
     "name": "心脏",
     "desc": "最大生命 +3",
-    "icon": "❤️",
     "tier": "I",
     "statField": "maxHp",
     "statValue": 3,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "maxHp"
   },
   {
     "id": "maxHp_t2",
     "name": "心脏",
     "desc": "最大生命 +6",
-    "icon": "❤️",
     "tier": "II",
     "statField": "maxHp",
     "statValue": 6,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "maxHp"
   },
   {
     "id": "maxHp_t3",
     "name": "心脏",
     "desc": "最大生命 +9",
-    "icon": "❤️",
     "tier": "III",
     "statField": "maxHp",
     "statValue": 9,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "maxHp"
   },
   {
     "id": "maxHp_t4",
     "name": "心脏",
     "desc": "最大生命 +12",
-    "icon": "❤️",
     "tier": "IV",
     "statField": "maxHp",
     "statValue": 12,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "maxHp"
   },
   {
     "id": "hpRegen_t1",
     "name": "肺脏",
     "desc": "生命回复 +0.3/秒",
-    "icon": "💚",
     "tier": "I",
     "statField": "hpRegen",
     "statValue": 0.3,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "hpRegen"
   },
   {
     "id": "hpRegen_t2",
     "name": "肺脏",
     "desc": "生命回复 +0.6/秒",
-    "icon": "💚",
     "tier": "II",
     "statField": "hpRegen",
     "statValue": 0.6,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "hpRegen"
   },
   {
     "id": "hpRegen_t3",
     "name": "肺脏",
     "desc": "生命回复 +1.0/秒",
-    "icon": "💚",
     "tier": "III",
     "statField": "hpRegen",
     "statValue": 1,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "hpRegen"
   },
   {
     "id": "hpRegen_t4",
     "name": "肺脏",
     "desc": "生命回复 +1.5/秒",
-    "icon": "💚",
     "tier": "IV",
     "statField": "hpRegen",
     "statValue": 1.5,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "hpRegen"
   },
   {
     "id": "lifeSteal_t1",
     "name": "利齿",
     "desc": "生命偷取 +1%",
-    "icon": "🩸",
     "tier": "I",
     "statField": "lifeSteal",
     "statValue": 0.01,
@@ -6455,13 +6454,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "lifeSteal"
   },
   {
     "id": "lifeSteal_t2",
     "name": "利齿",
     "desc": "生命偷取 +2%",
-    "icon": "🩸",
     "tier": "II",
     "statField": "lifeSteal",
     "statValue": 0.02,
@@ -6470,13 +6469,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "lifeSteal"
   },
   {
     "id": "lifeSteal_t3",
     "name": "利齿",
     "desc": "生命偷取 +3%",
-    "icon": "🩸",
     "tier": "III",
     "statField": "lifeSteal",
     "statValue": 0.03,
@@ -6485,13 +6484,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "lifeSteal"
   },
   {
     "id": "lifeSteal_t4",
     "name": "利齿",
     "desc": "生命偷取 +4%",
-    "icon": "🩸",
     "tier": "IV",
     "statField": "lifeSteal",
     "statValue": 0.04,
@@ -6500,65 +6499,65 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "lifeSteal"
   },
   {
     "id": "damagePercent_t1",
     "name": "三头肌",
     "desc": "伤害% +4%",
-    "icon": "🗡️",
     "tier": "I",
     "statField": "damagePercent",
     "statValue": 0.04,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "damagePercent"
   },
   {
     "id": "damagePercent_t2",
     "name": "三头肌",
     "desc": "伤害% +8%",
-    "icon": "🗡️",
     "tier": "II",
     "statField": "damagePercent",
     "statValue": 0.08,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "damagePercent"
   },
   {
     "id": "damagePercent_t3",
     "name": "三头肌",
     "desc": "伤害% +12%",
-    "icon": "🗡️",
     "tier": "III",
     "statField": "damagePercent",
     "statValue": 0.12,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "damagePercent"
   },
   {
     "id": "damagePercent_t4",
     "name": "三头肌",
     "desc": "伤害% +16%",
-    "icon": "🗡️",
     "tier": "IV",
     "statField": "damagePercent",
     "statValue": 0.16,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "damagePercent"
   },
   {
     "id": "meleeDamage_t1",
     "name": "前臂",
     "desc": "近战伤害 +2",
-    "icon": "⚔️",
     "tier": "I",
     "statField": "meleeDamage",
     "statValue": 2,
@@ -6567,13 +6566,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "meleeDamage"
   },
   {
     "id": "meleeDamage_t2",
     "name": "前臂",
     "desc": "近战伤害 +4",
-    "icon": "⚔️",
     "tier": "II",
     "statField": "meleeDamage",
     "statValue": 4,
@@ -6582,13 +6581,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "meleeDamage"
   },
   {
     "id": "meleeDamage_t3",
     "name": "前臂",
     "desc": "近战伤害 +6",
-    "icon": "⚔️",
     "tier": "III",
     "statField": "meleeDamage",
     "statValue": 6,
@@ -6597,13 +6596,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "meleeDamage"
   },
   {
     "id": "meleeDamage_t4",
     "name": "前臂",
     "desc": "近战伤害 +8",
-    "icon": "⚔️",
     "tier": "IV",
     "statField": "meleeDamage",
     "statValue": 8,
@@ -6612,13 +6611,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "meleeDamage"
   },
   {
     "id": "rangedDamage_t1",
     "name": "肩膀",
     "desc": "远程伤害 +1",
-    "icon": "🏹",
     "tier": "I",
     "statField": "rangedDamage",
     "statValue": 1,
@@ -6627,13 +6626,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "rangedDamage"
   },
   {
     "id": "rangedDamage_t2",
     "name": "肩膀",
     "desc": "远程伤害 +2",
-    "icon": "🏹",
     "tier": "II",
     "statField": "rangedDamage",
     "statValue": 2,
@@ -6642,13 +6641,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "rangedDamage"
   },
   {
     "id": "rangedDamage_t3",
     "name": "肩膀",
     "desc": "远程伤害 +3",
-    "icon": "🏹",
     "tier": "III",
     "statField": "rangedDamage",
     "statValue": 3,
@@ -6657,13 +6656,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "rangedDamage"
   },
   {
     "id": "rangedDamage_t4",
     "name": "肩膀",
     "desc": "远程伤害 +4",
-    "icon": "🏹",
     "tier": "IV",
     "statField": "rangedDamage",
     "statValue": 4,
@@ -6672,13 +6671,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "rangedDamage"
   },
   {
     "id": "elementalDamage_t1",
     "name": "大脑",
     "desc": "元素伤害 +1",
-    "icon": "🔮",
     "tier": "I",
     "statField": "elementalDamage",
     "statValue": 1,
@@ -6688,13 +6687,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "elementalDamage"
   },
   {
     "id": "elementalDamage_t2",
     "name": "大脑",
     "desc": "元素伤害 +2",
-    "icon": "🔮",
     "tier": "II",
     "statField": "elementalDamage",
     "statValue": 2,
@@ -6704,13 +6703,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "elementalDamage"
   },
   {
     "id": "elementalDamage_t3",
     "name": "大脑",
     "desc": "元素伤害 +3",
-    "icon": "🔮",
     "tier": "III",
     "statField": "elementalDamage",
     "statValue": 3,
@@ -6720,13 +6719,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "elementalDamage"
   },
   {
     "id": "elementalDamage_t4",
     "name": "大脑",
     "desc": "元素伤害 +4",
-    "icon": "🔮",
     "tier": "IV",
     "statField": "elementalDamage",
     "statValue": 4,
@@ -6736,65 +6735,65 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "elementalDamage"
   },
   {
     "id": "attackSpeed_t1",
     "name": "反射神经",
     "desc": "攻速 +5%",
-    "icon": "⚡",
     "tier": "I",
     "statField": "attackSpeed",
     "statValue": 0.05,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackSpeed"
   },
   {
     "id": "attackSpeed_t2",
     "name": "反射神经",
     "desc": "攻速 +10%",
-    "icon": "⚡",
     "tier": "II",
     "statField": "attackSpeed",
     "statValue": 0.1,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackSpeed"
   },
   {
     "id": "attackSpeed_t3",
     "name": "反射神经",
     "desc": "攻速 +15%",
-    "icon": "⚡",
     "tier": "III",
     "statField": "attackSpeed",
     "statValue": 0.15,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackSpeed"
   },
   {
     "id": "attackSpeed_t4",
     "name": "反射神经",
     "desc": "攻速 +20%",
-    "icon": "⚡",
     "tier": "IV",
     "statField": "attackSpeed",
     "statValue": 0.2,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackSpeed"
   },
   {
     "id": "critChance_t1",
     "name": "手指",
     "desc": "暴击率 +3%",
-    "icon": "💥",
     "tier": "I",
     "statField": "critChance",
     "statValue": 0.03,
@@ -6803,13 +6802,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "critChance"
   },
   {
     "id": "critChance_t2",
     "name": "手指",
     "desc": "暴击率 +5%",
-    "icon": "💥",
     "tier": "II",
     "statField": "critChance",
     "statValue": 0.05,
@@ -6818,13 +6817,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "critChance"
   },
   {
     "id": "critChance_t3",
     "name": "手指",
     "desc": "暴击率 +7%",
-    "icon": "💥",
     "tier": "III",
     "statField": "critChance",
     "statValue": 0.07,
@@ -6833,13 +6832,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "critChance"
   },
   {
     "id": "critChance_t4",
     "name": "手指",
     "desc": "暴击率 +9%",
-    "icon": "💥",
     "tier": "IV",
     "statField": "critChance",
     "statValue": 0.09,
@@ -6848,13 +6847,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "critChance"
   },
   {
     "id": "engineering_t1",
     "name": "颅骨",
     "desc": "工程 +1",
-    "icon": "🤖",
     "tier": "I",
     "statField": "engineering",
     "statValue": 1,
@@ -6863,13 +6862,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "engineering"
   },
   {
     "id": "engineering_t2",
     "name": "颅骨",
     "desc": "工程 +2",
-    "icon": "🤖",
     "tier": "II",
     "statField": "engineering",
     "statValue": 2,
@@ -6878,13 +6877,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "engineering"
   },
   {
     "id": "engineering_t3",
     "name": "颅骨",
     "desc": "工程 +3",
-    "icon": "🤖",
     "tier": "III",
     "statField": "engineering",
     "statValue": 3,
@@ -6893,13 +6892,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "engineering"
   },
   {
     "id": "engineering_t4",
     "name": "颅骨",
     "desc": "工程 +5",
-    "icon": "🤖",
     "tier": "IV",
     "statField": "engineering",
     "statValue": 5,
@@ -6908,13 +6907,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "engineering"
   },
   {
     "id": "attackRange_t1",
     "name": "眼睛",
     "desc": "射程 +15",
-    "icon": "🎯",
     "tier": "I",
     "statField": "attackRange",
     "statValue": 15,
@@ -6923,13 +6922,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackRange"
   },
   {
     "id": "attackRange_t2",
     "name": "眼睛",
     "desc": "射程 +30",
-    "icon": "🎯",
     "tier": "II",
     "statField": "attackRange",
     "statValue": 30,
@@ -6938,13 +6937,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackRange"
   },
   {
     "id": "attackRange_t3",
     "name": "眼睛",
     "desc": "射程 +45",
-    "icon": "🎯",
     "tier": "III",
     "statField": "attackRange",
     "statValue": 45,
@@ -6953,13 +6952,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackRange"
   },
   {
     "id": "attackRange_t4",
     "name": "眼睛",
     "desc": "射程 +60",
-    "icon": "🎯",
     "tier": "IV",
     "statField": "attackRange",
     "statValue": 60,
@@ -6968,169 +6967,169 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "attackRange"
   },
   {
     "id": "armor_t1",
     "name": "胸甲",
     "desc": "护甲 +1",
-    "icon": "🛡️",
     "tier": "I",
     "statField": "armor",
     "statValue": 1,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "armor"
   },
   {
     "id": "armor_t2",
     "name": "胸甲",
     "desc": "护甲 +2",
-    "icon": "🛡️",
     "tier": "II",
     "statField": "armor",
     "statValue": 2,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "armor"
   },
   {
     "id": "armor_t3",
     "name": "胸甲",
     "desc": "护甲 +3",
-    "icon": "🛡️",
     "tier": "III",
     "statField": "armor",
     "statValue": 3,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "armor"
   },
   {
     "id": "armor_t4",
     "name": "胸甲",
     "desc": "护甲 +4",
-    "icon": "🛡️",
     "tier": "IV",
     "statField": "armor",
     "statValue": 4,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "armor"
   },
   {
     "id": "dodge_t1",
     "name": "背部",
     "desc": "闪避 +3%",
-    "icon": "💨",
     "tier": "I",
     "statField": "dodge",
     "statValue": 0.03,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "dodge"
   },
   {
     "id": "dodge_t2",
     "name": "背部",
     "desc": "闪避 +6%",
-    "icon": "💨",
     "tier": "II",
     "statField": "dodge",
     "statValue": 0.06,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "dodge"
   },
   {
     "id": "dodge_t3",
     "name": "背部",
     "desc": "闪避 +9%",
-    "icon": "💨",
     "tier": "III",
     "statField": "dodge",
     "statValue": 0.09,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "dodge"
   },
   {
     "id": "dodge_t4",
     "name": "背部",
     "desc": "闪避 +12%",
-    "icon": "💨",
     "tier": "IV",
     "statField": "dodge",
     "statValue": 0.12,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "dodge"
   },
   {
     "id": "speed_t1",
     "name": "双腿",
     "desc": "移速 +3",
-    "icon": "👟",
     "tier": "I",
     "statField": "speed",
     "statValue": 3,
     "tags": [],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "speed"
   },
   {
     "id": "speed_t2",
     "name": "双腿",
     "desc": "移速 +6",
-    "icon": "👟",
     "tier": "II",
     "statField": "speed",
     "statValue": 6,
     "tags": [],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "speed"
   },
   {
     "id": "speed_t3",
     "name": "双腿",
     "desc": "移速 +9",
-    "icon": "👟",
     "tier": "III",
     "statField": "speed",
     "statValue": 9,
     "tags": [],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "speed"
   },
   {
     "id": "speed_t4",
     "name": "双腿",
     "desc": "移速 +12",
-    "icon": "👟",
     "tier": "IV",
     "statField": "speed",
     "statValue": 12,
     "tags": [],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "speed"
   },
   {
     "id": "luck_t1",
     "name": "嗅觉",
     "desc": "幸运 +5",
-    "icon": "🍀",
     "tier": "I",
     "statField": "luck",
     "statValue": 5,
@@ -7139,13 +7138,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "luck"
   },
   {
     "id": "luck_t2",
     "name": "嗅觉",
     "desc": "幸运 +10",
-    "icon": "🍀",
     "tier": "II",
     "statField": "luck",
     "statValue": 10,
@@ -7154,13 +7153,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "luck"
   },
   {
     "id": "luck_t3",
     "name": "嗅觉",
     "desc": "幸运 +15",
-    "icon": "🍀",
     "tier": "III",
     "statField": "luck",
     "statValue": 15,
@@ -7169,13 +7168,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "luck"
   },
   {
     "id": "luck_t4",
     "name": "嗅觉",
     "desc": "幸运 +20",
-    "icon": "🍀",
     "tier": "IV",
     "statField": "luck",
     "statValue": 20,
@@ -7184,13 +7183,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "luck"
   },
   {
     "id": "materialGain_t1",
     "name": "双手",
     "desc": "材料获取% +3%",
-    "icon": "💰",
     "tier": "I",
     "statField": "materialGain",
     "statValue": 0.03,
@@ -7199,13 +7198,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "materialGain"
   },
   {
     "id": "materialGain_t2",
     "name": "双手",
     "desc": "材料获取% +6%",
-    "icon": "💰",
     "tier": "II",
     "statField": "materialGain",
     "statValue": 0.06,
@@ -7214,13 +7213,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "materialGain"
   },
   {
     "id": "materialGain_t3",
     "name": "双手",
     "desc": "材料获取% +9%",
-    "icon": "💰",
     "tier": "III",
     "statField": "materialGain",
     "statValue": 0.09,
@@ -7229,13 +7228,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "materialGain"
   },
   {
     "id": "materialGain_t4",
     "name": "双手",
     "desc": "材料获取% +12%",
-    "icon": "💰",
     "tier": "IV",
     "statField": "materialGain",
     "statValue": 0.12,
@@ -7244,13 +7243,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "materialGain"
   },
   {
     "id": "harvesting_t1",
     "name": "胃",
     "desc": "采集 +4%",
-    "icon": "🍽️",
     "tier": "I",
     "statField": "harvesting",
     "statValue": 0.04,
@@ -7259,13 +7258,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 1,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "harvesting"
   },
   {
     "id": "harvesting_t2",
     "name": "胃",
     "desc": "采集 +8%",
-    "icon": "🍽️",
     "tier": "II",
     "statField": "harvesting",
     "statValue": 0.08,
@@ -7274,13 +7273,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 5,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "harvesting"
   },
   {
     "id": "harvesting_t3",
     "name": "胃",
     "desc": "采集 +12%",
-    "icon": "🍽️",
     "tier": "III",
     "statField": "harvesting",
     "statValue": 0.12,
@@ -7289,13 +7288,13 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 10,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "harvesting"
   },
   {
     "id": "harvesting_t4",
     "name": "胃",
     "desc": "采集 +18%",
-    "icon": "🍽️",
     "tier": "IV",
     "statField": "harvesting",
     "statValue": 0.18,
@@ -7304,46 +7303,34 @@ __DATA_BUNDLE__['levelUpCards'] = [
     ],
     "unlockLevel": 25,
     "actionType": "",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "harvesting"
   },
   {
     "id": "weaponLvUp",
     "name": "武器升级",
     "desc": "随机武器+1级",
-    "icon": "⚔️",
     "tier": "II",
     "statField": "",
     "statValue": null,
     "tags": [],
     "unlockLevel": 3,
     "actionType": "weaponLevelUp",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "weaponLevelUp"
   },
   {
     "id": "weaponQuality",
     "name": "品质提升",
     "desc": "随机武器品质+1",
-    "icon": "✨",
     "tier": "III",
     "statField": "",
     "statValue": null,
     "tags": [],
     "unlockLevel": 6,
     "actionType": "weaponQualityUp",
-    "actionValue": ""
-  },
-  {
-    "id": "weaponSlotUp",
-    "name": "武器槽",
-    "desc": "武器槽+1",
-    "icon": "📦",
-    "tier": "IV",
-    "statField": "",
-    "statValue": null,
-    "tags": [],
-    "unlockLevel": 25,
-    "actionType": "addWeaponSlot",
-    "actionValue": ""
+    "actionValue": "",
+    "iconName": "weaponQualityUp"
   }
 ];
 

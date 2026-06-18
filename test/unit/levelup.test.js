@@ -18,14 +18,13 @@ const MOCK_CARDS = [
     { id: 'melee_flat_5', name: '近战专精', desc: '+5', icon: '⚔️', rarity: 'common', category: 'offense', tags: ['melee'], statMods: { meleeDamage: { type: 'add', value: 5 } } },
     // mobility
     { id: 'speed_10', name: '疾跑', desc: '+10%', icon: '⚡', rarity: 'common', category: 'mobility', tags: [], statMods: { speed: { type: 'mult', value: 0.10 } } },
-    { id: 'range_15', name: '鹰眼', desc: '+15%', icon: '🎯', rarity: 'common', category: 'mobility', tags: ['ranged'], statMods: { attackRange: { type: 'mult', value: 0.15 } } },
+    { id: 'range_15', name: '鹰眼', desc: '+15%', icon: '🎯', rarity: 'epic', category: 'mobility', tags: ['ranged'], statMods: { attackRange: { type: 'mult', value: 0.15 } } },
     // economy
     { id: 'luck_2', name: '幸运之星', desc: '+2', icon: '🍀', rarity: 'common', category: 'economy', tags: ['economy'], statMods: { luck: { type: 'add', value: 2 } } },
     // weapon actions
     { id: 'weapon_level_up', name: '武器精炼', desc: '等级+1', icon: '⚔️', rarity: 'rare', category: 'weapon', tags: [], action: { type: 'weaponLevelUp' } },
-    { id: 'weapon_slot_1', name: '武器槽', desc: '+1', icon: '📦', rarity: 'legendary', category: 'weapon', tags: [], action: { type: 'addWeaponSlot' } },
     // passive
-    { id: 'passive_kill_explode', name: '杀戮快感', desc: '击杀爆炸', icon: '💥', rarity: 'epic', category: 'special', tags: ['explosive'], action: { type: 'addPassive', passiveId: 'on_kill_explosion' } },
+    { id: 'passive_kill_explode', name: '杀戮快感', desc: '击杀爆炸', icon: '💥', rarity: 'legendary', category: 'special', tags: ['explosive'], action: { type: 'addPassive', passiveId: 'on_kill_explosion' } },
 ];
 
 // Mock DataLoader
@@ -287,16 +286,6 @@ describe('LevelUpSystem - 应用 action', () => {
 
         LevelUpSystem.applyCard('weapon_level_up', player);
         expect(player.weapons[0].level).toBe(2);
-    });
-
-    it('L15: applyCard 添加武器槽', () => {
-        const player = makePlayer({ weaponSlots: 4 });
-        LevelUpSystem.allCards = [
-            { id: 'weapon_slot_1', name: '槽扩展', rarity: 'legendary', tags: [], action: { type: 'addWeaponSlot' } },
-        ];
-
-        LevelUpSystem.applyCard('weapon_slot_1', player);
-        expect(player.weaponSlots).toBe(5);
     });
 
     it('L16: applyCard 添加被动技能', () => {

@@ -398,11 +398,14 @@ const UISystem = {
         const wsLvl = weapon.minLevel || 1;
         const wsLvlEntry = RarityColorSystem.getByLevel(wsLvl);
         const wsLvlColor = wsLvlEntry ? wsLvlEntry.color : '#00ffff';
+        const wsRgb = this._hexToRgb(wsLvlColor);
+        const wsBorder = `rgba(${wsRgb.r},${wsRgb.g},${wsRgb.b},0.5)`;
+        const wsBg = `rgba(${wsRgb.r},${wsRgb.g},${wsRgb.b},0.12)`;
 
         detail.innerHTML = `
-            <div class="weapon-detail-avatar">${AssetSystem.weaponIconHTML(weapon.id, 72)}</div>
+            <div class="weapon-detail-avatar" style="border-color:${wsBorder};background:${wsBg}">${AssetSystem.weaponIconHTML(weapon.id, 72)}</div>
             <div class="weapon-detail-info">
-                <div class="weapon-detail-name">${weapon.name}<span class="ws-level-badge" style="color:${wsLvlColor};border-color:${wsLvlColor}">Lv.${wsLvl}</span><span class="wpn-detail-btn" data-weapon-id="${weapon.id}" title="查看详细属性与适配度">📊</span></div>
+                <div class="weapon-detail-name">${weapon.name}<span class="ws-level-badge">${wsLvl}</span><span class="wpn-detail-btn" data-weapon-id="${weapon.id}" title="查看详细属性与适配度">📊</span></div>
                 <div class="weapon-detail-tag" style="color:${tagColor}">${tagStr}${classStr ? ' · ' + classStr : ''}${warnBadge}</div>
                 ${fitBar}
                 <div class="weapon-detail-desc">${weapon.desc || ''}</div>
@@ -569,6 +572,14 @@ const UISystem = {
         }
     },
 
+    /** 工具: 将 #RRGGBB 颜色解析为 {r,g,b} 对象 */
+    _hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return { r, g, b };
+    },
+
     /** 渲染武器图标卡片（纯图标，点击后详情面板展示属性） */
     _renderWeaponIcon(container, weapon, selected) {
         const card = document.createElement('div');
@@ -576,8 +587,10 @@ const UISystem = {
         card.dataset.weaponId = weapon.id;
         const cardLvl = weapon.minLevel || 1;
         const cardLvlEntry = RarityColorSystem.getByLevel(cardLvl);
-        const cardLvlColor = cardLvlEntry ? cardLvlEntry.color : '#fff';
-        card.innerHTML = `<div class="ws-icon">${AssetSystem.weaponIconHTML(weapon.id, 42)}</div><span class="ws-card-level" style="color:${cardLvlColor};border-color:${cardLvlColor}">Lv.${cardLvl}</span>`;
+        const cardLvlColor = cardLvlEntry ? cardLvlEntry.color : '#ffffff';
+        const rgb = this._hexToRgb(cardLvlColor);
+        card.innerHTML = `<div class="ws-icon">${AssetSystem.weaponIconHTML(weapon.id, 42)}</div><span class="ws-card-level">${cardLvl}</span>`;
+        card.style.background = `rgba(${rgb.r},${rgb.g},${rgb.b},0.08)`;
         container.appendChild(card);
     },
 
@@ -2064,24 +2077,15 @@ const UISystem = {
             div.className = `levelup-choice tier-${card.tier}`;
             div.dataset.cardId = card.id;
 
-            // 卡片图标：先试 PNG，失败则 fallback 到 emoji
-            const iconField = card.statField || card.actionType || 'damagePercent';
+            // 卡片图标：从 levelUpCards 资产目录加载 PNG
+            const iconField = card.iconName || card.statField || card.actionType || 'damagePercent';
             const iconWrap = document.createElement('div');
             iconWrap.className = 'levelup-card-icon-wrap';
             const img = document.createElement('img');
             img.className = 'levelup-card-icon';
-            img.src = `assets/levelUpCards/${iconField}.png`;
+            img.src = `assets/levelUpCards/${iconField}.png?${typeof CACHE_VER !== 'undefined' ? CACHE_VER : ''}`;
             img.alt = card.name;
-            img.style.display = 'none';
-            const emoji = document.createElement('span');
-            emoji.className = 'levelup-card-emoji';
-            emoji.textContent = card.icon || '';
-            // 图片加载成功 → 隐藏 emoji 显示图片
-            img.onload = () => { emoji.style.display = 'none'; img.style.display = ''; };
-            // 图片加载失败 → 隐藏图片显示 emoji
-            img.onerror = () => { img.style.display = 'none'; emoji.style.display = ''; };
             iconWrap.appendChild(img);
-            iconWrap.appendChild(emoji);
 
             // 卡片内容：左图标 + 右侧信息区（2行）
             div.appendChild(iconWrap);

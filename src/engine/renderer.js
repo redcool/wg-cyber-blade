@@ -452,7 +452,8 @@ const Renderer = {
 
                 const dist = SystemConfig.get('weaponOrbitDistance')
                           + Math.max(0, (wp.slots || 1) - 1)
-                          * SystemConfig.get('weaponOrbitExtraPerSlot');
+                          * SystemConfig.get('weaponOrbitExtraPerSlot')
+                          + 4; // 安全边距：避免呼吸动画导致角色边缘与武器边缘重叠
                 const orbitAngle = (i / count) * Math.PI * 2 - Math.PI / 2;
                 let angle = orbitAngle, drawDist = dist, drawRotation = orbitAngle;
 
@@ -464,26 +465,26 @@ const Renderer = {
 
                     if (wp._attackBehavior === 'melee_thrust') {
                         // 瞄准阶段: 位置在轨道不动, 旋转朝向目标
-                        // 刺出阶段: 从轨道沿攻击方向刺出到 weaponRange 再收回
+                        // 刺出阶段: 从轨道向外伸展到 weaponRange 距离再收回（武器在角色上方飞过）
                         if (progress < AIM_END) {
                             angle = orbitAngle;
                             drawDist = dist;
                         } else {
                             const strikeP = (progress - AIM_END) / (1 - AIM_END);
-                            const maxDist = dist + (weaponRange - dist) * 0.7;
-                            drawDist = dist + (maxDist - dist) * Math.sin(strikeP * Math.PI);
+                            const extendDist = weaponRange > dist ? weaponRange : dist + weaponRange * 0.7;
+                            drawDist = dist + (extendDist - dist) * Math.sin(strikeP * Math.PI);
                             angle = aa;
                         }
                         drawRotation = aa;
                     } else if (wp._attackBehavior === 'melee_sweep') {
                         // 瞄准阶段: 位置在轨道不动, 旋转朝向目标
-                        // 横扫阶段: 在轨道上做弧线扫掠
+                        // 横扫阶段: 从轨道向外伸展做弧线扫掠（武器在角色上方飞过）
                         if (progress < AIM_END) {
                             angle = orbitAngle;
                             drawDist = dist;
                         } else {
                             const sweepP = (progress - AIM_END) / (1 - AIM_END);
-                            drawDist = weaponRange;
+                            drawDist = dist + weaponRange * 0.7;
                             angle = aa - Math.PI / 2 + sweepP * Math.PI;
                         }
                         drawRotation = aa;

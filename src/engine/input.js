@@ -4,6 +4,8 @@
 const Input = {
     keys: {},
     keyJustPressed: {},
+    /** 由 TouchJoystick 设置的方向向量，优先于键盘 */
+    joystickDir: null,
 
     init() {
         window.addEventListener('keydown', (e) => {
@@ -32,9 +34,15 @@ const Input = {
 
     /**
      * 获取玩家输入方向向量 (归一化)
+     * 优先使用摇杆，无摇杆时回退键盘
      * @returns {{x: number, y: number}} x:[-1,1], y:[-1,1], 对角线归一化
      */
     getInputDir() {
+        // 摇杆优先
+        if (this.joystickDir) {
+            return { x: this.joystickDir.x, y: this.joystickDir.y };
+        }
+
         let dx = 0, dy = 0;
         if (this.isDown('w') || this.isDown('W') || this.isDown('ArrowUp')) dy = -1;
         if (this.isDown('s') || this.isDown('S') || this.isDown('ArrowDown')) dy = 1;

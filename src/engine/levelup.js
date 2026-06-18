@@ -320,9 +320,6 @@ const LevelUpSystem = {
                 case 'weaponQualityUp':
                     this._applyWeaponQualityUp(player);
                     break;
-                case 'addWeaponSlot':
-                    this._applyWeaponSlotUp(player);
-                    break;
                 case 'addPassive': {
                     const passiveId = card.action ? card.action.passiveId : null;
                     if (passiveId && typeof PassiveSystem !== 'undefined' && PassiveSystem.register) {
@@ -419,11 +416,6 @@ const LevelUpSystem = {
         if (typeof ShopSystem !== 'undefined' && ShopSystem._updateWeaponParams) {
             ShopSystem._updateWeaponParams(player, weapon.id);
         }
-    },
-
-    _applyWeaponSlotUp(player) {
-        if (!player) return;
-        player.weaponSlots = (player.weaponSlots || SystemConfig.get('levelUpDefaultWeaponSlots')) + 1;
     },
 
     // -------------------------------------------------------
